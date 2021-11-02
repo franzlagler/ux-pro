@@ -38,7 +38,7 @@ export default function Layout({ children }: LayoutProps) {
     <>
       <GlobalStyle />
       <PageContainer>
-        <Navbar></Navbar>
+        <Navbar />
         <MainContainer>{children}</MainContainer>
       </PageContainer>
     </>

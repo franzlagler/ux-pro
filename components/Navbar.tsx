@@ -44,12 +44,12 @@ export default function Navbar() {
   return (
     <NavbarContainer>
       <NavbarItemContainer>
-        <Link href="/">
+        <Link href="/" passHref>
           <NavbarLink>
             <Image src="/images/logo.svg" width="90px" height="70px" />
           </NavbarLink>
         </Link>
-        <Link href="/about">
+        <Link href="/about" passHref>
           <NavbarLink>
             <NavbarItemBlock>
               <Image src="/images/about.svg" width="30px" height="30px" />
@@ -58,7 +58,7 @@ export default function Navbar() {
             </NavbarItemBlock>
           </NavbarLink>
         </Link>
-        <Link href="/topics">
+        <Link href="/topics" passHref>
           <NavbarLink>
             <NavbarItemBlock>
               <Image src="/images/topics.svg" width="30px" height="30px" />
@@ -66,7 +66,16 @@ export default function Navbar() {
             </NavbarItemBlock>
           </NavbarLink>
         </Link>
-        <Link href="/submit">
+        <Link href="/score" passHref>
+          <NavbarLink>
+            <NavbarItemBlock>
+              <Image src="/images/score.svg" width="30px" height="30px" />
+
+              <NavbarItemText>Score</NavbarItemText>
+            </NavbarItemBlock>
+          </NavbarLink>
+        </Link>
+        <Link href="/submit" passHref>
           <NavbarLink>
             <NavbarItemBlock>
               <Image src="/images/submit.svg" width="30px" height="30px" />

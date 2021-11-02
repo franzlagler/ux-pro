@@ -2,13 +2,13 @@ import styled from 'styled-components';
 
 export const PrimHeading = styled.h1`
   margin-bottom: 15px;
-  font-size: 44px;
+  font-size: 48px;
   font-weight: 900;
   color: #212529;
 `;
 
 export const SecHeading = styled.h2`
-  margin: 20px 0;
+  margin: 10px 0;
   font-size: 30px;
   font-weight: 900;
   color: #212529;

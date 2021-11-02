@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import { AnswerButton, LinkButton } from '../../components/Buttons';
+import { NarrowContainer } from '../../components/ContainerElements';
 
 const quiz1 = {
   question:
@@ -11,12 +12,6 @@ const quiz1 = {
   answer4: '90x90px',
   correct: 'answer3',
 };
-
-const QuizContainer = styled.div`
-  max-width: 1000px;
-  margin: auto;
-  padding: 2% 0;
-`;
 
 const QuestionContainer = styled.div`
   margin-bottom: 20px;
@@ -37,10 +32,10 @@ const AnswersContainer = styled.div`
 
 export default function Quiz() {
   const [buttonBackground, setButtonBackground] = useState([
-    '#f8f9fa',
-    '#f8f9fa',
-    '#f8f9fa',
-    '#f8f9fa',
+    '#fff',
+    '#fff',
+    '#fff',
+    '#fff',
   ]);
   const checkAnswer = ({ currentTarget }) => {
     const buttonId = currentTarget.id;
@@ -77,7 +72,7 @@ export default function Quiz() {
     }
   };
   return (
-    <QuizContainer>
+    <NarrowContainer>
       <QuestionContainer>
         <h1>{quiz1.question}</h1>
       </QuestionContainer>
@@ -115,6 +110,6 @@ export default function Quiz() {
           {quiz1.answer4}
         </AnswerButton>
       </AnswersContainer>
-    </QuizContainer>
+    </NarrowContainer>
   );
 }
