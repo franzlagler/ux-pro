@@ -1,7 +1,13 @@
+import { NextPageContext } from 'next';
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { AnswerButton, LinkButton } from '../../components/Buttons';
-import { NarrowContainer } from '../../components/ContainerElements';
+import { WideContainer } from '../../components/ContainerElements';
+import { changeToPurple, changeToWhite } from '../../state/answerBackground';
+import { deselect, select } from '../../state/selectedAnswers';
+import { RootState } from '../../state/store';
+import { connectToDatabase } from '../../util/mongodb';
 
 const quiz1 = {
   question:
@@ -30,86 +36,81 @@ const AnswersContainer = styled.div`
   grid-template-rows: 1fr 1fr;
 `;
 
-export default function Quiz() {
-  const [buttonBackground, setButtonBackground] = useState([
-    '#fff',
-    '#fff',
-    '#fff',
-    '#fff',
-  ]);
-  const checkAnswer = ({ currentTarget }) => {
-    const buttonId = currentTarget.id;
-    const buttonName = currentTarget.name;
+export default function Quiz(props) {
+  const answerBackground = useSelector(
+    (state: RootState) => state.answerBackground.value,
+  );
+  const selectedAnswers = useSelector(
+    (state: RootState) => state.selectedAnswers.value,
+  );
+  const dispatch = useDispatch();
 
-    if (buttonName === quiz1.correct) {
-      setButtonBackground(
-        buttonBackground.map((el, index) => {
-          if (index === Number(buttonId - 1)) {
-            return '#76f5c0';
-          }
+  const selectAnswer = ({ currentTarget }) => {
+    const index = currentTarget.id - 1;
+    console.log(index);
 
-          return el;
-        }),
-      );
-      setTimeout(
-        () => setButtonBackground(buttonBackground.map(() => 'inerhit')),
-        500,
-      );
-    } else {
-      setButtonBackground(
-        buttonBackground.map((el, index) => {
-          if (index === Number(buttonId - 1)) {
-            return '#ff4d6d';
-          }
+    const name = currentTarget.name;
 
-          return el;
-        }),
-      );
-      setTimeout(
-        () => setButtonBackground(buttonBackground.map(() => 'inerhit')),
-        500,
-      );
+    if (selectedAnswers[index] === false || selectedAnswers.length === 0) {
+      dispatch(changeToPurple(index));
+      dispatch(select(index));
+
+      return;
     }
+
+    dispatch(changeToWhite(index));
+    dispatch(deselect(index));
   };
+
   return (
-    <NarrowContainer>
+    <WideContainer>
       <QuestionContainer>
         <h1>{quiz1.question}</h1>
       </QuestionContainer>
       <AnswersContainer>
         <AnswerButton
-          backgroundColor={buttonBackground[0]}
+          backgroundColor={answerBackground[0]}
           id="1"
           name="answer1"
-          onClick={checkAnswer}
+          onClick={selectAnswer}
         >
           {quiz1.answer1}
         </AnswerButton>
         <AnswerButton
-          backgroundColor={buttonBackground[1]}
+          backgroundColor={answerBackground[1]}
           id="2"
           name="answer2"
-          onClick={checkAnswer}
+          onClick={selectAnswer}
         >
           {quiz1.answer2}
         </AnswerButton>
         <AnswerButton
-          backgroundColor={buttonBackground[2]}
+          backgroundColor={answerBackground[2]}
           id="3"
           name="answer3"
-          onClick={checkAnswer}
+          onClick={selectAnswer}
         >
           {quiz1.answer3}
         </AnswerButton>
         <AnswerButton
-          backgroundColor={buttonBackground[3]}
+          backgroundColor={answerBackground[3]}
           id="4"
           name="answer4"
-          onClick={checkAnswer}
+          onClick={selectAnswer}
         >
           {quiz1.answer4}
         </AnswerButton>
       </AnswersContainer>
-    </NarrowContainer>
+    </WideContainer>
   );
+}
+
+export async function getServerSideProps(context: NextPageContext) {
+  const { db } = await connectToDatabase();
+  const data = await db.collection('questions').find({}).toArray();
+  console.log(data);
+
+  return {
+    props: { data },
+  };
 }

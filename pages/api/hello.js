@@ -1,5 +1,7 @@
-import { updateDatabase } from '../../util/dbManipulation';
+import { quizQuestions } from '../../util/data';
+import { connectToDatabase } from '../../util/mongodb';
 
 export default async function handler(req, res) {
-  await updateDatabase();
+  const { db } = await connectToDatabase();
+  db.collection('questions').insertMany(quizQuestions);
 }

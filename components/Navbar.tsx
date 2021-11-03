@@ -49,29 +49,11 @@ export default function Navbar() {
             <Image src="/images/logo.svg" width="90px" height="70px" />
           </NavbarLink>
         </Link>
-        <Link href="/about" passHref>
-          <NavbarLink>
-            <NavbarItemBlock>
-              <Image src="/images/about.svg" width="30px" height="30px" />
-
-              <NavbarItemText>About</NavbarItemText>
-            </NavbarItemBlock>
-          </NavbarLink>
-        </Link>
         <Link href="/topics" passHref>
           <NavbarLink>
             <NavbarItemBlock>
               <Image src="/images/topics.svg" width="30px" height="30px" />
               <NavbarItemText>Topics</NavbarItemText>
-            </NavbarItemBlock>
-          </NavbarLink>
-        </Link>
-        <Link href="/score" passHref>
-          <NavbarLink>
-            <NavbarItemBlock>
-              <Image src="/images/score.svg" width="30px" height="30px" />
-
-              <NavbarItemText>Score</NavbarItemText>
             </NavbarItemBlock>
           </NavbarLink>
         </Link>

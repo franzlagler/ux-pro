@@ -24,16 +24,6 @@ export const CodeBlock = styled.span`
   font-weight: 600;
 `;
 
-const TopicsContainer = styled.div`
-  display: flex;
-`;
-
-const SingleTopicContainer = styled.div`
-  position: relative;
-  width: 300px;
-  border: 3px solid #212529;
-`;
-
 export const ImageContainer = styled.div`
   position: relative;
   width: 100%;

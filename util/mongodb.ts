@@ -1,4 +1,4 @@
-import { Db, MongoClient, MongoClientOptions } from 'mongodb';
+import { Db, MongoClient } from 'mongodb';
 
 const MONGODB_URI = process.env.MONGODB_URI!;
 const MONGODB_DB = process.env.DB_NAME;
@@ -26,14 +26,8 @@ export async function connectToDatabase() {
     };
   }
 
-  // set the connection options
-  const options = {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  };
-
   // Connect to cluster
-  const client = new MongoClient(MONGODB_URI, options);
+  const client = new MongoClient(MONGODB_URI);
   await client.connect();
   const db = client.db(MONGODB_DB);
 

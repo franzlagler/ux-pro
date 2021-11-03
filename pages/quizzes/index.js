@@ -5,7 +5,7 @@ export default function Quizzes() {
 export function getServerSideProps() {
   return {
     redirect: {
-      destination: '/',
+      destination: '/topics',
       permanent: false,
     },
   };
