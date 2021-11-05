@@ -1,19 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-export const selectedAnswersSlicer = createSlice({
-  name: 'selectedAnswers',
+export const answeredQuestionsSlicer = createSlice({
+  name: 'currentTopic',
   initialState: {
-    value: [false, false, false, false],
+    value: null,
   },
   reducers: {
-    select: (state, action) => {
-      state.value[action.payload] = true;
-    },
-    deselect: (state, action) => {
-      state.value[action.payload] = false;
+    update: (state, action) => {
+      state.value = action.payload;
     },
   },
 });
 
-export const { deselect, select } = selectedAnswersSlicer.actions;
-export default selectedAnswersSlicer.reducer;
+export const { update } = answeredQuestionsSlicer.actions;
+export default answeredQuestionsSlicer.reducer;

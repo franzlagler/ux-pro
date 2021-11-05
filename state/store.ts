@@ -1,12 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
-import answerBackgroundReducer from './answerBackground';
-import selectedAnswersReducer from './selectedAnswers';
+import { createWrapper } from 'next-redux-wrapper';
+import currentTopicReducer from './selectedAnswers';
 
 export const store = configureStore({
   reducer: {
-    answerBackground: answerBackgroundReducer,
-    selectedAnswers: selectedAnswersReducer,
+    currentTopic: currentTopicReducer,
   },
 });
-
-export type RootState = ReturnType<typeof store.getState>;

@@ -14,15 +14,7 @@ export const NarrowContainer = styled.div`
   padding: 1% 0;
 `;
 
-export const CodeBlock = styled.span`
-  margin: 0 4px;
-  padding: 2px 4px;
-  background-color: #ced4da;
-  border: 1px solid #212529;
-  border-radius: 5px;
-  color: #212529;
-  font-weight: 600;
-`;
+export const CodeBlock = styled.span``;
 
 export const ImageContainer = styled.div`
   position: relative;

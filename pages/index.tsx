@@ -1,15 +1,19 @@
 import Head from 'next/head';
 import Image from 'next/image';
+import { useEffect } from 'react';
 import styled from 'styled-components';
 import { WideContainer } from '../components/ContainerElements';
-import { PrimHeading, SecHeading } from '../components/TextElements';
+import { removeCookie } from '../util/cookies';
 
 export default function Home() {
+  useEffect(() => {
+    removeCookie('questionAnswers');
+  }, []);
   return (
     <WideContainer>
-      <PrimHeading>Dashboard</PrimHeading>
-      <SecHeading>Previous Topics</SecHeading>
-      <SecHeading>Topic of the Day</SecHeading>
+      <h1>Dashboard</h1>
+      <h2>Previous Topics</h2>
+      <h2>Topic of the Day</h2>
     </WideContainer>
   );
 }

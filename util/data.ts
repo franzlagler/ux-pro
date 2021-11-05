@@ -33,6 +33,7 @@ export const quizQuestions = [
   {
     _id: 1,
     topic_id: 1,
+    keyword: 'accessible-buttons-1-1',
     question: 'Why is the shown button not ideal?',
     answer1: 'It is too small.',
     answer2: 'Red is a bad background color for a delete button.',
@@ -43,6 +44,7 @@ export const quizQuestions = [
   {
     _id: 2,
     topic_id: 1,
+    keyword: 'accessible-buttons-1-2',
     question:
       'What should definitely be improved about the button in the shown notification?',
     answer1: 'It should be given a more meaningful label.',
@@ -54,6 +56,7 @@ export const quizQuestions = [
   {
     _id: 3,
     topic_id: 1,
+    keyword: 'accessible-buttons-1-3',
     question: 'What is problematic about the styling of the shown button?',
     answer1: 'No class was used for the styling.',
     answer2: 'Its pseudo class :focus was changed.',
@@ -64,6 +67,7 @@ export const quizQuestions = [
   {
     _id: 4,
     topic_id: 2,
+    keyword: 'excel-at-forms-2-1',
     question: 'What should definitely be improved about the shown form?',
     answer1: 'Placeholders should not be used as labels.',
     answer2: 'Gender should not be a text input.',
@@ -74,6 +78,7 @@ export const quizQuestions = [
   {
     _id: 5,
     topic_id: 2,
+    keyword: 'excel-at-forms-2-2',
     question: 'Why is the shown error message not optimal?',
     answer1: 'It is in red.',
     answer2: 'It does not tell what has gone wrong.',
@@ -84,6 +89,7 @@ export const quizQuestions = [
   {
     _id: 6,
     topic_id: 2,
+    keyword: 'excel-at-forms-2-3',
     question: 'What are the positive aspects about the shown form?',
     answer1: 'Related fields have been grouped.',
     answer2: 'Meaningful labels are used.',
@@ -94,6 +100,7 @@ export const quizQuestions = [
   {
     _id: 7,
     topic_id: 3,
+    keyword: 'pro-animations-3-1',
     question:
       'In which of the following scenarious are animations properly used?',
     answer1:
@@ -108,6 +115,7 @@ export const quizQuestions = [
   {
     _id: 8,
     topic_id: 3,
+    keyword: 'pro-animations-3-2',
     question:
       'Why should you not use linear animations when it comes to motion?',
     answer1:
@@ -121,6 +129,7 @@ export const quizQuestions = [
   {
     _id: 9,
     topic_id: 3,
+    keyword: 'pro-animations-3-3',
     question: 'Which of the following statements are false?',
     answer1:
       'The perfect duration for an animation is around 4 seconds on every device.',
@@ -134,6 +143,7 @@ export const quizQuestions = [
   {
     _id: 10,
     topic_id: 4,
+    keyword: 'getting-font-right-4-1',
     question: 'What should definitely be improved about the shown text?',
     answer1:
       'Headings and paragraphs should be given different font sizes and weights.',
@@ -145,6 +155,7 @@ export const quizQuestions = [
   {
     _id: 11,
     topic_id: 4,
+    keyword: 'getting-font-right-4-2',
     question: 'Which of the following statements are true?',
     answer1: 'No matter the device, all texts should have a font size of 16px.',
     answer2: 'On smaller devices, you should have larger fonts.',
@@ -156,6 +167,7 @@ export const quizQuestions = [
   {
     _id: 12,
     topic_id: 4,
+    keyword: 'getting-font-right-4-3',
     question: 'What statements about fonts are true?',
     answer1:
       'If the application should look professional, you should definitely go for a sans-serif font.',

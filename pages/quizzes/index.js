@@ -1,5 +1,5 @@
 export default function Quizzes() {
-  return 0;
+  return <div>Unauthorized action</div>;
 }
 
 export function getServerSideProps() {

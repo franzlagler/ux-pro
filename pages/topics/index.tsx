@@ -1,10 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import styled from 'styled-components';
-import {
-  PrimHeadingContainer,
-  WideContainer,
-} from '../../components/ContainerElements';
+import { WideContainer } from '../../components/ContainerElements';
 import { PrimHeading, SecHeading } from '../../components/TextElements';
 import { connectToDatabase } from '../../util/mongodb';
 
@@ -48,7 +45,7 @@ export default function Topics(props: { data: [] }) {
                 <SingleTopicContainerLink>
                   <SecHeading>{el.title}</SecHeading>
                   <ImageContainer>
-                    <Image src={`/images/${el.file}-1.png`} layout="fill" />
+                    <Image src={`/images/${el.file}-1.svg`} layout="fill" />
                   </ImageContainer>
                 </SingleTopicContainerLink>
               </Link>

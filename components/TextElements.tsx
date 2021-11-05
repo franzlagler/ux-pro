@@ -1,5 +1,9 @@
 import styled from 'styled-components';
 
+export const InvisibleHeading = styled.h1`
+  display: none;
+`;
+
 export const PrimHeading = styled.h1`
   margin-bottom: 15px;
   font-size: 48px;
@@ -20,7 +24,7 @@ export const TerHeading = styled.h3`
 
 export const ParaText = styled.p`
   margin-bottom: 15px;
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 400;
   line-height: 1.5;
   color: #212529;
