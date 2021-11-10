@@ -3,15 +3,16 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import {
-  AnswerButton,
-  LinkButton,
-  RegularButton,
-} from '../../components/Buttons';
+import { AnswerButton, RegularButton } from '../../components/Buttons';
 import { NarrowContainer } from '../../components/ContainerElements';
-import { getCookies, setCookies, setCookieValue } from '../../util/cookies';
+import {
+  getCookies,
+  setCookies,
+  setCookieValue,
+  updateAnswers,
+} from '../../util/cookies';
+import { findCurrentQuestion, findTopicQuestions } from '../../util/dbQueries';
 import { connectToDatabase } from '../../util/mongodb';
 
 const QuestionContainer = styled.div`
@@ -56,19 +57,25 @@ const QuestionNumber = styled.p`
   font-weight: 600;
 `;
 
-export default function Quiz(props: {
+type QuizProps = {
   currentQuestion: {
     _id: string;
-    topic_id: number;
-    question: string;
+    topicNumber: number;
     keyword: string;
+    question: string;
     answer1: string;
     answer2: string;
     answer3: string;
     answer4: string;
   };
   currentQuestionNumber: number;
-  totalQuestionsLength: number;
+  totalQuestionsNumber: number;
+};
+
+export default function Quiz({
+  currentQuestion,
+  currentQuestionNumber,
+  totalQuestionsNumber,
 }) {
   const router = useRouter();
 
@@ -79,105 +86,58 @@ export default function Quiz(props: {
     false,
   ]);
 
-  const selectAnswer = (index: number) => {
-    const arrayCopy = [...selectedAnswers];
-    arrayCopy[index] = true;
-    setSelectedAnswers(arrayCopy);
-  };
-
-  const deselectAnswer = (index: number) => {
-    const arrayCopy = [...selectedAnswers];
-    arrayCopy[index] = false;
-    setSelectedAnswers(arrayCopy);
-  };
-
   const updateSelectedAnswers = (e: React.MouseEvent<HTMLButtonElement>) => {
     const buttonIndex = Number(e.currentTarget.id) - 1;
-    if (!selectedAnswers[buttonIndex]) {
-      selectAnswer(buttonIndex);
-      return;
-    }
 
-    deselectAnswer(buttonIndex);
+    setSelectedAnswers(
+      selectedAnswers.map((el, index) => (index === buttonIndex ? !el : el)),
+    );
   };
 
   const goToNextQuestion = () => {
     let questionAnswers = getCookies('questionAnswers');
-    console.log(selectedAnswers);
 
-    questionAnswers = questionAnswers.map(
-      (el: { question: number; answers: boolean[] }) => {
-        console.log(el.question, props.currentQuestionNumber);
-
-        if (el.question === props.currentQuestionNumber) {
-          return {
-            topic: props.currentQuestion.topic_id,
-            question: props.currentQuestionNumber,
-            answers: selectedAnswers,
-          };
-        }
-
-        return el;
-      },
+    questionAnswers = updateAnswers(
+      selectedAnswers,
+      questionAnswers,
+      currentQuestionNumber,
     );
 
     setCookies('questionAnswers', questionAnswers);
 
     router.push(
-      `/quizzes/${props.currentQuestion.keyword.slice(
+      `/quizzes/${currentQuestion.keyword.slice(
         0,
-        props.currentQuestion.keyword.length - 1,
-      )}${Number(props.currentQuestionNumber) + 1}`,
+        currentQuestion.keyword.length - 1,
+      )}${Number(currentQuestionNumber) + 1}`,
     );
   };
 
   const goToLastQuestion = () => {
     let questionAnswers = getCookies('questionAnswers');
-    console.log(selectedAnswers);
 
-    questionAnswers = questionAnswers.map(
-      (el: { question: number; answers: boolean[] }) => {
-        console.log(el.question, props.currentQuestionNumber);
-
-        if (el.question === props.currentQuestionNumber) {
-          return {
-            topic: props.currentQuestion.topic_id,
-            question: props.currentQuestionNumber,
-            answers: selectedAnswers,
-          };
-        }
-
-        return el;
-      },
+    questionAnswers = updateAnswers(
+      selectedAnswers,
+      questionAnswers,
+      currentQuestionNumber,
     );
 
     setCookies('questionAnswers', questionAnswers);
     router.push(
-      `/quizzes/${props.currentQuestion.keyword.slice(
+      `/quizzes/${currentQuestion.keyword.slice(
         0,
-        props.currentQuestion.keyword.length - 1,
-      )}${Number(props.currentQuestionNumber) - 1}`,
+        currentQuestion.keyword.length - 1,
+      )}${Number(currentQuestionNumber) - 1}`,
     );
   };
 
   const finishQuiz = () => {
     let questionAnswers = getCookies('questionAnswers');
-    console.log(selectedAnswers);
 
-    questionAnswers = questionAnswers.map(
-      (el: { question: number; answers: boolean[] }) => {
-        console.log(el.question, props.currentQuestionNumber);
-
-        if (el.question === props.currentQuestionNumber) {
-          return {
-            topic: props.currentQuestion.topic_id,
-            question: props.currentQuestionNumber,
-            answers: selectedAnswers,
-          };
-        }
-
-        return el;
-      },
+    questionAnswers = updateAnswers(
+      selectedAnswers,
+      questionAnswers,
+      currentQuestionNumber,
     );
 
     setCookies('questionAnswers', questionAnswers);
@@ -188,31 +148,27 @@ export default function Quiz(props: {
     if (!getCookies('questionAnswers')) {
       setCookies(
         'questionAnswers',
-        setCookieValue(
-          props.currentQuestion.topic_id,
-          props.totalQuestionsLength,
-        ),
+        setCookieValue(currentQuestion.topicNumber, totalQuestionsNumber),
       );
     }
     const allAnswers = getCookies('questionAnswers');
 
-    const currentlySelectedAnswers =
-      allAnswers[props.currentQuestionNumber - 1].answers;
+    const currentlySelectedAnswers = allAnswers[currentQuestionNumber];
     setSelectedAnswers(currentlySelectedAnswers);
   }, [
-    props.currentQuestionNumber,
-    props.totalQuestionsLength,
-    props.currentQuestion.topic_id,
+    currentQuestionNumber,
+    currentQuestion.topicNumber,
+    totalQuestionsNumber,
   ]);
   return (
     <NarrowContainer>
       <QuestionContainer>
         <PrimHeadingContainer>
-          <h2>{props.currentQuestion.question}</h2>
+          <h2>{currentQuestion.question}</h2>
         </PrimHeadingContainer>
         <ImageContainer>
           <Image
-            src={`/images/questions/${props.currentQuestion.keyword}.svg`}
+            src={`/images/questions/${currentQuestion.keyword}.svg`}
             layout="fill"
             objectFit="cover"
           />
@@ -225,7 +181,7 @@ export default function Quiz(props: {
           name="answer1"
           onClick={updateSelectedAnswers}
         >
-          {props.currentQuestion.answer1}
+          {currentQuestion.answer1}
         </AnswerButton>
         <AnswerButton
           backgroundColor={selectedAnswers[1]}
@@ -233,7 +189,7 @@ export default function Quiz(props: {
           name="answer2"
           onClick={updateSelectedAnswers}
         >
-          {props.currentQuestion.answer2}
+          {currentQuestion.answer2}
         </AnswerButton>
         <AnswerButton
           backgroundColor={selectedAnswers[2]}
@@ -241,7 +197,7 @@ export default function Quiz(props: {
           name="answer3"
           onClick={updateSelectedAnswers}
         >
-          {props.currentQuestion.answer3}
+          {currentQuestion.answer3}
         </AnswerButton>
         <AnswerButton
           backgroundColor={selectedAnswers[3]}
@@ -249,22 +205,22 @@ export default function Quiz(props: {
           name="answer4"
           onClick={updateSelectedAnswers}
         >
-          {props.currentQuestion.answer4}
+          {currentQuestion.answer4}
         </AnswerButton>
       </AnswersContainer>
       <ButtonContainer>
         <RegularButton
-          disabled={props.currentQuestionNumber === 1}
+          disabled={currentQuestionNumber === 1}
           onClick={goToLastQuestion}
         >
           Back
         </RegularButton>
-        {props.currentQuestionNumber < 3 && (
+        {currentQuestionNumber < 3 && (
           <RegularButton purple onClick={goToNextQuestion}>
             Next
           </RegularButton>
         )}
-        {props.currentQuestionNumber === 3 && (
+        {currentQuestionNumber === 3 && (
           <Link href="/results" passHref>
             <RegularButton purple onClick={finishQuiz}>
               Finish
@@ -274,39 +230,30 @@ export default function Quiz(props: {
       </ButtonContainer>
 
       <QuestionNumber>
-        {props.currentQuestionNumber} out of {props.totalQuestionsLength}{' '}
-        questions
+        {currentQuestionNumber} out of {totalQuestionsNumber} questions
       </QuestionNumber>
     </NarrowContainer>
   );
 }
 
 export async function getServerSideProps(context: NextPageContext) {
-  const param = context.query.quiz;
+  const keyword = context.query.quiz;
 
-  const { db } = await connectToDatabase();
-  const res1 = await db
-    .collection('questions')
-    .find({ keyword: param })
-    .toArray();
+  const currentQuestion = await findCurrentQuestion(keyword);
+  const allTopicQuestions = await findTopicQuestions(
+    currentQuestion.topicNumber,
+  );
+  const totalQuestionsNumber = allTopicQuestions.length;
 
-  const currentQuestion = res1[0];
   const currentQuestionNumber = Number(
     currentQuestion.keyword[currentQuestion.keyword.length - 1],
   );
-
-  const res3 = await db
-    .collection('questions')
-    .find({ topic_id: currentQuestion['topic_id'] })
-    .toArray();
-
-  const totalQuestionsLength = res3.length;
 
   return {
     props: {
       currentQuestion,
       currentQuestionNumber,
-      totalQuestionsLength,
+      totalQuestionsNumber,
     },
   };
 }

@@ -1,3 +1,4 @@
+import { useSession } from 'next-auth/client';
 import Image from 'next/image';
 import Link from 'next/link';
 import styled from 'styled-components';
@@ -12,6 +13,13 @@ const NavbarContainer = styled.div`
   border-right: 3px solid #212529;
 `;
 
+const LogoContainer = styled.div`
+  position: relative;
+  width: 90px;
+  height: 70px;
+  margin-bottom: 20px;
+`;
+
 const NavbarItemContainer = styled.ul`
   display: grid;
   grid-gap: 30px;
@@ -22,15 +30,14 @@ const NavbarLink = styled.a`
   display: block;
   text-decoration: none;
   cursor: pointer;
-  &:first-of-type {
-    margin: 0 0 20px 0;
-  }
 `;
 
 const NavbarItemBlock = styled.div`
   display: flex;
   grid-gap: 16px;
   align-items: center;
+  width: 90%;
+  padding-bottom: 5px;
 `;
 
 const NavbarItemText = styled.li`
@@ -41,12 +48,31 @@ const NavbarItemText = styled.li`
 `;
 
 export default function Navbar() {
+  const [session] = useSession();
+
   return (
     <NavbarContainer>
       <NavbarItemContainer>
+        <LogoContainer>
+          <Image src="/images/logo.svg" layout="fill" />
+        </LogoContainer>
+
+        {session && (
+          <Link href="/profile" passHref>
+            <NavbarLink>
+              <NavbarItemBlock>
+                <Image src="/images/profile.svg" width="30px" height="30px" />
+                <NavbarItemText>User Profile</NavbarItemText>
+              </NavbarItemBlock>
+            </NavbarLink>
+          </Link>
+        )}
         <Link href="/" passHref>
           <NavbarLink>
-            <Image src="/images/logo.svg" width="90px" height="70px" />
+            <NavbarItemBlock>
+              <Image src="/images/dashboard.svg" width="30px" height="30px" />
+              <NavbarItemText>Dashboard</NavbarItemText>
+            </NavbarItemBlock>
           </NavbarLink>
         </Link>
         <Link href="/topics" passHref>

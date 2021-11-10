@@ -1,52 +1,35 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import styled from 'styled-components';
-import { WideContainer } from '../../components/ContainerElements';
+import {
+  ImageContainer,
+  SingleTopicContainer,
+  SingleTopicContainerLink,
+  SingleTopicImageContainer,
+  TopicsContainer,
+  WideContainer,
+} from '../../components/ContainerElements';
 import { PrimHeading, SecHeading } from '../../components/TextElements';
-import { connectToDatabase } from '../../util/mongodb';
+import { getAllTopics } from '../../util/dbQueries';
 
-const TopicsContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  grid-gap: 16px;
-`;
+type Topic<Document> = {
+  file: string;
+};
 
-const SingleTopicContainer = styled.div`
-  width: 420px;
-  height: 320px;
-  background-color: #fff;
-  border: 3px solid #212529;
-  border-radius: 3%;
-  text-align: center;
-  overflow: hidden;
-`;
-
-const SingleTopicContainerLink = styled.a`
-  text-decoration: none;
-`;
-
-const ImageContainer = styled.div`
-  position: relative;
-  width: 100%;
-  height: 100%;
-  border-radius: 0 0 3% 3%;
-  overflow-y: hidden;
-`;
-
-export default function Topics(props: { data: [] }) {
+export default function Topics({ allTopics }: { allTopics: Document[] }) {
   return (
     <WideContainer>
       <PrimHeading>Topics</PrimHeading>
       <TopicsContainer>
-        {props.data.map((el: { id: number; title: string; file: string }) => {
+        {allTopics.map((topic: Topic) => {
           return (
-            <SingleTopicContainer key={el.id}>
-              <Link href={`topics/${el.file}`} passHref>
+            <SingleTopicContainer key={topic.file}>
+              <Link href={`/topics/${topic.file}`} passHref>
                 <SingleTopicContainerLink>
-                  <SecHeading>{el.title}</SecHeading>
-                  <ImageContainer>
-                    <Image src={`/images/${el.file}-1.svg`} layout="fill" />
-                  </ImageContainer>
+                  <SecHeading>{topic.title}</SecHeading>
+                  <SingleTopicImageContainer>
+                    <Image src={`/images/${topic.file}-1.svg`} layout="fill" />
+                  </SingleTopicImageContainer>
                 </SingleTopicContainerLink>
               </Link>
             </SingleTopicContainer>
@@ -58,10 +41,9 @@ export default function Topics(props: { data: [] }) {
 }
 
 export async function getServerSideProps() {
-  const { db } = await connectToDatabase();
-  const data = await db.collection('topics').find({}).toArray();
+  const allTopics = await getAllTopics();
 
   return {
-    props: { data },
+    props: { allTopics },
   };
 }

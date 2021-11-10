@@ -9,10 +9,11 @@ export const PrimHeading = styled.h1`
   font-size: 48px;
   font-weight: 900;
   color: #212529;
+  text-align: inherit;
 `;
 
 export const SecHeading = styled.h2`
-  margin: 10px 0;
+  margin: 15px 0 10px 0;
   font-size: 30px;
   font-weight: 900;
   color: #212529;

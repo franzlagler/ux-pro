@@ -25,3 +25,42 @@ export const ImageContainer = styled.div`
   border-radius: 10px;
   overflow: hidden;
 `;
+
+export const ButtonContainer = styled.div`
+  display: flex;
+  grid-gap: 10px;
+`;
+
+export const CenteredButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  text-align: center;
+`;
+
+export const TopicsContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  grid-gap: 16px;
+`;
+
+export const SingleTopicContainer = styled.div`
+  width: 420px;
+  height: 320px;
+  background-color: #fff;
+  border: 3px solid #212529;
+  border-radius: 3%;
+  text-align: center;
+  overflow: hidden;
+`;
+
+export const SingleTopicContainerLink = styled.a`
+  text-decoration: none;
+`;
+
+export const SingleTopicImageContainer = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 0 0 3% 3%;
+  overflow-y: hidden;
+`;

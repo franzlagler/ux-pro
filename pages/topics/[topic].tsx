@@ -1,14 +1,21 @@
 import Markdown from 'markdown-to-jsx';
 import { NextPageContext } from 'next';
+import { getSession } from 'next-auth/client';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import Popup from 'reactjs-popup';
-import styled from 'styled-components';
-import { LinkButton, RegularButton } from '../../components/Buttons';
 import {
+  LikeButton,
+  LinkButton,
+  SocialMediaButton,
+} from '../../components/Buttons';
+import {
+  ButtonContainer,
+  CenteredButtonContainer,
   CodeBlock,
   ImageContainer,
   NarrowContainer,
+  SingleTopicImageContainer,
 } from '../../components/ContainerElements';
 import {
   InvisibleHeading,
@@ -17,25 +24,68 @@ import {
   SecHeading,
 } from '../../components/TextElements';
 import { removeCookie } from '../../util/cookies';
-import { connectToDatabase } from '../../util/mongodb';
+import {
+  checkIfTopicLiked,
+  findFirstQuestion,
+  findProfile,
+  findTopic,
+  findUser,
+} from '../../util/dbQueries';
 import fetchTopicData from '../../util/topicData';
 
-export default function Topic(props: {
-  foundTopic: { title: string; file: string };
+type TopicProps = {
   content: string;
-  firstQuestion: { keyword: string };
-}) {
-  const [open, setOpen] = useState(false);
+  foundTopic: { title: string; file: string; topicNumber: number };
+  firstTopicQuestionKeyword: string;
+  isLiked: boolean;
+  userId: string;
+  session?: {
+    user: {
+      name?: string | null;
+      email?: string | undefined;
+      image?: string | undefined;
+    };
+  };
+};
+
+export default function Topic(props: TopicProps) {
+  const [isLiked, setIsLiked] = useState(props.isLiked);
+
+  const handleLikeClick = async () => {
+    setIsLiked(!isLiked);
+    await fetch('/api/updateLikedTopics', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        topicNumber: props.foundTopic.topicNumber,
+        session: props.session,
+        userId: props.userId,
+      }),
+    });
+  };
   useEffect(() => {
     removeCookie('questionAnswers');
   }, []);
 
   return (
     <NarrowContainer>
-      <LinkButton href="/topics" purple>
-        <Image src="/images/arrow.svg" width="20px" height="20px" /> &nbsp;Back
-      </LinkButton>
+      <CenteredButtonContainer>
+        <LinkButton href="/topics" purple>
+          <Image src="/images/arrow.svg" width="20px" height="20px" />{' '}
+          &nbsp;Back
+        </LinkButton>
+      </CenteredButtonContainer>
+
       <PrimHeading>{props.foundTopic.title}</PrimHeading>
+      <ButtonContainer>
+        <LikeButton liked={isLiked} onClick={handleLikeClick} />
+        <Link href="https://twitter.com/intent/tweet" passHref>
+          <SocialMediaButton url="/images/twitter.svg" />
+        </Link>
+        <SocialMediaButton url="/images/linkedin.svg" />
+      </ButtonContainer>
       <ImageContainer>
         <Image
           src={`/images/${props.foundTopic.file}-1.svg`}
@@ -63,22 +113,22 @@ export default function Topic(props: {
       >
         {props.content}
       </Markdown>
-      <LinkButton href={`/quizzes/${props.firstQuestion.keyword}`}>
-        Start Quiz
-      </LinkButton>
+      <CenteredButtonContainer>
+        <LinkButton href={`/quizzes/${props.firstTopicQuestionKeyword}`}>
+          Start Quiz
+        </LinkButton>
+      </CenteredButtonContainer>
     </NarrowContainer>
   );
 }
 
 export async function getServerSideProps(context: NextPageContext) {
   const keyword = context.query.topic;
-  const { db } = await connectToDatabase();
-  const query1 = await db
-    .collection('topics')
-    .find({ file: keyword })
-    .toArray();
 
-  if (query1.length === 0) {
+  const foundTopic = await findTopic('file', keyword);
+  console.log(foundTopic);
+
+  if (!foundTopic) {
     return {
       redirect: {
         destination: '/topics',
@@ -86,17 +136,35 @@ export async function getServerSideProps(context: NextPageContext) {
       },
     };
   }
+
   const content = await fetchTopicData(keyword);
 
-  const foundTopic = query1[0];
+  const topicQuestions = await findFirstQuestion(foundTopic.topicNumber);
 
-  const query2 = await db
-    .collection('questions')
-    .find({ topic_id: foundTopic._id })
-    .toArray();
+  const firstTopicQuestionKeyword = topicQuestions[0].keyword;
 
-  const firstQuestion = query2[0];
+  const session = await getSession({ req: context.req });
+
+  const user = await findUser(session?.user?.email);
+
+  const userId = user?._id.toString();
+
+  const profile = await findProfile(userId, 'favoriteTopics');
+
+  const isLiked = await checkIfTopicLiked(
+    profile.favoriteTopics,
+    foundTopic.topicNumber,
+  );
+  console.log(foundTopic);
+
   return {
-    props: { content, foundTopic, firstQuestion },
+    props: {
+      content,
+      foundTopic,
+      firstTopicQuestionKeyword,
+      isLiked,
+      userId,
+      session,
+    },
   };
 }

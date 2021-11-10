@@ -1,3 +1,5 @@
+import { NextPageContext } from 'next';
+import { getSession } from 'next-auth/client';
 import styled, { createGlobalStyle } from 'styled-components';
 import Navbar from './Navbar';
 
@@ -45,4 +47,13 @@ export default function Layout({ children }: LayoutProps) {
       </PageContainer>
     </>
   );
+}
+
+export async function getServerSideProps(context: NextPageContext) {
+  const session = await getSession({ req: context.req });
+  console.log(session);
+
+  return {
+    props: session,
+  };
 }
