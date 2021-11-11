@@ -13,7 +13,7 @@ export const PrimHeading = styled.h1`
 `;
 
 export const SecHeading = styled.h2`
-  margin: 15px 0 10px 0;
+  margin: 15px 0;
   font-size: 30px;
   font-weight: 900;
   color: #212529;

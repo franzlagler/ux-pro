@@ -7,8 +7,16 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { RegularButton } from '../../components/Buttons';
 import { WideContainer } from '../../components/ContainerElements';
-import { PrimHeading, SecHeading } from '../../components/TextElements';
-import { getCookies, removeCookie } from '../../util/cookies';
+import {
+  ParaText,
+  PrimHeading,
+  SecHeading,
+} from '../../components/TextElements';
+import {
+  checkIfAnswersCorrect,
+  getCookies,
+  removeCookie,
+} from '../../util/cookies';
 import { quizQuestions } from '../../util/data';
 import { findTopic, findTopicQuestions } from '../../util/dbQueries';
 import { connectToDatabase } from '../../util/mongodb';
@@ -51,10 +59,17 @@ const Checkbox = styled.input`
   }
 `;
 
+const HeadingContainer = styled.div`
+  display: flex;
+  align-items: center;
+  grid-gap: 20px;
+`;
+
 export default function Results({
   questionAnswers,
   topicNumber,
   topicQuestions,
+  correctlyAnsweredQuestions,
 }) {
   const router = useRouter();
 
@@ -79,9 +94,20 @@ export default function Results({
         ) => {
           return (
             <SingleResultContainer key={el._id}>
-              <SecHeading>
-                {index + 1}. {el.question}
-              </SecHeading>
+              <HeadingContainer>
+                <SecHeading>
+                  {index + 1}. {el.question}
+                </SecHeading>
+                <Image
+                  src={`/images/${
+                    correctlyAnsweredQuestions[index]
+                      ? 'correctAnswer'
+                      : 'wrongAnswer'
+                  }.svg`}
+                  width="40px"
+                  height="40px"
+                />
+              </HeadingContainer>
               <AnswerContainer
                 backgroundColor={
                   topicQuestions[index].correctAnswers[0] === true &&
@@ -176,8 +202,17 @@ export async function getServerSideProps(context) {
   const topicNumber = questionAnswers[0];
   const topicQuestions = await findTopicQuestions(topicNumber);
   console.log(topicQuestions);
+  const correctlyAnsweredQuestions = await checkIfAnswersCorrect(
+    questionAnswers.slice(1),
+    topicQuestions,
+  );
 
   return {
-    props: { questionAnswers, topicNumber, topicQuestions },
+    props: {
+      questionAnswers,
+      topicNumber,
+      topicQuestions,
+      correctlyAnsweredQuestions,
+    },
   };
 }

@@ -5,7 +5,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect } from 'react';
 import styled from 'styled-components';
-import { LinkButton, RegularButton } from '../components/Buttons';
+import {
+  DropdownButton,
+  LinkButton,
+  RegularButton,
+} from '../components/Buttons';
 import {
   ButtonContainer,
   ImageContainer,
@@ -15,17 +19,50 @@ import {
   TopicsContainer,
   WideContainer,
 } from '../components/ContainerElements';
-import { ParaText, PrimHeading, SecHeading } from '../components/TextElements';
-import { removeCookie } from '../util/cookies';
+import {
+  ParaText,
+  PrimHeading,
+  SecHeading,
+  TerHeading,
+} from '../components/TextElements';
+import { checkIfAnswersCorrect, removeCookie } from '../util/cookies';
 import {
   filterTopics,
   findAllPreviousTopics,
   findProfile,
   findUser,
   getAllTopics,
+  getPreviousQuizData,
 } from '../util/dbQueries';
 
-export default function Home({ session, allTopics, filteredTopics }) {
+const PreviousQuizzesContainer = styled.div`
+  max-width: 1000px;
+  height: fit-content;
+  border: 3px solid #212529;
+  border-radius: 15px;
+  overflow-x: hidden;
+`;
+
+const SinglePreviousQuizContainer = styled.div`
+  display: flex;
+  align-items: center;
+  height: 60px;
+  margin: 0 auto;
+  padding: 30px 20px;
+  background-color: #ada7ff;
+  border-bottom: 2px solid #212529;
+  border-radius: 2px;
+  &:last-of-type {
+    border-bottom: 0;
+  }
+`;
+
+export default function Home({
+  session,
+  allTopics,
+  filteredTopics,
+  previousQuizData,
+}) {
   useEffect(() => {
     removeCookie('questionAnswers');
   }, []);
@@ -35,8 +72,21 @@ export default function Home({ session, allTopics, filteredTopics }) {
       {session && (
         <>
           <ParaText>Explore your previous UX learning journey.</ParaText>
-          <SecHeading>Previous Topics</SecHeading>
-          <ParaText>No previous topics yet.</ParaText>
+          <SecHeading>Previous Quizzes</SecHeading>
+          {previousQuizData.length !== 0 && (
+            <PreviousQuizzesContainer>
+              {previousQuizData.map((el, index) => {
+                return (
+                  <DropdownButton key={`${el.title}-${index + 1}`}>
+                    {el.title}
+                  </DropdownButton>
+                );
+              })}
+            </PreviousQuizzesContainer>
+          )}
+          {previousQuizData.length === 0 && (
+            <ParaText>No quizzes done yet.</ParaText>
+          )}
           <SecHeading>Favorite Topics</SecHeading>
           {filteredTopics.length !== 0 && (
             <TopicsContainer>
@@ -94,13 +144,13 @@ export async function getServerSideProps(context: NextPageContext) {
 
     const filteredTopics = await filterTopics(allTopics, favoriteTopics);
 
-    const { _id } = await findProfile(user._id.toString(), '_id');
+    const { _id, results } = await findProfile(user._id.toString());
+    const userId = _id.toString();
 
-    const previousTopics = await findAllPreviousTopics(_id.toString());
-    console.log(previousTopics);
+    const previousQuizData = await getPreviousQuizData(results, allTopics);
 
     return {
-      props: { session, allTopics, filteredTopics },
+      props: { session, allTopics, filteredTopics, previousQuizData, userId },
     };
   }
 

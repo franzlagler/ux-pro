@@ -41,3 +41,17 @@ export const updateAnswers = (
 
   return allAnswers;
 };
+
+export const checkIfAnswersCorrect = (userAnswers, questions) => {
+  const isTotallyCorrectlyAnswered = [];
+  for (let i = 0; i < userAnswers.length; i++) {
+    let isCorrect = true;
+    for (let j = 0; j < userAnswers[i].length; j++) {
+      if (userAnswers[i][j] !== questions[i].correctAnswers[j]) {
+        isCorrect = false;
+      }
+    }
+    isTotallyCorrectlyAnswered.push(isCorrect);
+  }
+  return isTotallyCorrectlyAnswered;
+};

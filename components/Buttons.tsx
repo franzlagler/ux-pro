@@ -114,3 +114,27 @@ export const SocialMediaButton = styled.a`
     box-shadow: none;
   }
 `;
+
+export const DropdownButton = styled.button`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  height: 60px;
+  margin: 0 auto;
+  padding: 30px 20px;
+  background-color: #ada7ff;
+  background-image: url('/images/down-arrow.svg');
+  background-repeat: no-repeat;
+  background-position: 95% 50%;
+  background-size: 20px;
+
+  border: 0;
+  border-bottom: 2px solid #212529;
+  border-radius: 2px;
+  font-size: 24px;
+  font-weight: 800;
+  cursor: pointer;
+  &:last-of-type {
+    border-bottom: 0;
+  }
+`;

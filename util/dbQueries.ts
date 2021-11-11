@@ -109,13 +109,9 @@ export const findUser = async (email: string | null | undefined) => {
   }
 };
 
-export const findProfile = async (id: string, constraint: string) => {
+export const findProfile = async (id: string) => {
   const { db } = await connectToDatabase();
-  const user = await db
-    .collection('profiles')
-    .find({ userId: id })
-    .project({ [constraint]: 1 })
-    .toArray();
+  const user = await db.collection('profiles').find({ userId: id }).toArray();
 
   if (user.length !== 0) {
     return user[0];
@@ -193,12 +189,13 @@ export const insertLatestResults = async (
 
   await db.collection('results').insertOne({
     profileId: _id.toString(),
+    keyword: `${_id.toString()}-${finalAnswers[0]}`,
     topicNumber: finalAnswers[0],
     questionAnswers: finalAnswers.slice(1),
   });
 };
 
-export const findAllPreviousTopics = async (profileId: string) => {
+export const findPreviousQuizzes = async (profileId: string) => {
   const { db } = await connectToDatabase();
 
   const previousTopics = await db
@@ -206,4 +203,20 @@ export const findAllPreviousTopics = async (profileId: string) => {
     .find({ profileId })
     .toArray();
   return previousTopics;
+};
+
+export const getPreviousQuizData = (
+  resultsArray: number[],
+  allTopicsArray: {}[],
+) => {
+  const previousQuizData: [] = [];
+
+  for (let i = 0; i < resultsArray.length; i++) {
+    for (let j = 0; j < allTopicsArray.length; j++) {
+      if (resultsArray[i] === allTopicsArray[j].topicNumber) {
+        previousQuizData.push({ title: allTopicsArray[j].title });
+      }
+    }
+  }
+  return previousQuizData;
 };
