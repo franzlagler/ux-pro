@@ -5,13 +5,13 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { RegularButton } from '../components/Buttons';
-import { WideContainer } from '../components/ContainerElements';
-import { PrimHeading, SecHeading } from '../components/TextElements';
-import { getCookies, removeCookie } from '../util/cookies';
-import { quizQuestions } from '../util/data';
-import { findTopic, findTopicQuestions } from '../util/dbQueries';
-import { connectToDatabase } from '../util/mongodb';
+import { RegularButton } from '../../components/Buttons';
+import { WideContainer } from '../../components/ContainerElements';
+import { PrimHeading, SecHeading } from '../../components/TextElements';
+import { getCookies, removeCookie } from '../../util/cookies';
+import { quizQuestions } from '../../util/data';
+import { findTopic, findTopicQuestions } from '../../util/dbQueries';
+import { connectToDatabase } from '../../util/mongodb';
 
 const SingleResultContainer = styled.div`
   position: relative;

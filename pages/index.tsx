@@ -19,6 +19,7 @@ import { ParaText, PrimHeading, SecHeading } from '../components/TextElements';
 import { removeCookie } from '../util/cookies';
 import {
   filterTopics,
+  findAllPreviousTopics,
   findProfile,
   findUser,
   getAllTopics,
@@ -35,6 +36,7 @@ export default function Home({ session, allTopics, filteredTopics }) {
         <>
           <ParaText>Explore your previous UX learning journey.</ParaText>
           <SecHeading>Previous Topics</SecHeading>
+          <ParaText>No previous topics yet.</ParaText>
           <SecHeading>Favorite Topics</SecHeading>
           {filteredTopics.length !== 0 && (
             <TopicsContainer>
@@ -91,7 +93,11 @@ export async function getServerSideProps(context: NextPageContext) {
     );
 
     const filteredTopics = await filterTopics(allTopics, favoriteTopics);
-    console.log(filteredTopics);
+
+    const { _id } = await findProfile(user._id.toString(), '_id');
+
+    const previousTopics = await findAllPreviousTopics(_id.toString());
+    console.log(previousTopics);
 
     return {
       props: { session, allTopics, filteredTopics },

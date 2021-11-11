@@ -1,4 +1,5 @@
 import { NextPageContext } from 'next';
+import { getSession } from 'next-auth/client';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -76,6 +77,7 @@ export default function Quiz({
   currentQuestion,
   currentQuestionNumber,
   totalQuestionsNumber,
+  session,
 }) {
   const router = useRouter();
 
@@ -131,7 +133,7 @@ export default function Quiz({
     );
   };
 
-  const finishQuiz = () => {
+  const finishQuiz = async () => {
     let questionAnswers = getCookies('questionAnswers');
 
     questionAnswers = updateAnswers(
@@ -141,6 +143,20 @@ export default function Quiz({
     );
 
     setCookies('questionAnswers', questionAnswers);
+    const finalAnswers = getCookies('questionAnswers');
+    console.log(session);
+
+    if (session) {
+      const result = await fetch('/api/submitResults', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ session, finalAnswers }),
+      });
+
+      console.log(result);
+    }
     router.push('/results');
   };
 
@@ -237,6 +253,7 @@ export default function Quiz({
 }
 
 export async function getServerSideProps(context: NextPageContext) {
+  const session = await getSession({ req: context.req });
   const keyword = context.query.quiz;
 
   const currentQuestion = await findCurrentQuestion(keyword);
@@ -254,6 +271,7 @@ export async function getServerSideProps(context: NextPageContext) {
       currentQuestion,
       currentQuestionNumber,
       totalQuestionsNumber,
+      session,
     },
   };
 }

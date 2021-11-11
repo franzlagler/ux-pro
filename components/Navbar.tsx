@@ -57,16 +57,6 @@ export default function Navbar() {
           <Image src="/images/logo.svg" layout="fill" />
         </LogoContainer>
 
-        {session && (
-          <Link href="/profile" passHref>
-            <NavbarLink>
-              <NavbarItemBlock>
-                <Image src="/images/profile.svg" width="30px" height="30px" />
-                <NavbarItemText>User Profile</NavbarItemText>
-              </NavbarItemBlock>
-            </NavbarLink>
-          </Link>
-        )}
         <Link href="/" passHref>
           <NavbarLink>
             <NavbarItemBlock>
@@ -92,6 +82,16 @@ export default function Navbar() {
             </NavbarItemBlock>
           </NavbarLink>
         </Link>
+        {session && (
+          <Link href="/profile" passHref>
+            <NavbarLink>
+              <NavbarItemBlock>
+                <Image src="/images/profile.svg" width="30px" height="30px" />
+                <NavbarItemText>User Profile</NavbarItemText>
+              </NavbarItemBlock>
+            </NavbarLink>
+          </Link>
+        )}
       </NavbarItemContainer>
     </NavbarContainer>
   );

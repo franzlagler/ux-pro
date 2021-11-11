@@ -114,7 +114,7 @@ export const findProfile = async (id: string, constraint: string) => {
   const user = await db
     .collection('profiles')
     .find({ userId: id })
-    .project({ [constraint]: 1, _id: 0 })
+    .project({ [constraint]: 1 })
     .toArray();
 
   if (user.length !== 0) {
@@ -162,4 +162,48 @@ export const filterTopics = (
 
     return filteredArray;
   }
+};
+
+export const insertLatestResults = async (
+  userId: string,
+  results: number[],
+  finalAnswers: (number | boolean[])[],
+) => {
+  const { db } = await connectToDatabase();
+
+  await db
+    .collection('profiles')
+    .updateOne({ userId: userId }, { $set: { results: results } });
+  const { _id } = await db.collection('profiles').findOne({ userId });
+
+  const foundResult = await db
+    .collection('results')
+    .findOne({ profileId: _id.toString(), topicNumber: finalAnswers[0] });
+  console.log(foundResult);
+
+  if (foundResult) {
+    await db
+      .collection('results')
+      .updateOne(
+        { profileId: _id.toString(), topicNumber: finalAnswers[0] },
+        { $set: { questionAnswers: finalAnswers.slice(1) } },
+      );
+    return;
+  }
+
+  await db.collection('results').insertOne({
+    profileId: _id.toString(),
+    topicNumber: finalAnswers[0],
+    questionAnswers: finalAnswers.slice(1),
+  });
+};
+
+export const findAllPreviousTopics = async (profileId: string) => {
+  const { db } = await connectToDatabase();
+
+  const previousTopics = await db
+    .collection('results')
+    .find({ profileId })
+    .toArray();
+  return previousTopics;
 };
