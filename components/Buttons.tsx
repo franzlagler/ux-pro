@@ -1,3 +1,4 @@
+import { HTMLProps } from 'react';
 import styled from 'styled-components';
 
 export const LinkButton = styled.a`
@@ -24,12 +25,14 @@ export const LinkButton = styled.a`
   }
 `;
 
-export const RegularButton = styled.button`
+export const RegularButton = styled.button<{
+  purple?: boolean;
+  center?: boolean;
+}>`
   width: 220px;
   height: 50px;
-  margin: 20px 0;
-  background-color: ${(props: { purple?: Boolean }) =>
-    props.purple ? '#ada7ff' : '#76f5c0'};
+  margin: ${(props) => (props.center ? '20px auto' : '20px 0')};
+  background-color: ${(props) => (props.purple ? '#ada7ff' : '#76f5c0')};
   border: 3px solid #212529;
   border-radius: 15px;
   font-size: 20px;
@@ -123,18 +126,25 @@ export const DropdownButton = styled.button`
   margin: 0 auto;
   padding: 30px 20px;
   background-color: #ada7ff;
-  background-image: url('/images/down-arrow.svg');
+  background-image: ${(props: { open: boolean; firstOfType: boolean }) =>
+    props.open
+      ? "url('/images/up-arrow.svg')"
+      : "url('/images/down-arrow.svg')"};
   background-repeat: no-repeat;
   background-position: 95% 50%;
   background-size: 20px;
-
   border: 0;
-  border-bottom: 2px solid #212529;
+  border-top: ${(props: { firstOfType: boolean; open: boolean }) =>
+    props.firstOfType ? '0' : '3px solid #212529'};
   border-radius: 2px;
   font-size: 24px;
   font-weight: 800;
   cursor: pointer;
-  &:last-of-type {
-    border-bottom: 0;
-  }
+  z-index: 1;
+`;
+
+export const LinkLink = styled.a`
+  font-size: 24px;
+  font-weight: 800;
+  color: #212529;
 `;

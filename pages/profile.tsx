@@ -11,19 +11,40 @@ import {
 import { Field, FieldContainer, Label } from '../components/FormFields';
 import { ParaText, PrimHeading, SecHeading } from '../components/TextElements';
 
-export default function Profile(props: {
-  session: { user: { name: string; email: string } };
-}) {
-  const { session } = props;
+export default function Profile({ session }) {
+  const user = session.user;
   const [profileData, setProfileData] = useState({
     name: session.user.name,
     email: session.user.email,
-    password: '*****',
+    passwordHashed: '*****',
   });
 
   const [disabledFields, setDisabledFields] = useState([true, true, true]);
 
-  const handleProfileDataChange = () => {};
+  const handleInputChange = ({ currentTarget }) => {
+    const id = currentTarget.id;
+    const value = currentTarget.value;
+    console.log(id);
+
+    setProfileData({ ...profileData, [id]: value });
+  };
+
+  const handleProfileDataChange = async ({ currentTarget }) => {
+    const updateKey = currentTarget.id;
+
+    const updateValue = profileData[updateKey];
+
+    await fetch('/api/updateUser', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ user, updateKey, updateValue }),
+    });
+
+    setProfileData({ ...profileData, [updateKey]: updateValue });
+    setDisabledFields(disabledFields.map(() => true));
+  };
 
   return (
     <NarrowContainer>
@@ -32,8 +53,13 @@ export default function Profile(props: {
       </PrimHeadingContainer>
       <ParaText>Review your account details below.</ParaText>
       <FieldContainer>
-        <Label>Name</Label>
-        <Field disabled={disabledFields[0]} value={profileData.name} />
+        <Label htmlFor="name">Name</Label>
+        <Field
+          id="name"
+          disabled={disabledFields[0]}
+          value={profileData.name}
+          onChange={handleInputChange}
+        />
         {disabledFields[0] && (
           <RegularButton
             onClick={() => {
@@ -47,7 +73,9 @@ export default function Profile(props: {
         )}
         {!disabledFields[0] && (
           <ButtonContainer>
-            <RegularButton>Update</RegularButton>
+            <RegularButton id="name" onClick={handleProfileDataChange}>
+              Update
+            </RegularButton>
             <RegularButton
               purple
               onClick={() =>
@@ -64,8 +92,13 @@ export default function Profile(props: {
         )}
       </FieldContainer>
       <FieldContainer>
-        <Label>Email</Label>
-        <Field disabled={disabledFields[1]} value={profileData.email} />
+        <Label htmlFor="email">Email</Label>
+        <Field
+          id="email"
+          disabled={disabledFields[1]}
+          value={profileData.email}
+          onChange={handleInputChange}
+        />
         {disabledFields[1] && (
           <RegularButton
             onClick={() =>
@@ -79,7 +112,9 @@ export default function Profile(props: {
         )}
         {!disabledFields[1] && (
           <ButtonContainer>
-            <RegularButton>Update</RegularButton>
+            <RegularButton id="email" onClick={handleProfileDataChange}>
+              Update
+            </RegularButton>
             <RegularButton
               purple
               onClick={() =>
@@ -97,8 +132,13 @@ export default function Profile(props: {
       </FieldContainer>
 
       <FieldContainer>
-        <Label>Password</Label>
-        <Field disabled={disabledFields[2]} value={profileData.password} />
+        <Label htmlFor="passwordHashed">Password</Label>
+        <Field
+          id="passwordHashed"
+          disabled={disabledFields[2]}
+          value={profileData.passwordHashed}
+          onChange={handleInputChange}
+        />
         {disabledFields[2] && (
           <RegularButton
             onClick={() =>
@@ -112,7 +152,12 @@ export default function Profile(props: {
         )}
         {!disabledFields[2] && (
           <ButtonContainer>
-            <RegularButton>Update</RegularButton>
+            <RegularButton
+              id="passwordHashed"
+              onClick={handleProfileDataChange}
+            >
+              Update
+            </RegularButton>
             <RegularButton
               purple
               onClick={() =>

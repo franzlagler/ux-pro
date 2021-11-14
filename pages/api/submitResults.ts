@@ -1,30 +1,39 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import {
-  findProfile,
-  findUser,
-  insertLatestResults,
-} from '../../util/dbQueries';
+import { findProfile } from '../../util/DB/findQueries';
+import { insertLatestResults } from '../../util/dbQueries';
 
 export default async function submitResultsHandler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
   if (req.method === 'PATCH') {
-    const { session, finalAnswers } = req.body;
+    const { user, finalAnswers } = req.body;
+    console.log(user);
 
-    if (session) {
+    if (user) {
       try {
-        const { _id } = await findUser(session.user.email);
-        let { results } = await findProfile(_id.toString(), 'results');
+        const foundProfile = await findProfile(user._id);
+        console.log(foundProfile);
+
+        let results = foundProfile?.results;
+        console.log(finalAnswers);
 
         results = results.filter((el: number) => {
           if (el !== finalAnswers[0]) {
             return el;
           }
         });
-        results.push(finalAnswers[0]);
+        results.unshift(finalAnswers[0]);
 
-        await insertLatestResults(_id.toString(), results, finalAnswers);
+        if (results.length > 3) {
+          results.pop();
+        }
+
+        await insertLatestResults(
+          foundProfile?._id.toString(),
+          results,
+          finalAnswers,
+        );
 
         res
           .status(201)

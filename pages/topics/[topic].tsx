@@ -144,18 +144,19 @@ export async function getServerSideProps(context: NextPageContext) {
   const firstTopicQuestionKeyword = topicQuestions[0].keyword;
 
   const session = await getSession({ req: context.req });
+  console.log(session);
 
-  const user = await findUser(session?.user?.email);
+  const user = await findUser(session?.user?._id);
 
   const userId = user?._id.toString();
+  console.log(userId);
 
-  const profile = await findProfile(userId, 'favoriteTopics');
+  const profile = await findProfile(userId);
 
   const isLiked = await checkIfTopicLiked(
     profile.favoriteTopics,
     foundTopic.topicNumber,
   );
-  console.log(foundTopic);
 
   return {
     props: {

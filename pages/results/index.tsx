@@ -1,25 +1,19 @@
 import cookie from 'cookie';
-import { NextPageContext } from 'next';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { RegularButton } from '../../components/Buttons';
-import { WideContainer } from '../../components/ContainerElements';
 import {
-  ParaText,
-  PrimHeading,
-  SecHeading,
-} from '../../components/TextElements';
+  HeadingContainer,
+  WideContainer,
+} from '../../components/ContainerElements';
+import { PrimHeading, SecHeading } from '../../components/TextElements';
 import {
   checkIfAnswersCorrect,
-  getCookies,
+  parseAnswerCookieServerSide,
   removeCookie,
 } from '../../util/cookies';
-import { quizQuestions } from '../../util/data';
-import { findTopic, findTopicQuestions } from '../../util/dbQueries';
-import { connectToDatabase } from '../../util/mongodb';
+import { findQuestions, findTopic } from '../../util/DB/findQueries';
 
 const SingleResultContainer = styled.div`
   position: relative;
@@ -57,12 +51,6 @@ const Checkbox = styled.input`
   &:checked {
     background: url('/images/cross.svg') no-repeat center;
   }
-`;
-
-const HeadingContainer = styled.div`
-  display: flex;
-  align-items: center;
-  grid-gap: 20px;
 `;
 
 export default function Results({
@@ -104,8 +92,8 @@ export default function Results({
                       ? 'correctAnswer'
                       : 'wrongAnswer'
                   }.svg`}
-                  width="40px"
-                  height="40px"
+                  width="30px"
+                  height="30px"
                 />
               </HeadingContainer>
               <AnswerContainer
@@ -196,11 +184,10 @@ export async function getServerSideProps(context) {
   }
 
   let { questionAnswers } = cookie.parse(context.req.headers.cookie);
-  questionAnswers = JSON.parse(questionAnswers);
-  console.log(questionAnswers);
+  questionAnswers = parseAnswerCookieServerSide(context.req.headers.cookie);
 
   const topicNumber = questionAnswers[0];
-  const topicQuestions = await findTopicQuestions(topicNumber);
+  const topicQuestions = await findQuestions(topicNumber);
   console.log(topicQuestions);
   const correctlyAnsweredQuestions = await checkIfAnswersCorrect(
     questionAnswers.slice(1),

@@ -1,3 +1,4 @@
+import cookie from 'cookie';
 import Cookies from 'js-cookie';
 
 export function getCookies(key: string) {
@@ -26,6 +27,12 @@ export const removeCookie = (key: string) => {
   Cookies.remove(key);
 };
 
+export const parseAnswerCookieServerSide = (cookieToParse: string) => {
+  let { questionAnswers } = cookie.parse(cookieToParse);
+  questionAnswers = JSON.parse(questionAnswers);
+  return questionAnswers;
+};
+
 export const updateAnswers = (
   selectedAnswers: boolean[],
   allAnswers: (number | boolean[])[],
@@ -42,8 +49,11 @@ export const updateAnswers = (
   return allAnswers;
 };
 
-export const checkIfAnswersCorrect = (userAnswers, questions) => {
-  const isTotallyCorrectlyAnswered = [];
+export const checkIfAnswersCorrect = (
+  userAnswers: boolean[][],
+  questions: { correctAnswers: boolean[] }[],
+) => {
+  const questionIsCorrectlyAnswered = [];
   for (let i = 0; i < userAnswers.length; i++) {
     let isCorrect = true;
     for (let j = 0; j < userAnswers[i].length; j++) {
@@ -51,7 +61,7 @@ export const checkIfAnswersCorrect = (userAnswers, questions) => {
         isCorrect = false;
       }
     }
-    isTotallyCorrectlyAnswered.push(isCorrect);
+    questionIsCorrectlyAnswered.push(isCorrect);
   }
-  return isTotallyCorrectlyAnswered;
+  return questionIsCorrectlyAnswered;
 };

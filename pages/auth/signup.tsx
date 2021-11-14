@@ -1,6 +1,10 @@
+import { NextPageContext } from 'next';
+import { getSession } from 'next-auth/client';
+import router, { useRouter } from 'next/router';
 import React, { ChangeEvent, FocusEvent, FormEvent, useState } from 'react';
 import { RegularButton } from '../../components/Buttons';
 import {
+  ButtonContainer,
   NarrowContainer,
   PrimHeadingContainer,
 } from '../../components/ContainerElements';
@@ -12,54 +16,65 @@ import {
   Label,
 } from '../../components/FormFields';
 import { PrimHeading } from '../../components/TextElements';
-import { validateRegistrationDataClientSide } from '../../util/authentication';
+import { validateRegistrationDataClientSide } from '../../util/validation';
 
-interface Status {
+interface Errors {
   name?: string;
   email?: string;
   password?: string;
 }
 
-export default function Registration() {
+export default function SignUp({ user }) {
+  const router = useRouter();
   const [credentials, setCredentials] = useState({
     name: '',
     email: '',
     password: '',
   });
 
-  const [status, setStatus] = useState<Status>({});
+  const [errors, setErrors] = useState<Errors>({});
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const curEl = e.currentTarget.id;
-    const curVal = e.currentTarget.value;
+    const fieldId = e.currentTarget.id;
+    const fieldValue = e.currentTarget.value;
 
-    setCredentials((prev) => ({ ...prev, [curEl]: curVal }));
+    setCredentials({ ...credentials, [fieldId]: fieldValue });
   };
 
   const handleFieldLeave = (e: FocusEvent<HTMLInputElement>) => {
-    const curEl = e.currentTarget.id;
-    setStatus(validateRegistrationDataClientSide(curEl, credentials[curEl]));
+    const fieldId = e.currentTarget.id;
+    const validationMessage = validateRegistrationDataClientSide(
+      fieldId,
+      credentials[fieldId],
+    );
+    setErrors({ ...errors, [fieldId]: validationMessage });
   };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const { name, email, password } = credentials;
 
-    if (Object.keys(status).length === 0) {
+    if (Object.values(errors).every((el) => el === undefined)) {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          user,
           name,
           email,
           password,
         }),
       });
 
-      const data = await res.json();
-      console.log(data);
+      const { ok, message } = await res.json();
+      setErrors(message);
+
+      if (ok) {
+        setTimeout(() => router.push('/auth/signin'), 2000);
+      }
     }
   };
 
@@ -77,7 +92,7 @@ export default function Registration() {
             onChange={handleInputChange}
             onBlur={handleFieldLeave}
           />
-          {status.name && <ErrorMessage>{status.name}</ErrorMessage>}
+          {errors.name && <ErrorMessage>{errors.name}</ErrorMessage>}
         </FieldContainer>
         <Label htmlFor="email">Email</Label>
         <FieldContainer>
@@ -88,7 +103,7 @@ export default function Registration() {
             onChange={handleInputChange}
             onBlur={handleFieldLeave}
           />
-          {status.email && <ErrorMessage>{status.email}</ErrorMessage>}
+          {errors.email && <ErrorMessage>{errors.email}</ErrorMessage>}
         </FieldContainer>
         <Label htmlFor="password">Password</Label>
         <FieldContainer>
@@ -99,10 +114,22 @@ export default function Registration() {
             onChange={handleInputChange}
             onBlur={handleFieldLeave}
           />
-          {status.password && <ErrorMessage>{status.password}</ErrorMessage>}
+          {errors.password && <ErrorMessage>{errors.password}</ErrorMessage>}
         </FieldContainer>
-        <RegularButton>Sign Up</RegularButton>
+        <ButtonContainer>
+          <RegularButton center>Sign Up</RegularButton>
+        </ButtonContainer>
       </Form>
     </NarrowContainer>
   );
+}
+
+export async function getServerSideProps(context: NextPageContext) {
+  const session = await getSession({ req: context.req });
+  if (session) {
+    const user = session.user;
+    return {
+      props: user,
+    };
+  }
 }

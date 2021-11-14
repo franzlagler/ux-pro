@@ -21,6 +21,7 @@ export const ImageContainer = styled.div`
   width: 100%;
   height: 420px;
   margin: 20px 0;
+  background-color: #ada7ff;
   border: 4px solid black;
   border-radius: 10px;
   overflow: hidden;
@@ -61,6 +62,13 @@ export const SingleTopicImageContainer = styled.div`
   position: relative;
   width: 100%;
   height: 100%;
+  background-color: #ada7ff;
   border-radius: 0 0 3% 3%;
   overflow-y: hidden;
+`;
+
+export const HeadingContainer = styled.div`
+  display: flex;
+  align-items: center;
+  grid-gap: 20px;
 `;

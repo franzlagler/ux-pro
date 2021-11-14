@@ -1,8 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getSession } from 'next-auth/client';
-import { defaultTopics, quizQuestions } from '../../util/data';
+import { connectToDatabase } from '../../util/DB/mongodb';
 import { updateLikedTopicsArray } from '../../util/dbQueries';
-import { connectToDatabase } from '../../util/mongodb';
 
 export default async function handler(
   req: NextApiRequest,

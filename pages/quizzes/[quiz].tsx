@@ -13,8 +13,7 @@ import {
   setCookieValue,
   updateAnswers,
 } from '../../util/cookies';
-import { findCurrentQuestion, findTopicQuestions } from '../../util/dbQueries';
-import { connectToDatabase } from '../../util/mongodb';
+import { findCurrentQuestion, findQuestions } from '../../util/DB/findQueries';
 
 const QuestionContainer = styled.div`
   position: relative;
@@ -73,12 +72,11 @@ type QuizProps = {
   totalQuestionsNumber: number;
 };
 
-export default function Quiz({
-  currentQuestion,
-  currentQuestionNumber,
-  totalQuestionsNumber,
-  session,
-}) {
+export default function Quiz({ currentQuestion, allQuestions, user }) {
+  const numberOfQuestions = allQuestions.length;
+  const currentQuestionNumber = Number(
+    currentQuestion.keyword[currentQuestion.keyword.length - 1],
+  );
   const router = useRouter();
 
   const [selectedAnswers, setSelectedAnswers] = useState([
@@ -144,15 +142,14 @@ export default function Quiz({
 
     setCookies('questionAnswers', questionAnswers);
     const finalAnswers = getCookies('questionAnswers');
-    console.log(session);
 
-    if (session) {
+    if (user) {
       const result = await fetch('/api/submitResults', {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ session, finalAnswers }),
+        body: JSON.stringify({ user, finalAnswers }),
       });
 
       console.log(result);
@@ -164,18 +161,14 @@ export default function Quiz({
     if (!getCookies('questionAnswers')) {
       setCookies(
         'questionAnswers',
-        setCookieValue(currentQuestion.topicNumber, totalQuestionsNumber),
+        setCookieValue(currentQuestion.topicNumber, numberOfQuestions),
       );
     }
     const allAnswers = getCookies('questionAnswers');
 
     const currentlySelectedAnswers = allAnswers[currentQuestionNumber];
     setSelectedAnswers(currentlySelectedAnswers);
-  }, [
-    currentQuestionNumber,
-    currentQuestion.topicNumber,
-    totalQuestionsNumber,
-  ]);
+  }, [currentQuestionNumber, currentQuestion.topicNumber, numberOfQuestions]);
   return (
     <NarrowContainer>
       <QuestionContainer>
@@ -246,7 +239,7 @@ export default function Quiz({
       </ButtonContainer>
 
       <QuestionNumber>
-        {currentQuestionNumber} out of {totalQuestionsNumber} questions
+        {currentQuestionNumber} out of {numberOfQuestions} questions
       </QuestionNumber>
     </NarrowContainer>
   );
@@ -254,24 +247,17 @@ export default function Quiz({
 
 export async function getServerSideProps(context: NextPageContext) {
   const session = await getSession({ req: context.req });
+  const user = session?.user;
   const keyword = context.query.quiz;
 
   const currentQuestion = await findCurrentQuestion(keyword);
-  const allTopicQuestions = await findTopicQuestions(
-    currentQuestion.topicNumber,
-  );
-  const totalQuestionsNumber = allTopicQuestions.length;
-
-  const currentQuestionNumber = Number(
-    currentQuestion.keyword[currentQuestion.keyword.length - 1],
-  );
+  const allQuestions = await findQuestions(currentQuestion.topicNumber);
 
   return {
     props: {
       currentQuestion,
-      currentQuestionNumber,
-      totalQuestionsNumber,
-      session,
+      allQuestions,
+      user,
     },
   };
 }

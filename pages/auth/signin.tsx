@@ -1,5 +1,5 @@
 import { NextPageContext } from 'next';
-import { getProviders, getSession, signIn } from 'next-auth/client';
+import { getSession, signIn } from 'next-auth/client';
 import { useRouter } from 'next/router';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { RegularButton } from '../../components/Buttons';
@@ -13,34 +13,39 @@ import {
   Form,
   Label,
 } from '../../components/FormFields';
-import { PrimHeading } from '../../components/TextElements';
+import {
+  ErrorMessage,
+  ParaText,
+  PrimHeading,
+} from '../../components/TextElements';
 
 export default function SignIn() {
   const router = useRouter();
   const [credentials, setCredentials] = useState({ email: '', password: '' });
+  const [errorMessage, setErrorMessage] = useState<String | undefined>();
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const curEl = e.currentTarget.id;
-    const value = e.currentTarget.value;
-    setCredentials((prev: { email: string; password: string }) => ({
-      ...prev,
-      [curEl]: value,
-    }));
+    const fieldId = e.currentTarget.id;
+    const fieldValue = e.currentTarget.value;
+    setCredentials({ ...credentials, [fieldId]: fieldValue });
   };
   const handleSignIn = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const { email, password } = credentials;
-    console.log(email, password);
-
-    const result = await signIn('credentials', {
+    const res = await signIn('credentials', {
       redirect: false,
       email: email,
       password: password,
     });
 
-    if (!result?.error) {
+    const signInSuccesful = !res?.error;
+
+    if (signInSuccesful) {
+      setErrorMessage('');
       router.push('/profile');
+    } else {
+      setErrorMessage(res.error);
     }
   };
 
@@ -67,6 +72,7 @@ export default function SignIn() {
             onChange={handleInputChange}
           />
         </FieldContainer>
+        {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         <RegularButton>Sign In</RegularButton>
       </Form>
     </NarrowContainer>

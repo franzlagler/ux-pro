@@ -1,8 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import styled from 'styled-components';
 import {
-  ImageContainer,
   SingleTopicContainer,
   SingleTopicContainerLink,
   SingleTopicImageContainer,
@@ -10,18 +8,14 @@ import {
   WideContainer,
 } from '../../components/ContainerElements';
 import { PrimHeading, SecHeading } from '../../components/TextElements';
-import { getAllTopics } from '../../util/dbQueries';
-
-type Topic<Document> = {
-  file: string;
-};
+import { getAllTopics } from '../../util/DB/findQueries';
 
 export default function Topics({ allTopics }: { allTopics: Document[] }) {
   return (
     <WideContainer>
       <PrimHeading>Topics</PrimHeading>
       <TopicsContainer>
-        {allTopics.map((topic: Topic) => {
+        {allTopics.map((topic) => {
           return (
             <SingleTopicContainer key={topic.file}>
               <Link href={`/topics/${topic.file}`} passHref>

@@ -1,17 +1,20 @@
-import cookie from 'cookie';
 import { NextPageContext } from 'next';
+import { getSession } from 'next-auth/client';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { RegularButton } from '../../components/Buttons';
-import { WideContainer } from '../../components/ContainerElements';
+import {
+  HeadingContainer,
+  WideContainer,
+} from '../../components/ContainerElements';
 import { PrimHeading, SecHeading } from '../../components/TextElements';
-import { getCookies, removeCookie } from '../../util/cookies';
-import { quizQuestions } from '../../util/data';
-import { findTopic, findTopicQuestions } from '../../util/dbQueries';
-import { connectToDatabase } from '../../util/mongodb';
+import { removeCookie } from '../../util/cookies';
+import {
+  findProfile,
+  findQuestions,
+  findResult,
+} from '../../util/DB/findQueries';
 
 const SingleResultContainer = styled.div`
   position: relative;
@@ -51,15 +54,11 @@ const Checkbox = styled.input`
   }
 `;
 
-export default function Results({
-  questionAnswers,
-  topicNumber,
-  topicQuestions,
-}) {
+export default function Results({ result, topicQuestions }) {
   const router = useRouter();
 
   const redoQuiz = () => {
-    removeCookie('questionAnswers');
+    removeCookie('result');
     router.push(`/quizzes/${topicQuestions[0].keyword}`);
   };
   return (
@@ -79,13 +78,24 @@ export default function Results({
         ) => {
           return (
             <SingleResultContainer key={el._id}>
-              <SecHeading>
-                {index + 1}. {el.question}
-              </SecHeading>
+              <HeadingContainer>
+                <SecHeading>
+                  {index + 1}. {el.question}
+                </SecHeading>
+                <Image
+                  src={`/images/${
+                    result.isCorrectlyAnswered[index]
+                      ? 'correctAnswer'
+                      : 'wrongAnswer'
+                  }.svg`}
+                  width="30px"
+                  height="30px"
+                />
+              </HeadingContainer>
               <AnswerContainer
                 backgroundColor={
                   topicQuestions[index].correctAnswers[0] === true &&
-                  questionAnswers[index + 1][0] === true
+                  result.questionAnswers[index][0] === true
                     ? '#76f5c0'
                     : ''
                 }
@@ -94,7 +104,7 @@ export default function Results({
                   type="checkbox"
                   disabled
                   checked={
-                    questionAnswers[index + 1][0] === true ? true : false
+                    result.questionAnswers[index][0] === true ? true : false
                   }
                 />
                 <AnswerText>{el.answer1}</AnswerText>
@@ -102,7 +112,7 @@ export default function Results({
               <AnswerContainer
                 backgroundColor={
                   topicQuestions[index].correctAnswers[1] === true &&
-                  questionAnswers[index + 1][1] === true
+                  result.questionAnswers[index][1] === true
                     ? '#76f5c0'
                     : ''
                 }
@@ -111,7 +121,7 @@ export default function Results({
                   type="checkbox"
                   disabled
                   checked={
-                    questionAnswers[index + 1][1] === true ? true : false
+                    result.questionAnswers[index][1] === true ? true : false
                   }
                 />
                 <AnswerText>{el.answer2}</AnswerText>
@@ -119,7 +129,7 @@ export default function Results({
               <AnswerContainer
                 backgroundColor={
                   topicQuestions[index].correctAnswers[2] === true &&
-                  questionAnswers[index + 1][2] === true
+                  result.questionAnswers[index][2] === true
                     ? '#76f5c0'
                     : ''
                 }
@@ -128,7 +138,7 @@ export default function Results({
                   type="checkbox"
                   disabled
                   checked={
-                    questionAnswers[index + 1][2] === true ? true : false
+                    result.questionAnswers[index][2] === true ? true : false
                   }
                 />
                 <AnswerText>{el.answer3}</AnswerText>
@@ -136,7 +146,7 @@ export default function Results({
               <AnswerContainer
                 backgroundColor={
                   topicQuestions[index].correctAnswers[3] === true &&
-                  questionAnswers[index + 1][3] === true
+                  result.questionAnswers[index][3] === true
                     ? '#76f5c0'
                     : ''
                 }
@@ -145,7 +155,7 @@ export default function Results({
                   type="checkbox"
                   disabled
                   checked={
-                    questionAnswers[index + 1][3] === true ? true : false
+                    result.questionAnswers[index][3] === true ? true : false
                   }
                 />
                 <AnswerText>{el.answer4}</AnswerText>
@@ -159,25 +169,46 @@ export default function Results({
   );
 }
 
-export async function getServerSideProps(context) {
-  if (!context.req?.headers.cookie) {
+export async function getServerSideProps(context: NextPageContext) {
+  const session = await getSession({ req: context.req });
+  if (!session) {
     return {
-      redirect: {
-        destination: '/topics',
-        permanent: false,
-      },
+      destination: '/auth/signin',
+      permanent: false,
     };
   }
 
-  let { questionAnswers } = cookie.parse(context.req.headers.cookie);
-  questionAnswers = JSON.parse(questionAnswers);
-  console.log(questionAnswers);
+  if (context.query.result) {
+    const [enteredProfileId, topicNumber] = context.query.result.split('-');
 
-  const topicNumber = questionAnswers[0];
-  const topicQuestions = await findTopicQuestions(topicNumber);
-  console.log(topicQuestions);
+    const userId = session.user?._id;
 
-  return {
-    props: { questionAnswers, topicNumber, topicQuestions },
-  };
+    const foundProfile = await findProfile(userId.toString());
+    const profileId = foundProfile?._id.toString();
+
+    if (profileId !== enteredProfileId) {
+      return {
+        redirect: {
+          destination: '/',
+          permanent: false,
+        },
+      };
+    }
+
+    const result = await findResult(profileId, Number(topicNumber));
+    if (!result) {
+      return {
+        redirect: {
+          destination: '/',
+          permanent: false,
+        },
+      };
+    }
+
+    const topicQuestions = await findQuestions(Number(topicNumber));
+
+    return {
+      props: { result, topicQuestions },
+    };
+  }
 }

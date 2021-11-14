@@ -1,18 +1,17 @@
 import { NextPageContext } from 'next';
 import { getSession, signIn, signOut } from 'next-auth/client';
-import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import {
   DropdownButton,
   LinkButton,
+  LinkLink,
   RegularButton,
 } from '../components/Buttons';
 import {
   ButtonContainer,
-  ImageContainer,
   SingleTopicContainer,
   SingleTopicContainerLink,
   SingleTopicImageContainer,
@@ -20,49 +19,56 @@ import {
   WideContainer,
 } from '../components/ContainerElements';
 import {
+  BoldText,
   ParaText,
   PrimHeading,
   SecHeading,
-  TerHeading,
 } from '../components/TextElements';
-import { checkIfAnswersCorrect, removeCookie } from '../util/cookies';
+import { removeCookie } from '../util/cookies';
 import {
-  filterTopics,
-  findAllPreviousTopics,
   findProfile,
-  findUser,
+  findThreeLatestQuizResults,
   getAllTopics,
-  getPreviousQuizData,
-} from '../util/dbQueries';
+} from '../util/DB/findQueries';
+import { filterTopics, getPreviousQuizTitle } from '../util/dbQueries';
 
 const PreviousQuizzesContainer = styled.div`
   max-width: 1000px;
   height: fit-content;
+  background-color: #ada7ff;
   border: 3px solid #212529;
   border-radius: 15px;
   overflow-x: hidden;
 `;
 
-const SinglePreviousQuizContainer = styled.div`
-  display: flex;
-  align-items: center;
-  height: 60px;
+const PreviousQuizContentContainer = styled.div`
+  display: ${(props: { open: boolean }) => (props.open ? 'grid' : 'none')};
+  grid-gap: 10px;
   margin: 0 auto;
-  padding: 30px 20px;
-  background-color: #ada7ff;
-  border-bottom: 2px solid #212529;
-  border-radius: 2px;
-  &:last-of-type {
-    border-bottom: 0;
-  }
+  padding: 20px;
+  background-color: #fff;
+  border-top: 3px solid #212529;
 `;
 
 export default function Home({
   session,
-  allTopics,
-  filteredTopics,
-  previousQuizData,
+  userFavoriteTopics,
+  userQuizzesResults,
 }) {
+  const [openAccordions, setOpenAccordions] = useState([
+    false,
+    false,
+    false,
+    false,
+  ]);
+
+  const checkDateOfQuiz = (date) => {
+    const [quizDay, quizMonth, quizYear] = date.split('/');
+
+    const [currentDay, currentMonth, currentYear] = new Date()
+      .toLocaleDateString()
+      .split('/');
+  };
   useEffect(() => {
     removeCookie('questionAnswers');
   }, []);
@@ -73,24 +79,55 @@ export default function Home({
         <>
           <ParaText>Explore your previous UX learning journey.</ParaText>
           <SecHeading>Previous Quizzes</SecHeading>
-          {previousQuizData.length !== 0 && (
+          {userQuizzesResults.length !== 0 && (
             <PreviousQuizzesContainer>
-              {previousQuizData.map((el, index) => {
-                return (
-                  <DropdownButton key={`${el.title}-${index + 1}`}>
-                    {el.title}
-                  </DropdownButton>
-                );
-              })}
+              {userQuizzesResults.map(
+                (el: { title: string }, index: number) => {
+                  return (
+                    <div key={`${el.title}-${index + 1}`}>
+                      <DropdownButton
+                        open={openAccordions[index]}
+                        firstOfType={index === 0 ? true : false}
+                        onClick={() =>
+                          setOpenAccordions(
+                            openAccordions.map((el, elIndex) =>
+                              elIndex === index ? !el : false,
+                            ),
+                          )
+                        }
+                      >
+                        {el.title}
+                      </DropdownButton>
+                      <PreviousQuizContentContainer
+                        open={openAccordions[index]}
+                      >
+                        <ParaText>
+                          <BoldText>Status:</BoldText>
+                          {el.isCorrectlyAnswered.includes(false)
+                            ? ' Not all questions were answered correctly last time.'
+                            : ' All questions were answered correctly last time.'}
+                        </ParaText>
+                        <ParaText>
+                          <BoldText>Last Attempt:</BoldText> More than three
+                          days ago.
+                        </ParaText>
+                        <Link href={`/results/${el.keyword}`} passHref>
+                          <LinkLink>View Results in Detail</LinkLink>
+                        </Link>
+                      </PreviousQuizContentContainer>
+                    </div>
+                  );
+                },
+              )}
             </PreviousQuizzesContainer>
           )}
-          {previousQuizData.length === 0 && (
+          {userQuizzesResults.length === 0 && (
             <ParaText>No quizzes done yet.</ParaText>
           )}
           <SecHeading>Favorite Topics</SecHeading>
-          {filteredTopics.length !== 0 && (
+          {userFavoriteTopics.length !== 0 && (
             <TopicsContainer>
-              {filteredTopics.map((topic) => {
+              {userFavoriteTopics.map((topic) => {
                 return (
                   <SingleTopicContainer key={topic.file}>
                     <Link href={`/topics/${topic.file}`} passHref>
@@ -109,14 +146,14 @@ export default function Home({
               })}
             </TopicsContainer>
           )}
-          {filteredTopics.length === 0 && (
+          {userFavoriteTopics.length === 0 && (
             <ParaText>No favorite topics yet.</ParaText>
           )}
         </>
       )}
       {!session && (
         <>
-          <ParaText>Please login to use the dashboard.</ParaText>
+          <ParaText>Please log in to use the dashboard.</ParaText>
           <ButtonContainer>
             {' '}
             <RegularButton onClick={() => signIn()}>Log In</RegularButton>
@@ -136,21 +173,32 @@ export async function getServerSideProps(context: NextPageContext) {
   if (session) {
     const allTopics = await getAllTopics();
 
-    const user = await findUser(session?.user?.email);
-    const { favoriteTopics } = await findProfile(
-      user?._id.toString(),
-      'favoriteTopics',
+    const user = session.user;
+
+    const foundProfile = await findProfile(user?._id);
+
+    const userFavoriteTopics = await filterTopics(
+      allTopics,
+      foundProfile?.favoriteTopics,
     );
 
-    const filteredTopics = await filterTopics(allTopics, favoriteTopics);
+    const previousQuizzesTitle = await getPreviousQuizTitle(
+      foundProfile?.results,
+      allTopics,
+    );
 
-    const { _id, results } = await findProfile(user._id.toString());
-    const userId = _id.toString();
-
-    const previousQuizData = await getPreviousQuizData(results, allTopics);
+    const userQuizzesResults = await findThreeLatestQuizResults(
+      foundProfile?._id.toString(),
+      foundProfile?.results,
+      previousQuizzesTitle,
+    );
 
     return {
-      props: { session, allTopics, filteredTopics, previousQuizData, userId },
+      props: {
+        session,
+        userFavoriteTopics,
+        userQuizzesResults,
+      },
     };
   }
 

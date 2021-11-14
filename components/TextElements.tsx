@@ -13,7 +13,7 @@ export const PrimHeading = styled.h1`
 `;
 
 export const SecHeading = styled.h2`
-  margin: 15px 0;
+  margin: 25px 0;
   font-size: 30px;
   font-weight: 900;
   color: #212529;
@@ -29,4 +29,14 @@ export const ParaText = styled.p`
   font-weight: 400;
   line-height: 1.5;
   color: #212529;
+`;
+
+export const BoldText = styled.span`
+  font-weight: 800;
+`;
+
+export const ErrorMessage = styled.p`
+  font-size: 16px;
+  font-weight: 600;
+  color: #f85555;
 `;
