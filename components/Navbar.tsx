@@ -11,19 +11,34 @@ const NavbarContainer = styled.div`
   grid-area: nav;
   background-color: #76f5c0;
   border-right: 3px solid #212529;
+  @media (max-width: 900px) {
+    display: flex;
+    width: 100%;
+    height: 70px;
+    border-right: 0;
+    border-bottom: 3px solid #212529;
+  }
 `;
 
 const LogoContainer = styled.div`
   position: relative;
-  width: 90px;
-  height: 70px;
+  width: 60px;
+  height: 40px;
   margin-bottom: 20px;
+  @media (max-width: 900px) {
+    margin: 0;
+  }
 `;
 
 const NavbarItemContainer = styled.ul`
   display: grid;
   grid-gap: 30px;
   padding: 24px 0;
+  @media (max-width: 900px) {
+    display: flex;
+    padding: 0;
+    align-items: center;
+  }
 `;
 
 const NavbarLink = styled.a`

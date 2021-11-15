@@ -1,5 +1,5 @@
 import { NextPageContext } from 'next';
-import { getSession, signIn, signOut } from 'next-auth/client';
+import { getSession, signIn } from 'next-auth/client';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -30,7 +30,8 @@ import {
   findThreeLatestQuizResults,
   getAllTopics,
 } from '../util/DB/findQueries';
-import { filterTopics, getPreviousQuizTitle } from '../util/dbQueries';
+import { getPreviousQuizTitle } from '../util/dbQueries';
+import { filterTopics } from '../util/topics';
 
 const PreviousQuizzesContainer = styled.div`
   max-width: 1000px;

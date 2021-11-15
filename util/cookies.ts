@@ -1,3 +1,4 @@
+import { Document } from 'bson';
 import cookie from 'cookie';
 import Cookies from 'js-cookie';
 
@@ -31,37 +32,4 @@ export const parseAnswerCookieServerSide = (cookieToParse: string) => {
   let { questionAnswers } = cookie.parse(cookieToParse);
   questionAnswers = JSON.parse(questionAnswers);
   return questionAnswers;
-};
-
-export const updateAnswers = (
-  selectedAnswers: boolean[],
-  allAnswers: (number | boolean[])[],
-  currentQuestionNumber: number,
-) => {
-  allAnswers = allAnswers.map((el: number | boolean[], index: number) => {
-    if (index === currentQuestionNumber) {
-      return selectedAnswers;
-    }
-
-    return el;
-  });
-
-  return allAnswers;
-};
-
-export const checkIfAnswersCorrect = (
-  userAnswers: boolean[][],
-  questions: { correctAnswers: boolean[] }[],
-) => {
-  const questionIsCorrectlyAnswered = [];
-  for (let i = 0; i < userAnswers.length; i++) {
-    let isCorrect = true;
-    for (let j = 0; j < userAnswers[i].length; j++) {
-      if (userAnswers[i][j] !== questions[i].correctAnswers[j]) {
-        isCorrect = false;
-      }
-    }
-    questionIsCorrectlyAnswered.push(isCorrect);
-  }
-  return questionIsCorrectlyAnswered;
 };

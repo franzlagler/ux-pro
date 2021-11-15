@@ -32,3 +32,31 @@ export const updateUser = async (
     return 'Successfully updated user';
   }
 };
+
+export const updateProfileResults = async (
+  userId: string,
+  fieldValue: number[],
+) => {
+  const { db } = await connectToDatabase();
+  return await db
+    .collection('profiles')
+    .findOneAndUpdate({ userId }, { $set: { fieldValue } });
+};
+
+export const updateExistingResultEntry = async (
+  profileId: string,
+  finalAnswers: (number | boolean[])[],
+  isCorrectlyAnswered: boolean[],
+) => {
+  const { db } = await connectToDatabase();
+  db.collection('results').updateOne(
+    { profileId, topicNumber: finalAnswers[0] },
+    {
+      $set: {
+        date: new Date().toLocaleDateString(),
+        questionAnswers: finalAnswers.slice(1),
+        isCorrectlyAnswered,
+      },
+    },
+  );
+};

@@ -10,7 +10,7 @@ export default NextAuth({
   },
   providers: [
     Providers.Credentials({
-      async authorize(credentials) {
+      async authorize(credentials: { email: string; password: string }) {
         const { db } = await connectToDatabase();
 
         const foundUser = await db
@@ -43,10 +43,14 @@ export default NextAuth({
       return token;
     },
     async session(session, token) {
-      const foundUser = await findUser(token.sub);
-      foundUser._id = foundUser._id.toString();
-      delete foundUser.passwordHashed;
-      session.user = foundUser;
+      const userId = token.sub;
+      const foundUser = await findUser(userId);
+
+      if (foundUser) {
+        foundUser._id = foundUser._id.toString();
+        delete foundUser.passwordHashed;
+        session.user = foundUser;
+      }
       return session;
     },
   },

@@ -15,7 +15,6 @@ import {
   CodeBlock,
   ImageContainer,
   NarrowContainer,
-  SingleTopicImageContainer,
 } from '../../components/ContainerElements';
 import {
   InvisibleHeading,
@@ -25,13 +24,12 @@ import {
 } from '../../components/TextElements';
 import { removeCookie } from '../../util/cookies';
 import {
-  checkIfTopicLiked,
-  findFirstQuestion,
+  findFirstQuestionKeyword,
   findProfile,
   findTopic,
   findUser,
-} from '../../util/dbQueries';
-import fetchTopicData from '../../util/topicData';
+} from '../../util/DB/findQueries';
+import { checkIfTopicLiked, fetchTopicData } from '../../util/topics';
 
 type TopicProps = {
   content: string;
@@ -126,7 +124,6 @@ export async function getServerSideProps(context: NextPageContext) {
   const keyword = context.query.topic;
 
   const foundTopic = await findTopic('file', keyword);
-  console.log(foundTopic);
 
   if (!foundTopic) {
     return {
@@ -139,22 +136,20 @@ export async function getServerSideProps(context: NextPageContext) {
 
   const content = await fetchTopicData(keyword);
 
-  const topicQuestions = await findFirstQuestion(foundTopic.topicNumber);
-
-  const firstTopicQuestionKeyword = topicQuestions[0].keyword;
+  const firstTopicQuestionKeyword = await findFirstQuestionKeyword(
+    foundTopic.topicNumber,
+  );
 
   const session = await getSession({ req: context.req });
-  console.log(session);
 
   const user = await findUser(session?.user?._id);
 
   const userId = user?._id.toString();
-  console.log(userId);
 
   const profile = await findProfile(userId);
 
   const isLiked = await checkIfTopicLiked(
-    profile.favoriteTopics,
+    profile?.favoriteTopics,
     foundTopic.topicNumber,
   );
 

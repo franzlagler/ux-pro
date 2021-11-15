@@ -36,17 +36,14 @@ export const findQuestions = async (topicNumber: number) => {
   return questions;
 };
 
-export const findFirstQuestion = async (topicNumber: string) => {
+export const findFirstQuestionKeyword = async (topicNumber: string) => {
   const { db } = await connectToDatabase();
 
   const question = await db
     .collection('questions')
-    .find({ topicNumber: topicNumber })
-    .toArray();
+    .findOne({ topicNumber: topicNumber });
 
-  if (question.length !== 0) {
-    return question;
-  }
+  return question?.keyword;
 };
 
 export const findCurrentQuestion = async (keyword: string) => {

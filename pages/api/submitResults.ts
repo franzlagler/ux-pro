@@ -8,32 +8,24 @@ export default async function submitResultsHandler(
 ) {
   if (req.method === 'PATCH') {
     const { user, finalAnswers } = req.body;
-    console.log(user);
 
     if (user) {
       try {
         const foundProfile = await findProfile(user._id);
-        console.log(foundProfile);
 
         let results = foundProfile?.results;
-        console.log(finalAnswers);
 
         results = results.filter((el: number) => {
-          if (el !== finalAnswers[0]) {
-            return el;
-          }
+          return el !== finalAnswers[0];
         });
         results.unshift(finalAnswers[0]);
 
         if (results.length > 3) {
           results.pop();
         }
+        console.log(results);
 
-        await insertLatestResults(
-          foundProfile?._id.toString(),
-          results,
-          finalAnswers,
-        );
+        await insertLatestResults(user._id, results, finalAnswers);
 
         res
           .status(201)

@@ -1,5 +1,10 @@
 import { hash } from 'bcryptjs';
+import { checkIfAnswersCorrect } from '../quiz';
 import { connectToDatabase } from './mongodb';
+import {
+  updateExistingResultEntry,
+  updateProfileResults,
+} from './updateQueries';
 
 export const addUser = async (
   name: string,
@@ -22,4 +27,58 @@ export const addProfile = async (userId: string) => {
   await db
     .collection('profiles')
     .insertOne({ userId, favoriteTopics: [], results: [] });
+};
+
+export const insertNewResultEntry = async (
+  profileId: string,
+  finalAnswers: (number | boolean[])[],
+  isCorrectlyAnswered: boolean[],
+) => {
+  const { db } = await connectToDatabase();
+  db.collection('results').insertOne({
+    profileId,
+    keyword: `${profileId}-${finalAnswers[0]}`,
+    topicNumber: finalAnswers[0],
+    date: new Date().toLocaleDateString(),
+    questionAnswers: finalAnswers.slice(1),
+    isCorrectlyAnswered,
+  });
+};
+
+export const insertLatestResults = async (
+  userId: string,
+  results: number[],
+  userAnswers: (number | boolean[])[],
+) => {
+  const { db } = await connectToDatabase();
+
+  const updatedProfile = await updateProfileResults(userId, results);
+
+  const profileId = updatedProfile.value?._id.toString();
+
+  const foundResult = await db.collection('results').findOne({
+    profileId,
+    topicNumber: userAnswers[0],
+  });
+
+  const topicQuestions = await db
+    .collection('questions')
+    .find({ topicNumber: userAnswers[0] })
+    .toArray();
+
+  const isCorrectlyAnswered = checkIfAnswersCorrect(
+    userAnswers.slice(1),
+    topicQuestions,
+  );
+
+  if (foundResult) {
+    await updateExistingResultEntry(
+      profileId,
+      userAnswers,
+      isCorrectlyAnswered,
+    );
+    return;
+  }
+
+  await insertNewResultEntry(profileId, userAnswers, isCorrectlyAnswered);
 };

@@ -26,6 +26,13 @@ const PageContainer = styled.div`
   grid-template-columns: 256px 1fr;
   grid-template-rows: 100vh;
   grid-template-areas: 'nav content';
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    grid-template-rows: 50px 1fr;
+    grid-template-areas:
+      'nav nav'
+      'content content';
+  } ;
 `;
 
 const MainContainer = styled.div`
