@@ -1,8 +1,13 @@
 import { Document } from 'bson';
 
+interface AllTopicsType extends Document {
+  topicNumber?: number;
+  title?: string;
+}
+
 export const getPreviousQuizTitle = (
   results: number[],
-  allTopics: { topicNumber: number; title: string }[],
+  allTopics: AllTopicsType,
 ) => {
   const previousQuizData: { title: string }[] = [];
 

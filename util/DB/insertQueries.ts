@@ -82,3 +82,17 @@ export const insertLatestResults = async (
 
   await insertNewResultEntry(profileId, userAnswers, isCorrectlyAnswered);
 };
+
+export const insertNewTopicProposal = async (
+  userId: string,
+  title: string,
+  fileName: string,
+) => {
+  const { db } = await connectToDatabase();
+  db.collection('submissions').insertOne({
+    userId,
+    date: new Date().toLocaleDateString(),
+    title,
+    fileName,
+  });
+};

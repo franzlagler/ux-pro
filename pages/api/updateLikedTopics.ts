@@ -1,20 +1,34 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { Session } from 'next-auth';
+import { getSession } from 'next-auth/client';
 import { connectToDatabase } from '../../util/DB/mongodb';
-import { updateLikedTopicsArray } from '../../util/dbQueries';
+import { updateLikedTopicsArray } from '../../util/topics';
+
+interface ExtendedSessionType extends Session {
+  user?: {
+    _id?: string;
+    name?: string | null | undefined;
+    email?: string | null | undefined;
+    image?: string | null | undefined;
+  };
+}
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
   if (req.method === 'PATCH') {
-    const { session, topicNumber, userId } = req.body;
+    const { topicNumber } = req.body;
+
+    const session: ExtendedSessionType | null = await getSession({ req });
 
     if (session) {
       try {
+        const userId = session.user?._id;
         const { db } = await connectToDatabase();
         const foundProfile = await db
           .collection('profiles')
-          .find({ userId: userId })
+          .find({ userId })
           .toArray();
 
         const likedTopicsArray = foundProfile[0].favoriteTopics;
@@ -42,6 +56,4 @@ export default async function handler(
   } else {
     res.status(500).json({ message: 'Method not allowed' });
   }
-
-  const { db } = await connectToDatabase();
 }

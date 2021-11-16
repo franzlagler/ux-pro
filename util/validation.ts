@@ -64,3 +64,12 @@ export const validateRegistrationDataClientSide = (
     return validatePassword(fieldValue);
   }
 };
+
+export const validateTopicProposalClientSide = (
+  title: string,
+  textProposal: string,
+) => {
+  if (!/^[a-zA-Z/d.!?()/§$%&+*#]$/.test(title)) {
+    return '';
+  }
+};

@@ -1,4 +1,5 @@
 import { NextPageContext } from 'next';
+import { Session } from 'next-auth';
 import { getSession, signIn } from 'next-auth/client';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -30,7 +31,7 @@ import {
   findThreeLatestQuizResults,
   getAllTopics,
 } from '../util/DB/findQueries';
-import { getPreviousQuizTitle } from '../util/dbQueries';
+import { getPreviousQuizTitle } from '../util/quiz';
 import { filterTopics } from '../util/topics';
 
 const PreviousQuizzesContainer = styled.div`
@@ -169,14 +170,20 @@ export default function Home({
 }
 
 export async function getServerSideProps(context: NextPageContext) {
-  const session = await getSession({ req: context.req });
+  interface NewSession extends Session {
+    user?: {
+      _id?: string;
+      name?: string | null | undefined;
+      email?: string | null | undefined;
+      image?: string | null | undefined;
+    };
+  }
+  const session: NewSession | null = await getSession({ req: context.req });
 
   if (session) {
     const allTopics = await getAllTopics();
 
-    const user = session.user;
-
-    const foundProfile = await findProfile(user?._id);
+    const foundProfile = await findProfile(session.user?._id);
 
     const userFavoriteTopics = await filterTopics(
       allTopics,

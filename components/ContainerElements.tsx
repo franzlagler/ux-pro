@@ -45,7 +45,7 @@ export const TopicsContainer = styled.div`
 `;
 
 export const SingleTopicContainer = styled.div`
-  width: 420px;
+  width: 480px;
   height: 320px;
   background-color: #fff;
   border: 3px solid #212529;

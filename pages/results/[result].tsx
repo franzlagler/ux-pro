@@ -1,4 +1,5 @@
 import { NextPageContext } from 'next';
+import { Session } from 'next-auth';
 import { getSession } from 'next-auth/client';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -15,6 +16,15 @@ import {
   findQuestions,
   findResult,
 } from '../../util/DB/findQueries';
+
+interface ExtendedSessionType extends Session {
+  user?: {
+    _id?: string;
+    name?: string | null | undefined;
+    email?: string | null | undefined;
+    image?: string | null | undefined;
+  };
+}
 
 const SingleResultContainer = styled.div`
   position: relative;
@@ -170,7 +180,9 @@ export default function Results({ result, topicQuestions }) {
 }
 
 export async function getServerSideProps(context: NextPageContext) {
-  const session = await getSession({ req: context.req });
+  const session: ExtendedSessionType | null = await getSession({
+    req: context.req,
+  });
   if (!session) {
     return {
       destination: '/auth/signin',
@@ -178,12 +190,12 @@ export async function getServerSideProps(context: NextPageContext) {
     };
   }
 
-  if (context.query.result) {
+  if (typeof context.query.result === 'string') {
     const [enteredProfileId, topicNumber] = context.query.result.split('-');
 
     const userId = session.user?._id;
 
-    const foundProfile = await findProfile(userId.toString());
+    const foundProfile = await findProfile(userId?.toString());
     const profileId = foundProfile?._id.toString();
 
     if (profileId !== enteredProfileId) {

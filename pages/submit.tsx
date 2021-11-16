@@ -1,4 +1,15 @@
+import { NextPageContext } from 'next';
+import { DefaultSession, Session } from 'next-auth';
+import { getSession } from 'next-auth/client';
+import {
+  ChangeEvent,
+  FormEvent,
+  FormEventHandler,
+  ReactEventHandler,
+  useState,
+} from 'react';
 import styled from 'styled-components';
+import { isContext } from 'vm';
 import { RegularButton } from '../components/Buttons';
 import { NarrowContainer } from '../components/ContainerElements';
 import { Field, FieldContainer, Form, Label } from '../components/FormFields';
@@ -8,26 +19,73 @@ const TextArea = styled.textarea`
   width: 100%;
   min-height: 500px;
   padding: 5px;
-  margin-top: 5px;
+  margin: 0 0 15px 0;
   border: 3px solid #212529;
   border-radius: 15px;
   font-size: 20px;
   font-family: 'Inter', sans-serif;
+  resize: none;
 `;
 
-export default function Submit() {
+interface SessionProp {
+  session: { _id: string };
+}
+
+export default function Submit({ session }: SessionProp) {
+  const [inputData, setInputData] = useState({ title: '', textProposal: '' });
+
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const fieldId = e.currentTarget.id;
+    const fieldValue = e.currentTarget.value;
+
+    setInputData({ ...inputData, [fieldId]: fieldValue });
+  };
+  const handlePropsalSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const response = await fetch('/api/submitTopicProposals', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId: session._id,
+        title: inputData.title,
+        textProposal: inputData.textProposal,
+      }),
+    });
+
+    console.log(response);
+  };
   return (
     <NarrowContainer>
       <PrimHeading>Submit</PrimHeading>
-      <Form>
-        <Label>Title</Label>
-        <Field />
+      <Form onSubmit={handlePropsalSubmit}>
+        <Label htmlFor="title">Title</Label>
+        <Field
+          id="title"
+          value={inputData.title}
+          onChange={handleInputChange}
+        />
         <Label htmlFor="text"> Text Proposal</Label>
-        <TextArea id="text" />
-        <Label htmlFor="text"> Files</Label>
-        <Field type="file" />
-        <RegularButton>Submit</RegularButton>
+        <TextArea
+          id="textProposal"
+          value={inputData.textProposal}
+          onChange={handleInputChange}
+          spellCheck="false"
+        />
+        <RegularButton center>Submit</RegularButton>
       </Form>
     </NarrowContainer>
   );
+}
+
+export async function getServerSideProps(context: NextPageContext) {
+  const session = await getSession({ req: context.req });
+
+  return {
+    props: { session },
+  };
 }

@@ -1,17 +1,30 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { Session } from 'next-auth';
+import { getSession } from 'next-auth/client';
 import { findProfile } from '../../util/DB/findQueries';
-import { insertLatestResults } from '../../util/dbQueries';
+import { insertLatestResults } from '../../util/DB/insertQueries';
+
+interface ExtendedSessionType extends Session {
+  user?: {
+    _id?: string;
+    name?: string | null | undefined;
+    email?: string | null | undefined;
+    image?: string | null | undefined;
+  };
+}
 
 export default async function submitResultsHandler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
   if (req.method === 'PATCH') {
-    const { user, finalAnswers } = req.body;
+    const session: ExtendedSessionType | null = await getSession({ req });
 
-    if (user) {
+    if (session) {
       try {
-        const foundProfile = await findProfile(user._id);
+        const userId = session.user?._id;
+        const { finalAnswers } = req.body;
+        const foundProfile = await findProfile(userId);
 
         let results = foundProfile?.results;
 
@@ -25,7 +38,7 @@ export default async function submitResultsHandler(
         }
         console.log(results);
 
-        await insertLatestResults(user._id, results, finalAnswers);
+        await insertLatestResults(userId, results, finalAnswers);
 
         res
           .status(201)

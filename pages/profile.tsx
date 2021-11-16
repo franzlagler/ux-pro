@@ -1,7 +1,6 @@
 import { NextPageContext } from 'next';
 import { getSession } from 'next-auth/client';
-import { useState } from 'react';
-import styled from 'styled-components';
+import { ChangeEvent, MouseEvent, useState } from 'react';
 import { RegularButton } from '../components/Buttons';
 import {
   ButtonContainer,
@@ -9,19 +8,35 @@ import {
   PrimHeadingContainer,
 } from '../components/ContainerElements';
 import { Field, FieldContainer, Label } from '../components/FormFields';
-import { ParaText, PrimHeading, SecHeading } from '../components/TextElements';
+import { ParaText, PrimHeading } from '../components/TextElements';
 
-export default function Profile({ session }) {
-  const user = session.user;
-  const [profileData, setProfileData] = useState({
-    name: session.user.name,
-    email: session.user.email,
+interface SessionProps {
+  session: {
+    user: string;
+    name: string;
+    email: string;
+  };
+}
+
+interface ProfileData {
+  name: string;
+  email: string;
+  passwordHashed: string;
+  [key: string]: string | undefined;
+}
+
+export default function Profile({ session }: SessionProps) {
+  const [profileData, setProfileData] = useState<ProfileData>({
+    name: session.name,
+    email: session.email,
     passwordHashed: '*****',
   });
 
   const [disabledFields, setDisabledFields] = useState([true, true, true]);
 
-  const handleInputChange = ({ currentTarget }) => {
+  const handleInputChange = ({
+    currentTarget,
+  }: ChangeEvent<HTMLInputElement>) => {
     const id = currentTarget.id;
     const value = currentTarget.value;
     console.log(id);
@@ -29,7 +44,9 @@ export default function Profile({ session }) {
     setProfileData({ ...profileData, [id]: value });
   };
 
-  const handleProfileDataChange = async ({ currentTarget }) => {
+  const handleProfileDataChange = async ({
+    currentTarget,
+  }: MouseEvent<HTMLButtonElement>) => {
     const updateKey = currentTarget.id;
 
     const updateValue = profileData[updateKey];
@@ -39,7 +56,7 @@ export default function Profile({ session }) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ user, updateKey, updateValue }),
+      body: JSON.stringify({ session, updateKey, updateValue }),
     });
 
     setProfileData({ ...profileData, [updateKey]: updateValue });

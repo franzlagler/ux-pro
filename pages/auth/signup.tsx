@@ -1,6 +1,7 @@
 import { NextPageContext } from 'next';
+import { Session } from 'next-auth';
 import { getSession } from 'next-auth/client';
-import router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import React, { ChangeEvent, FocusEvent, FormEvent, useState } from 'react';
 import { RegularButton } from '../../components/Buttons';
 import {
@@ -18,15 +19,29 @@ import {
 import { PrimHeading } from '../../components/TextElements';
 import { validateRegistrationDataClientSide } from '../../util/validation';
 
+interface ExtendedSessionType extends Session {
+  user?: {
+    _id?: string;
+    name?: string | null | undefined;
+    email?: string | null | undefined;
+    image?: string | null | undefined;
+  };
+}
+interface CredentialsType {
+  name: string;
+  email: string;
+  password: string;
+  [key: string]: string;
+}
 interface Errors {
   name?: string;
   email?: string;
   password?: string;
 }
 
-export default function SignUp({ user }) {
+export default function SignUp({ user }: ExtendedSessionType) {
   const router = useRouter();
-  const [credentials, setCredentials] = useState({
+  const [credentials, setCredentials] = useState<CredentialsType>({
     name: '',
     email: '',
     password: '',
@@ -125,11 +140,12 @@ export default function SignUp({ user }) {
 }
 
 export async function getServerSideProps(context: NextPageContext) {
-  const session = await getSession({ req: context.req });
+  const session: ExtendedSessionType | null = await getSession({
+    req: context.req,
+  });
   if (session) {
-    const user = session.user;
     return {
-      props: user,
+      props: session.user,
     };
   }
 }

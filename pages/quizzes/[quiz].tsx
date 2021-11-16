@@ -7,13 +7,9 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { AnswerButton, RegularButton } from '../../components/Buttons';
 import { NarrowContainer } from '../../components/ContainerElements';
-import {
-  getCookies,
-  setCookies,
-  setCookieValue,
-  updateAnswers,
-} from '../../util/cookies';
+import { getCookies, setCookies, setCookieValue } from '../../util/cookies';
 import { findCurrentQuestion, findQuestions } from '../../util/DB/findQueries';
+import { updateAnswers } from '../../util/quiz';
 
 const QuestionContainer = styled.div`
   position: relative;
@@ -72,7 +68,11 @@ type QuizProps = {
   totalQuestionsNumber: number;
 };
 
-export default function Quiz({ currentQuestion, allQuestions, user }) {
+export default function Quiz({
+  currentQuestion,
+  allQuestions,
+  user,
+}: QuizProps) {
   const numberOfQuestions = allQuestions.length;
   const currentQuestionNumber = Number(
     currentQuestion.keyword[currentQuestion.keyword.length - 1],
@@ -250,14 +250,24 @@ export async function getServerSideProps(context: NextPageContext) {
   const user = session?.user;
   const keyword = context.query.quiz;
 
-  const currentQuestion = await findCurrentQuestion(keyword);
-  const allQuestions = await findQuestions(currentQuestion.topicNumber);
+  if (typeof keyword === 'string') {
+    const currentQuestion = await findCurrentQuestion(keyword);
+    if (!currentQuestion) {
+      return {
+        redirect: {
+          destination: '/topics',
+          permanent: false,
+        },
+      };
+    }
+    const allQuestions = await findQuestions(currentQuestion.topicNumber);
 
-  return {
-    props: {
-      currentQuestion,
-      allQuestions,
-      user,
-    },
-  };
+    return {
+      props: {
+        currentQuestion,
+        allQuestions,
+        user,
+      },
+    };
+  }
 }

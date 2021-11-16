@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import { Document } from 'bson';
 
 export const fetchTopicData = (file: string) => {
   if (/^[a-z\-]*$/.test(file)) {
@@ -27,7 +28,7 @@ export const updateLikedTopicsArray = (topicNumber: number, arr: number[]) => {
 };
 
 interface AllTopics extends Document {
-  topicNumber: number;
+  topicNumber?: number;
 }
 
 export const filterTopics = (

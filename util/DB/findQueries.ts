@@ -10,7 +10,7 @@ export const getAllTopics = async () => {
   return allTopics;
 };
 
-export const findTopic = async (key, value) => {
+export const findTopic = async (key: string, value: string) => {
   const { db } = await connectToDatabase();
 
   const [foundTopic] = await db
@@ -49,17 +49,19 @@ export const findFirstQuestionKeyword = async (topicNumber: string) => {
 export const findCurrentQuestion = async (keyword: string) => {
   const { db } = await connectToDatabase();
 
-  const [currentQuestion] = await db
+  const currentQuestion = await db
     .collection('questions')
-    .find({ keyword: keyword })
-    .project({ answers: 0 })
-    .toArray();
+    .findOne({ keyword: keyword });
 
-  currentQuestion._id = currentQuestion._id.toString();
+  if (currentQuestion) {
+    currentQuestion['_id'] = currentQuestion._id.toString();
+    delete currentQuestion.answers;
+  }
+
   return currentQuestion;
 };
 
-export const findUser = async (userId: string) => {
+export const findUser = async (userId: string | unknown) => {
   if (userId) {
     const { db } = await connectToDatabase();
     const user = await db
@@ -70,7 +72,7 @@ export const findUser = async (userId: string) => {
   }
 };
 
-export const findProfile = async (userId: string) => {
+export const findProfile = async (userId: string | undefined) => {
   const { db } = await connectToDatabase();
   const foundProfile = await db.collection('profiles').findOne({ userId });
 

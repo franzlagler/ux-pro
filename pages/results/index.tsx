@@ -1,4 +1,5 @@
 import cookie from 'cookie';
+import { NextPageContext } from 'next';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
@@ -8,12 +9,9 @@ import {
   WideContainer,
 } from '../../components/ContainerElements';
 import { PrimHeading, SecHeading } from '../../components/TextElements';
-import {
-  checkIfAnswersCorrect,
-  parseAnswerCookieServerSide,
-  removeCookie,
-} from '../../util/cookies';
-import { findQuestions, findTopic } from '../../util/DB/findQueries';
+import { parseAnswerCookieServerSide, removeCookie } from '../../util/cookies';
+import { findQuestions } from '../../util/DB/findQueries';
+import { checkIfAnswersCorrect } from '../../util/quiz';
 
 const SingleResultContainer = styled.div`
   position: relative;
@@ -173,7 +171,7 @@ export default function Results({
   );
 }
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps(context: NextPageContext) {
   if (!context.req?.headers.cookie) {
     return {
       redirect: {
@@ -186,7 +184,7 @@ export async function getServerSideProps(context) {
   let { questionAnswers } = cookie.parse(context.req.headers.cookie);
   questionAnswers = parseAnswerCookieServerSide(context.req.headers.cookie);
 
-  const topicNumber = questionAnswers[0];
+  const topicNumber = Number(questionAnswers[0]);
   const topicQuestions = await findQuestions(topicNumber);
   console.log(topicQuestions);
   const correctlyAnsweredQuestions = await checkIfAnswersCorrect(

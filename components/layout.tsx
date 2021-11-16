@@ -1,7 +1,7 @@
 import { NextPageContext } from 'next';
 import { getSession } from 'next-auth/client';
 import styled, { createGlobalStyle } from 'styled-components';
-import Navbar from './Navbar';
+import Navbar from './Menubars';
 
 const GlobalStyle = createGlobalStyle`
 * {
