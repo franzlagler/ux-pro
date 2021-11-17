@@ -41,6 +41,8 @@ export default NextAuth({
   callbacks: {
     jwt(token, user) {
       if (user) {
+        console.log(token);
+
         token.accessToken = user._id;
         token.user = user;
       }
@@ -50,7 +52,7 @@ export default NextAuth({
     async session(session, token) {
       console.log(token);
 
-      const userId = token.sub;
+      const userId: any = token.sub;
       const foundUser = await findUser(userId);
 
       if (foundUser) {

@@ -1,19 +1,11 @@
 import { NextPageContext } from 'next';
-import { DefaultSession, Session } from 'next-auth';
 import { getSession } from 'next-auth/client';
-import {
-  ChangeEvent,
-  FormEvent,
-  FormEventHandler,
-  ReactEventHandler,
-  useState,
-} from 'react';
+import { ChangeEvent, FormEvent, useState } from 'react';
 import styled from 'styled-components';
-import { isContext } from 'vm';
 import { RegularButton } from '../components/Buttons';
 import { NarrowContainer } from '../components/ContainerElements';
-import { Field, FieldContainer, Form, Label } from '../components/FormFields';
-import { PrimHeading } from '../components/TextElements';
+import { Field, Form, Label } from '../components/FormFields';
+import { ParaText, PrimHeading } from '../components/TextElements';
 
 const TextArea = styled.textarea`
   width: 100%;
@@ -61,15 +53,19 @@ export default function Submit({ session }: SessionProp) {
   };
   return (
     <NarrowContainer>
-      <PrimHeading>Submit</PrimHeading>
+      <PrimHeading center>Submit</PrimHeading>
+      <ParaText>
+        Would you like to contribute to the platform with an own topic? Send us
+        your idea!
+      </ParaText>
       <Form onSubmit={handlePropsalSubmit}>
-        <Label htmlFor="title">Title</Label>
+        <Label htmlFor="title">Topic Title</Label>
         <Field
           id="title"
           value={inputData.title}
           onChange={handleInputChange}
         />
-        <Label htmlFor="text"> Text Proposal</Label>
+        <Label htmlFor="text">Text Proposal</Label>
         <TextArea
           id="textProposal"
           value={inputData.textProposal}
@@ -84,6 +80,15 @@ export default function Submit({ session }: SessionProp) {
 
 export async function getServerSideProps(context: NextPageContext) {
   const session = await getSession({ req: context.req });
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/auth/login',
+        permanent: false,
+      },
+    };
+  }
 
   return {
     props: { session },

@@ -12,9 +12,10 @@ import { ParaText, PrimHeading } from '../components/TextElements';
 
 interface SessionProps {
   session: {
-    user: string;
-    name: string;
-    email: string;
+    user: {
+      name: string;
+      email: string;
+    };
   };
 }
 
@@ -27,8 +28,8 @@ interface ProfileData {
 
 export default function Profile({ session }: SessionProps) {
   const [profileData, setProfileData] = useState<ProfileData>({
-    name: session.name,
-    email: session.email,
+    name: session.user.name,
+    email: session.user.email,
     passwordHashed: '*****',
   });
 

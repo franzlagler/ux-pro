@@ -65,11 +65,17 @@ export const validateRegistrationDataClientSide = (
   }
 };
 
-export const validateTopicProposalClientSide = (
+export const validateTopicProposalServerSide = (
   title: string,
   textProposal: string,
 ) => {
-  if (!/^[a-zA-Z/d.!?()/§$%&+*#]$/.test(title)) {
-    return '';
+  if (!/^[a-zA-Z/d.,;:-!?()/§$%&+*#]{5,}$/.test(title)) {
+    return false;
   }
+
+  if (!/^[a-zA-Z/d.,;:-!?()/§$%&+*#]{30,}$/.test(textProposal)) {
+    return false;
+  }
+
+  return true;
 };

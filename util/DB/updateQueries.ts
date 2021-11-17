@@ -8,7 +8,7 @@ export async function updateDatabase(collection: string, data: any) {
 }
 
 export const updateUser = async (
-  userId: string,
+  userId: string | undefined,
   key: string,
   value: string,
 ) => {
@@ -34,7 +34,7 @@ export const updateUser = async (
 };
 
 export const updateProfileResults = async (
-  userId: string,
+  userId: string | undefined,
   fieldValue: number[],
 ) => {
   const { db } = await connectToDatabase();

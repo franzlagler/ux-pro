@@ -61,7 +61,7 @@ export const findCurrentQuestion = async (keyword: string) => {
   return currentQuestion;
 };
 
-export const findUser = async (userId: string | unknown) => {
+export const findUser = async (userId: string | undefined) => {
   if (userId) {
     const { db } = await connectToDatabase();
     const user = await db

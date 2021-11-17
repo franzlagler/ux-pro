@@ -46,7 +46,7 @@ export const insertNewResultEntry = async (
 };
 
 export const insertLatestResults = async (
-  userId: string,
+  userId: string | undefined,
   results: number[],
   userAnswers: (number | boolean[])[],
 ) => {

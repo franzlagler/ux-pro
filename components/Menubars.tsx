@@ -88,24 +88,27 @@ export default function Navbar() {
             </NavbarItemBlock>
           </NavbarLink>
         </Link>
-        <Link href="/submit" passHref>
-          <NavbarLink>
-            <NavbarItemBlock>
-              <Image src="/images/submit.svg" width="30px" height="30px" />
 
-              <NavbarItemText>Submit</NavbarItemText>
-            </NavbarItemBlock>
-          </NavbarLink>
-        </Link>
         {session && (
-          <Link href="/profile" passHref>
-            <NavbarLink>
-              <NavbarItemBlock>
-                <Image src="/images/profile.svg" width="30px" height="30px" />
-                <NavbarItemText>User Profile</NavbarItemText>
-              </NavbarItemBlock>
-            </NavbarLink>
-          </Link>
+          <>
+            <Link href="/submit" passHref>
+              <NavbarLink>
+                <NavbarItemBlock>
+                  <Image src="/images/submit.svg" width="30px" height="30px" />
+
+                  <NavbarItemText>Submit</NavbarItemText>
+                </NavbarItemBlock>
+              </NavbarLink>
+            </Link>
+            <Link href="/profile" passHref>
+              <NavbarLink>
+                <NavbarItemBlock>
+                  <Image src="/images/profile.svg" width="30px" height="30px" />
+                  <NavbarItemText>User Profile</NavbarItemText>
+                </NavbarItemBlock>
+              </NavbarLink>
+            </Link>
+          </>
         )}
       </NavbarItemContainer>
     </NavbarContainer>

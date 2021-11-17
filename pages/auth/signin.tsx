@@ -13,11 +13,7 @@ import {
   Form,
   Label,
 } from '../../components/FormFields';
-import {
-  ErrorMessage,
-  ParaText,
-  PrimHeading,
-} from '../../components/TextElements';
+import { ErrorMessage, PrimHeading } from '../../components/TextElements';
 
 export default function SignIn() {
   const router = useRouter();

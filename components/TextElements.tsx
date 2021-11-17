@@ -10,6 +10,8 @@ export const PrimHeading = styled.h1`
   font-weight: 900;
   color: #212529;
   text-align: inherit;
+  text-align: ${(props: { center?: boolean }) =>
+    props.center ? 'center' : 'auto'};
 `;
 
 export const SecHeading = styled.h2`

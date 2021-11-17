@@ -10,7 +10,11 @@ import {
 import { PrimHeading, SecHeading } from '../../components/TextElements';
 import { getAllTopics } from '../../util/DB/findQueries';
 
-export default function Topics({ allTopics }: { allTopics: Document[] }) {
+export default function Topics({
+  allTopics,
+}: {
+  allTopics: { file: string; title: string }[];
+}) {
   return (
     <WideContainer>
       <PrimHeading>Topics</PrimHeading>

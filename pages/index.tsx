@@ -52,11 +52,30 @@ const PreviousQuizContentContainer = styled.div`
   border-top: 3px solid #212529;
 `;
 
+interface NewSession extends Session {
+  user?: {
+    _id?: string;
+    name?: string | null | undefined;
+    email?: string | null | undefined;
+    image?: string | null | undefined;
+  };
+}
+
+interface HomeProps {
+  session: NewSession | undefined;
+  userFavoriteTopics: { file: string; title: string }[];
+  userQuizzesResults: {
+    title: string;
+    isCorrectlyAnswered: boolean[];
+    keyword: string;
+  }[];
+}
+
 export default function Home({
   session,
   userFavoriteTopics,
   userQuizzesResults,
-}) {
+}: HomeProps) {
   const [openAccordions, setOpenAccordions] = useState([
     false,
     false,
@@ -64,7 +83,9 @@ export default function Home({
     false,
   ]);
 
-  const checkDateOfQuiz = (date) => {
+  const checkDateOfQuiz = (date: string) => {
+    console.log(session);
+
     const [quizDay, quizMonth, quizYear] = date.split('/');
 
     const [currentDay, currentMonth, currentYear] = new Date()
@@ -84,28 +105,35 @@ export default function Home({
           {userQuizzesResults.length !== 0 && (
             <PreviousQuizzesContainer>
               {userQuizzesResults.map(
-                (el: { title: string }, index: number) => {
+                (
+                  quizResult: {
+                    title: string;
+                    isCorrectlyAnswered: boolean[];
+                    keyword: string;
+                  },
+                  index: number,
+                ) => {
                   return (
-                    <div key={`${el.title}-${index + 1}`}>
+                    <div key={`${quizResult.title}-${index + 1}`}>
                       <DropdownButton
                         open={openAccordions[index]}
                         firstOfType={index === 0 ? true : false}
                         onClick={() =>
                           setOpenAccordions(
-                            openAccordions.map((el, elIndex) =>
-                              elIndex === index ? !el : false,
+                            openAccordions.map((accordion, accordionIndex) =>
+                              accordionIndex === index ? !accordion : false,
                             ),
                           )
                         }
                       >
-                        {el.title}
+                        {quizResult.title}
                       </DropdownButton>
                       <PreviousQuizContentContainer
                         open={openAccordions[index]}
                       >
                         <ParaText>
                           <BoldText>Status:</BoldText>
-                          {el.isCorrectlyAnswered.includes(false)
+                          {quizResult.isCorrectlyAnswered.includes(false)
                             ? ' Not all questions were answered correctly last time.'
                             : ' All questions were answered correctly last time.'}
                         </ParaText>
@@ -113,7 +141,7 @@ export default function Home({
                           <BoldText>Last Attempt:</BoldText> More than three
                           days ago.
                         </ParaText>
-                        <Link href={`/results/${el.keyword}`} passHref>
+                        <Link href={`/results/${quizResult.keyword}`} passHref>
                           <LinkLink>View Results in Detail</LinkLink>
                         </Link>
                       </PreviousQuizContentContainer>
@@ -129,23 +157,25 @@ export default function Home({
           <SecHeading>Favorite Topics</SecHeading>
           {userFavoriteTopics.length !== 0 && (
             <TopicsContainer>
-              {userFavoriteTopics.map((topic) => {
-                return (
-                  <SingleTopicContainer key={topic.file}>
-                    <Link href={`/topics/${topic.file}`} passHref>
-                      <SingleTopicContainerLink>
-                        <SecHeading>{topic.title}</SecHeading>
-                        <SingleTopicImageContainer>
-                          <Image
-                            src={`/images/${topic.file}-1.svg`}
-                            layout="fill"
-                          />
-                        </SingleTopicImageContainer>
-                      </SingleTopicContainerLink>
-                    </Link>
-                  </SingleTopicContainer>
-                );
-              })}
+              {userFavoriteTopics.map(
+                (topic: { file: string; title: string }) => {
+                  return (
+                    <SingleTopicContainer key={topic.file}>
+                      <Link href={`/topics/${topic.file}`} passHref>
+                        <SingleTopicContainerLink>
+                          <SecHeading>{topic.title}</SecHeading>
+                          <SingleTopicImageContainer>
+                            <Image
+                              src={`/images/${topic.file}-1.svg`}
+                              layout="fill"
+                            />
+                          </SingleTopicImageContainer>
+                        </SingleTopicContainerLink>
+                      </Link>
+                    </SingleTopicContainer>
+                  );
+                },
+              )}
             </TopicsContainer>
           )}
           {userFavoriteTopics.length === 0 && (
@@ -170,14 +200,6 @@ export default function Home({
 }
 
 export async function getServerSideProps(context: NextPageContext) {
-  interface NewSession extends Session {
-    user?: {
-      _id?: string;
-      name?: string | null | undefined;
-      email?: string | null | undefined;
-      image?: string | null | undefined;
-    };
-  }
   const session: NewSession | null = await getSession({ req: context.req });
 
   if (session) {
@@ -200,6 +222,7 @@ export async function getServerSideProps(context: NextPageContext) {
       foundProfile?.results,
       previousQuizzesTitle,
     );
+    console.log(userQuizzesResults);
 
     return {
       props: {
