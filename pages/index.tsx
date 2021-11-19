@@ -32,13 +32,13 @@ import {
   getAllTopics,
 } from '../util/DB/findQueries';
 import { getPreviousQuizTitle } from '../util/quiz';
-import { filterTopics } from '../util/topics';
+import { filterFavoriteTopics } from '../util/topics';
 
 const PreviousQuizzesContainer = styled.div`
-  max-width: 1000px;
+  max-width: 480px;
   height: fit-content;
   background-color: #ada7ff;
-  border: 3px solid #212529;
+  border: 5px solid #212529;
   border-radius: 15px;
   overflow-x: hidden;
 `;
@@ -49,7 +49,7 @@ const PreviousQuizContentContainer = styled.div`
   margin: 0 auto;
   padding: 20px;
   background-color: #fff;
-  border-top: 3px solid #212529;
+  border-top: 5px solid #212529;
 `;
 
 interface NewSession extends Session {
@@ -206,8 +206,9 @@ export async function getServerSideProps(context: NextPageContext) {
     const allTopics = await getAllTopics();
 
     const foundProfile = await findProfile(session.user?._id);
+    console.log(foundProfile);
 
-    const userFavoriteTopics = await filterTopics(
+    const userFavoriteTopics = filterFavoriteTopics(
       allTopics,
       foundProfile?.favoriteTopics,
     );
@@ -222,7 +223,6 @@ export async function getServerSideProps(context: NextPageContext) {
       foundProfile?.results,
       previousQuizzesTitle,
     );
-    console.log(userQuizzesResults);
 
     return {
       props: {

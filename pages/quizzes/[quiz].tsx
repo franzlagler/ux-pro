@@ -1,4 +1,5 @@
 import { NextPageContext } from 'next';
+import { Session } from 'next-auth';
 import { getSession } from 'next-auth/client';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -8,13 +9,16 @@ import styled from 'styled-components';
 import { AnswerButton, RegularButton } from '../../components/Buttons';
 import { NarrowContainer } from '../../components/ContainerElements';
 import { getCookies, setCookies, setCookieValue } from '../../util/cookies';
-import { findCurrentQuestion, findQuestions } from '../../util/DB/findQueries';
+import {
+  findCurrentQuestion,
+  findTopicQuestions,
+} from '../../util/DB/findQueries';
 import { updateAnswers } from '../../util/quiz';
 
 const QuestionContainer = styled.div`
   position: relative;
   margin-bottom: 20px;
-  border: 3px solid #212529;
+  border: 5px solid #212529;
   border-radius: 15px;
   overflow: hidden;
   text-align: center;
@@ -47,11 +51,20 @@ const QuestionNumber = styled.p`
   margin: 0 auto;
   padding: 10px 20px;
   background-color: #ffee99;
-  border: 2px solid #212529;
+  border: 5px solid #212529;
   border-radius: 15px;
   font-size: 22px;
   font-weight: 600;
 `;
+
+interface ExtendedSessionType extends Session {
+  user?: {
+    _id?: string;
+    name?: string | null | undefined;
+    email?: string | null | undefined;
+    image?: string | null | undefined;
+  };
+}
 
 type QuizProps = {
   currentQuestion: {
@@ -64,8 +77,8 @@ type QuizProps = {
     answer3: string;
     answer4: string;
   };
-  currentQuestionNumber: number;
-  totalQuestionsNumber: number;
+  allQuestions: {}[];
+  user: {} | null;
 };
 
 export default function Quiz({
@@ -246,7 +259,9 @@ export default function Quiz({
 }
 
 export async function getServerSideProps(context: NextPageContext) {
-  const session = await getSession({ req: context.req });
+  const session: ExtendedSessionType | null = await getSession({
+    req: context.req,
+  });
   const user = session?.user;
   const keyword = context.query.quiz;
 
@@ -260,7 +275,7 @@ export async function getServerSideProps(context: NextPageContext) {
         },
       };
     }
-    const allQuestions = await findQuestions(currentQuestion.topicNumber);
+    const allQuestions = await findTopicQuestions(currentQuestion.topicNumber);
 
     return {
       props: {

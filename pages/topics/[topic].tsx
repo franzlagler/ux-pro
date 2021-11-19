@@ -1,5 +1,6 @@
 import Markdown from 'markdown-to-jsx';
 import { NextPageContext } from 'next';
+import { Session } from 'next-auth';
 import { getSession } from 'next-auth/client';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -23,18 +24,25 @@ import {
   SecHeading,
 } from '../../components/TextElements';
 import { removeCookie } from '../../util/cookies';
-import {
-  findFirstQuestionKeyword,
-  findProfile,
-  findTopic,
-  findUser,
-} from '../../util/DB/findQueries';
+import { findProfile, findTopic, findUser } from '../../util/DB/findQueries';
 import { checkIfTopicLiked, fetchTopicData } from '../../util/topics';
+
+interface ExtendedSessionType extends Session {
+  user?: {
+    _id?: string;
+    name?: string | null | undefined;
+    email?: string | null | undefined;
+    image?: string | null | undefined;
+  };
+}
 
 type TopicProps = {
   content: string;
-  foundTopic: { title: string; file: string; topicNumber: number };
-  firstTopicQuestionKeyword: string;
+  foundTopic: {
+    title: string;
+    file: string;
+    topicNumber: number;
+  };
   isLiked: boolean;
   userId: string;
   session?: {
@@ -112,7 +120,9 @@ export default function Topic(props: TopicProps) {
         {props.content}
       </Markdown>
       <CenteredButtonContainer>
-        <LinkButton href={`/quizzes/${props.firstTopicQuestionKeyword}`}>
+        <LinkButton
+          href={`/quizzes/${props.foundTopic.file}-${props.foundTopic.topicNumber}-1`}
+        >
           Start Quiz
         </LinkButton>
       </CenteredButtonContainer>
@@ -123,44 +133,43 @@ export default function Topic(props: TopicProps) {
 export async function getServerSideProps(context: NextPageContext) {
   const keyword = context.query.topic;
 
-  const foundTopic = await findTopic('file', keyword);
+  if (typeof keyword === 'string') {
+    const foundTopic = await findTopic('file', keyword);
 
-  if (!foundTopic) {
+    if (!foundTopic) {
+      return {
+        redirect: {
+          destination: '/topics',
+          permanent: false,
+        },
+      };
+    }
+
+    const content = await fetchTopicData(keyword);
+
+    const session: ExtendedSessionType | null = await getSession({
+      req: context.req,
+    });
+
+    const user = await findUser(session?.user?._id);
+
+    const userId = user?._id.toString();
+
+    const profile = await findProfile(userId);
+
+    const isLiked = await checkIfTopicLiked(
+      profile?.favoriteTopics,
+      foundTopic.topicNumber,
+    );
+
     return {
-      redirect: {
-        destination: '/topics',
-        permanent: false,
+      props: {
+        content,
+        foundTopic,
+        isLiked,
+        userId,
+        session,
       },
     };
   }
-
-  const content = await fetchTopicData(keyword);
-
-  const firstTopicQuestionKeyword = await findFirstQuestionKeyword(
-    foundTopic.topicNumber,
-  );
-
-  const session = await getSession({ req: context.req });
-
-  const user = await findUser(session?.user?._id);
-
-  const userId = user?._id.toString();
-
-  const profile = await findProfile(userId);
-
-  const isLiked = await checkIfTopicLiked(
-    profile?.favoriteTopics,
-    foundTopic.topicNumber,
-  );
-
-  return {
-    props: {
-      content,
-      foundTopic,
-      firstTopicQuestionKeyword,
-      isLiked,
-      userId,
-      session,
-    },
-  };
 }

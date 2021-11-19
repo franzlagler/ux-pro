@@ -37,6 +37,12 @@ export const BoldText = styled.span`
   font-weight: 800;
 `;
 
+export const SuccessMessage = styled.p`
+  font-size: 16px;
+  font-weight: 600;
+  color: #76f5c0;
+`;
+
 export const ErrorMessage = styled.p`
   font-size: 16px;
   font-weight: 600;

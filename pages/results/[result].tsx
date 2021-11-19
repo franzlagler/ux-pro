@@ -13,9 +13,10 @@ import { PrimHeading, SecHeading } from '../../components/TextElements';
 import { removeCookie } from '../../util/cookies';
 import {
   findProfile,
-  findQuestions,
   findResult,
+  findTopicQuestions,
 } from '../../util/DB/findQueries';
+import { sortTopicQuestions } from '../../util/quiz';
 
 interface ExtendedSessionType extends Session {
   user?: {
@@ -33,7 +34,7 @@ const SingleResultContainer = styled.div`
   padding: 10px 20px;
   margin-bottom: 20px;
   background-color: #fff;
-  border: 3px solid #212529;
+  border: 5px solid #212529;
   border-radius: 15px;
 `;
 
@@ -54,9 +55,9 @@ const AnswerText = styled.p`
 
 const Checkbox = styled.input`
   appearance: none;
-  width: 20px;
-  height: 20px;
-  border: 1px solid #212529;
+  width: 25px;
+  height: 25px;
+  border: 5px solid #212529;
   border-radius: 3px;
 
   &:checked {
@@ -217,7 +218,8 @@ export async function getServerSideProps(context: NextPageContext) {
       };
     }
 
-    const topicQuestions = await findQuestions(Number(topicNumber));
+    let topicQuestions = await findTopicQuestions(Number(topicNumber));
+    topicQuestions = sortTopicQuestions(topicQuestions);
 
     return {
       props: { result, topicQuestions },

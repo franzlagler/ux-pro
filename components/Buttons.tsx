@@ -1,4 +1,3 @@
-import { HTMLProps } from 'react';
 import styled from 'styled-components';
 
 export const LinkButton = styled.a`
@@ -11,7 +10,7 @@ export const LinkButton = styled.a`
   margin: 20px 0;
   background-color: ${(props: { purple?: Boolean }) =>
     props.purple ? '#ada7ff' : '#76f5c0'};
-  border: 3px solid #212529;
+  border: 5px solid #212529;
   border-radius: 15px;
   font-size: 20px;
   font-weight: 600;
@@ -33,7 +32,7 @@ export const RegularButton = styled.button<{
   height: 50px;
   margin: ${(props) => (props.center ? '20px auto' : '20px 0')};
   background-color: ${(props) => (props.purple ? '#ada7ff' : '#76f5c0')};
-  border: 3px solid #212529;
+  border: 5px solid #212529;
   border-radius: 15px;
   font-size: 20px;
   font-weight: 600;
@@ -58,7 +57,7 @@ export const AnswerButton = styled.button`
   padding: 30px;
   background-color: ${(props: { backgroundColor: boolean }) =>
     !props.backgroundColor ? '#fff' : '#ffee99'};
-  border: 3px solid #212529;
+  border: 5px solid #212529;
   border-radius: 15px;
   box-shadow: 1px 1px 0 1px #212529;
 
@@ -76,7 +75,7 @@ export const LikeButton = styled.button`
   width: 100px;
   height: 50px;
   margin: 20px 0;
-  background-image: ${(props) =>
+  background-image: ${(props: { liked: boolean }) =>
     props.liked
       ? "url('/images/heart_liked.svg')"
       : "url('/images/heart_not_liked.svg')"};
@@ -84,7 +83,7 @@ export const LikeButton = styled.button`
   background-position-x: center;
   background-color: ${(props: { liked?: Boolean }) =>
     props.liked ? '#76f5c0' : 'inherit'};
-  border: 3px solid #212529;
+  border: 5px solid #212529;
   border-radius: 15px;
 
   text-decoration: none;
@@ -105,7 +104,7 @@ export const SocialMediaButton = styled.a`
   background-repeat: no-repeat;
   background-position-x: center;
   background-color: #ffee99;
-  border: 3px solid #212529;
+  border: 5px solid #212529;
   border-radius: 15px;
 
   text-decoration: none;
@@ -135,7 +134,7 @@ export const DropdownButton = styled.button`
   background-size: 20px;
   border: 0;
   border-top: ${(props: { firstOfType: boolean; open: boolean }) =>
-    props.firstOfType ? '0' : '3px solid #212529'};
+    props.firstOfType ? '0' : '5px solid #212529'};
   border-radius: 2px;
   font-size: 24px;
   font-weight: 800;

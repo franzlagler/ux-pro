@@ -35,12 +35,12 @@ export const updateUser = async (
 
 export const updateProfileResults = async (
   userId: string | undefined,
-  fieldValue: number[],
+  newResults: number[],
 ) => {
   const { db } = await connectToDatabase();
   return await db
     .collection('profiles')
-    .findOneAndUpdate({ userId }, { $set: { fieldValue } });
+    .findOneAndUpdate({ userId }, { $set: { results: newResults } });
 };
 
 export const updateExistingResultEntry = async (

@@ -24,7 +24,7 @@ export const Field = styled.input`
   padding: 10px;
   margin-bottom: 20px;
   background-color: #fff;
-  border: 3px solid #212529;
+  border: 5px solid #212529;
   border-radius: 15px;
   font-size: 20px;
   &:disabled {

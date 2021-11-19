@@ -31,7 +31,7 @@ interface AllTopics extends Document {
   topicNumber?: number;
 }
 
-export const filterTopics = (
+export const filterFavoriteTopics = (
   allTopics: AllTopics[],
   favoriteTopics: number[],
 ) => {
@@ -42,7 +42,6 @@ export const filterTopics = (
         filteredArray.push(allTopics[j]);
       }
     }
-
-    return filteredArray;
   }
+  return filteredArray;
 };

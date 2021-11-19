@@ -10,8 +10,8 @@ import {
 } from '../../components/ContainerElements';
 import { PrimHeading, SecHeading } from '../../components/TextElements';
 import { parseAnswerCookieServerSide, removeCookie } from '../../util/cookies';
-import { findQuestions } from '../../util/DB/findQueries';
-import { checkIfAnswersCorrect } from '../../util/quiz';
+import { findTopicQuestions } from '../../util/DB/findQueries';
+import { checkIfAnswersCorrect, sortTopicQuestions } from '../../util/quiz';
 
 const SingleResultContainer = styled.div`
   position: relative;
@@ -20,7 +20,7 @@ const SingleResultContainer = styled.div`
   padding: 10px 20px;
   margin-bottom: 20px;
   background-color: #fff;
-  border: 3px solid #212529;
+  border: 5px solid #212529;
   border-radius: 15px;
 `;
 
@@ -51,12 +51,26 @@ const Checkbox = styled.input`
   }
 `;
 
+interface ResultsProps {
+  topicQuestions: {
+    _id: string;
+    keyword: string;
+    question: string;
+    answer1: string;
+    answer2: string;
+    answer3: string;
+    answer4: string;
+    correctAnswers: boolean[];
+  }[];
+  questionAnswers: (number | boolean[])[];
+  correctlyAnsweredQuestions: boolean[];
+}
+
 export default function Results({
   questionAnswers,
-  topicNumber,
   topicQuestions,
   correctlyAnsweredQuestions,
-}) {
+}: ResultsProps) {
   const router = useRouter();
 
   const redoQuiz = () => {
@@ -185,8 +199,8 @@ export async function getServerSideProps(context: NextPageContext) {
   questionAnswers = parseAnswerCookieServerSide(context.req.headers.cookie);
 
   const topicNumber = Number(questionAnswers[0]);
-  const topicQuestions = await findQuestions(topicNumber);
-  console.log(topicQuestions);
+  let topicQuestions = await findTopicQuestions(topicNumber);
+  topicQuestions = sortTopicQuestions(topicQuestions);
   const correctlyAnsweredQuestions = await checkIfAnswersCorrect(
     questionAnswers.slice(1),
     topicQuestions,

@@ -1,3 +1,4 @@
+import sgMail from '@sendgrid/mail';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { DefaultSession, Session, User } from 'next-auth';
 import { getSession } from 'next-auth/client';
@@ -22,6 +23,27 @@ export default async function submitTopicProposalsHandler(
       const user = session.user;
       const userId = user?._id;
       const { title, textProposal } = req.body;
+
+      const msg = {
+        to: 'fglagler@gmail.com',
+        from: String(user?.email),
+        subject: `New Topic Proposal by ${userId}`,
+        text: `${title}
+        ${textProposal}`,
+        html: '',
+      };
+      const sgAPIKey = process.env.SENDGRID_API_KEY;
+      sgMail.setApiKey(sgAPIKey);
+      sgMail
+        .send(msg)
+        .then(() => {
+          res.status(201).send({ message: 'Email successfully sent' });
+        })
+        .catch((err) => {
+          console.log(err);
+
+          res.status(500).send({ message: err });
+        });
     } else {
       res.status(401).json({ message: 'Unauthorized Action' });
     }

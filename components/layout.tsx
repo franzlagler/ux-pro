@@ -1,7 +1,7 @@
 import { NextPageContext } from 'next';
 import { getSession } from 'next-auth/client';
 import styled, { createGlobalStyle } from 'styled-components';
-import Navbar from './Menubars';
+import { MobileNavbar, RegularNavbar } from './Menubars';
 
 const GlobalStyle = createGlobalStyle`
 * {
@@ -23,7 +23,7 @@ body {
 
 const PageContainer = styled.div`
   display: grid;
-  grid-template-columns: 256px 1fr;
+  grid-template-columns: 270px 1fr;
   grid-template-rows: 100vh;
   grid-template-areas: 'nav content';
   @media (max-width: 900px) {
@@ -37,7 +37,7 @@ const PageContainer = styled.div`
 
 const MainContainer = styled.div`
   grid-area: content;
-  padding: 48px 0;
+  padding: 30px 0;
 `;
 
 type LayoutProps = {
@@ -49,7 +49,8 @@ export default function Layout({ children }: LayoutProps) {
     <>
       <GlobalStyle />
       <PageContainer>
-        <Navbar />
+        <RegularNavbar />
+        <MobileNavbar />
         <MainContainer>{children}</MainContainer>
       </PageContainer>
     </>

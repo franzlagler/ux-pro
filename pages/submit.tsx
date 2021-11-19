@@ -5,14 +5,18 @@ import styled from 'styled-components';
 import { RegularButton } from '../components/Buttons';
 import { NarrowContainer } from '../components/ContainerElements';
 import { Field, Form, Label } from '../components/FormFields';
-import { ParaText, PrimHeading } from '../components/TextElements';
+import {
+  ParaText,
+  PrimHeading,
+  SuccessMessage,
+} from '../components/TextElements';
 
 const TextArea = styled.textarea`
   width: 100%;
   min-height: 500px;
   padding: 5px;
   margin: 0 0 15px 0;
-  border: 3px solid #212529;
+  border: 5px solid #212529;
   border-radius: 15px;
   font-size: 20px;
   font-family: 'Inter', sans-serif;
@@ -25,6 +29,7 @@ interface SessionProp {
 
 export default function Submit({ session }: SessionProp) {
   const [inputData, setInputData] = useState({ title: '', textProposal: '' });
+  const [status, setStatus] = useState('');
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -43,13 +48,12 @@ export default function Submit({ session }: SessionProp) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        userId: session._id,
         title: inputData.title,
         textProposal: inputData.textProposal,
       }),
     });
-
-    console.log(response);
+    setInputData({ title: '', textProposal: '' });
+    setStatus(response.message);
   };
   return (
     <NarrowContainer>
@@ -72,6 +76,7 @@ export default function Submit({ session }: SessionProp) {
           onChange={handleInputChange}
           spellCheck="false"
         />
+        {status && <SuccessMessage>{status}</SuccessMessage>}
         <RegularButton center>Submit</RegularButton>
       </Form>
     </NarrowContainer>

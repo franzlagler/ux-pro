@@ -53,3 +53,15 @@ export const checkIfAnswersCorrect = (
   }
   return questionIsCorrectlyAnswered;
 };
+
+export const sortTopicQuestions = (topicQuestions: Document[]) => {
+  return topicQuestions.sort((curQuestion, nextQuestion) => {
+    const curQuestionNumber = Number(
+      curQuestion.keyword[curQuestion.keyword.length - 1],
+    );
+    const nextQuestionNumber = Number(
+      nextQuestion.keyword[nextQuestion.keyword.length - 1],
+    );
+    return curQuestionNumber - nextQuestionNumber;
+  });
+};

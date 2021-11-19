@@ -22,7 +22,7 @@ export const ImageContainer = styled.div`
   height: 420px;
   margin: 20px 0;
   background-color: #ada7ff;
-  border: 4px solid black;
+  border: 5px solid black;
   border-radius: 10px;
   overflow: hidden;
 `;
@@ -48,7 +48,7 @@ export const SingleTopicContainer = styled.div`
   width: 480px;
   height: 320px;
   background-color: #fff;
-  border: 3px solid #212529;
+  border: 5px solid #212529;
   border-radius: 3%;
   text-align: center;
   overflow: hidden;

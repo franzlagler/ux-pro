@@ -13,16 +13,16 @@ export const getAllTopics = async () => {
 export const findTopic = async (key: string, value: string) => {
   const { db } = await connectToDatabase();
 
-  const [foundTopic] = await db
-    .collection('topics')
-    .find({ [key]: value })
-    .project({ _id: 0 })
-    .toArray();
+  const foundTopic = await db.collection('topics').findOne({ [key]: value });
+
+  if (foundTopic) {
+    delete foundTopic._id;
+  }
 
   return foundTopic;
 };
 
-export const findQuestions = async (topicNumber: number) => {
+export const findTopicQuestions = async (topicNumber: number) => {
   const { db } = await connectToDatabase();
   const questions = await db
     .collection('questions')
