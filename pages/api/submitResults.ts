@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Session } from 'next-auth';
 import { getSession } from 'next-auth/client';
-import { findProfile } from '../../util/DB/findQueries';
+import { findProfile, findSession } from '../../util/DB/findQueries';
 import { insertLatestResults } from '../../util/DB/insertQueries';
 
 interface ExtendedSessionType extends Session {
@@ -18,13 +18,14 @@ export default async function submitResultsHandler(
   res: NextApiResponse,
 ) {
   if (req.method === 'PATCH') {
-    const session: ExtendedSessionType | null = await getSession({ req });
+    const currentSessionToken = req.cookies.sessionTokenRegister;
 
-    if (session) {
+    const validSession = await findSession(currentSessionToken);
+
+    if (validSession) {
       try {
-        const userId = session.user?._id;
         const { finalAnswers } = req.body;
-        const foundProfile = await findProfile(userId);
+        const foundProfile = await findProfile(validSession.userId);
 
         let results = foundProfile?.results;
 
@@ -38,7 +39,7 @@ export default async function submitResultsHandler(
         }
         console.log(results);
 
-        await insertLatestResults(userId, results, finalAnswers);
+        await insertLatestResults(validSession.userId, results, finalAnswers);
 
         res
           .status(201)

@@ -60,7 +60,7 @@ export default function Topic({
     });
   };
   useEffect(() => {
-    removeCookie('questionAnswers');
+    removeCookie('userAnswers');
   }, []);
 
   return (

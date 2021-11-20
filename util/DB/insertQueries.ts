@@ -1,5 +1,5 @@
 import { hash } from 'bcryptjs';
-import { checkIfAnswersCorrect } from '../quiz';
+import { checkIfAnswersCorrect, sortTopicQuestions } from '../quiz';
 import { connectToDatabase } from './mongodb';
 import {
   updateExistingResultEntry,
@@ -32,7 +32,7 @@ export const addSession = async (userId: string, token: string) => {
 
   const res = await db
     .collection('sessions')
-    .createIndex({ expiryTimestamp: 1 }, { expireAfterSeconds: 60*60*12 });
+    .createIndex({ expiryTimestamp: 1 }, { expireAfterSeconds: 60 * 60 * 12 });
   const indexes = await db.collection('sessions').listIndexes().toArray();
 };
 
@@ -80,9 +80,11 @@ export const insertLatestResults = async (
     .find({ topicNumber: userAnswers[0] })
     .toArray();
 
+  const topicQuestionsSorted = sortTopicQuestions(topicQuestions);
+
   const isCorrectlyAnswered = checkIfAnswersCorrect(
     userAnswers.slice(1),
-    topicQuestions,
+    topicQuestionsSorted,
   );
 
   if (foundResult) {

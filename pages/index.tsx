@@ -75,7 +75,7 @@ export default function Home({
       .split('/');
   };
   useEffect(() => {
-    removeCookie('questionAnswers');
+    removeCookie('userAnswers');
   }, []);
   return (
     <WideContainer>

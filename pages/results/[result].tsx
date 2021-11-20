@@ -9,7 +9,7 @@ import {
   WideContainer,
 } from '../../components/ContainerElements';
 import { PrimHeading, SecHeading } from '../../components/TextElements';
-import { removeCookie } from '../../util/cookies';
+import { getSessionCookie, removeCookie } from '../../util/cookies';
 import {
   findProfile,
   findResult,
@@ -186,7 +186,7 @@ export default function Results({ result, topicQuestions }: ResultsProps) {
 }
 
 export async function getServerSideProps(context: NextPageContext) {
-  const currentSessionToken = context.req?.headers.cookie;
+  const currentSessionToken = getSessionCookie(context.req?.headers.cookie);
 
   const validSession = await findSession(currentSessionToken);
   if (!validSession) {
@@ -221,6 +221,8 @@ export async function getServerSideProps(context: NextPageContext) {
         },
       };
     }
+
+    console.log(result);
 
     let topicQuestions = await findTopicQuestions(Number(topicNumber));
     topicQuestions = sortTopicQuestions(topicQuestions);

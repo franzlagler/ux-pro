@@ -3,15 +3,6 @@ import { findSession, findUserById } from '../../util/DB/findQueries';
 
 const nodemailer = require('nodemailer');
 
-interface ExtendedSessionType extends Session {
-  user?: {
-    _id?: string;
-    name?: string | null | undefined;
-    email?: string | null | undefined;
-    image?: string | null | undefined;
-  };
-}
-
 export default async function submitTopicProposalsHandler(
   req: NextApiRequest,
   res: NextApiResponse,
