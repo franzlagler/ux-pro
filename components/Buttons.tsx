@@ -71,6 +71,17 @@ export const AuthenticationButton = styled.button`
   cursor: pointer;
 `;
 
+export const AuthenticationLink = styled.a`
+  width: fit-content;
+  background-color: inherit;
+  border: none;
+  color: #212529;
+  font-size: 20px;
+  font-weight: 800;
+  cursor: pointer;
+  text-decoration: none;
+`;
+
 export const AnswerButton = styled.button`
   display: flex;
   justify-content: center;

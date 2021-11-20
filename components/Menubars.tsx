@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { MouseEvent, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { AuthenticationButton } from './Buttons';
+import { AuthenticationButton, AuthenticationLink } from './Buttons';
 
 // General Styled Components
 
@@ -220,15 +220,19 @@ export function RegularNavbar({
           )}
         </NavbarFirstItemBlock>
         <NavbarSecondItemBlock>
-          {!loggedIn && <AuthenticationButton>Log In</AuthenticationButton>}
+          {!loggedIn && (
+            <Link href="/auth/signin" passHref>
+              <AuthenticationLink>Log In</AuthenticationLink>
+            </Link>
+          )}
           {loggedIn && (
             <AuthenticationButton onClick={handleSignOutClick}>
               Log Out
             </AuthenticationButton>
           )}
-          <AuthenticationButton onClick={() => router.push('/auth/signup')}>
-            Register
-          </AuthenticationButton>
+          <Link href="/auth/signup" passHref>
+            <AuthenticationLink>Register</AuthenticationLink>
+          </Link>
         </NavbarSecondItemBlock>
       </NavbarAllItemsList>
     </RegularNavbarContainer>
@@ -266,6 +270,7 @@ export function MobileNavbar({
     const status = await response.json();
     if (status.ok) {
       setLoggedIn(false);
+      router.reload();
     }
   };
 
@@ -326,13 +331,19 @@ export function MobileNavbar({
               )}
             </NavbarFirstItemBlock>
             <NavbarSecondItemBlock>
-              {!loggedIn && <AuthenticationButton>Log In</AuthenticationButton>}
+              {!loggedIn && (
+                <Link href="/auth/signin" passHref>
+                  <AuthenticationLink>Log In</AuthenticationLink>
+                </Link>
+              )}
               {loggedIn && (
                 <AuthenticationButton onClick={handleSignOutClick}>
                   Log Out
                 </AuthenticationButton>
               )}
-              <AuthenticationButton>Register</AuthenticationButton>
+              <Link href="/auth/signup" passHref>
+                <AuthenticationLink>Register</AuthenticationLink>
+              </Link>
             </NavbarSecondItemBlock>
           </MobileNavbarAllItemsList>
         </MobileBarDropDownMenu>
