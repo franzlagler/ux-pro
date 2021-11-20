@@ -1,5 +1,5 @@
 import styled, { createGlobalStyle } from 'styled-components';
-import Navbar from './Navbar';
+import { MobileNavbar, RegularNavbar } from './Menubars';
 
 const GlobalStyle = createGlobalStyle`
 * {
@@ -15,30 +15,48 @@ body {
   font-family: 'Inter', sans-serif;
   font-weight: 400;
 }
+
+
 `;
 
 const PageContainer = styled.div`
   display: grid;
-  grid-template-columns: 256px 1fr;
+  grid-template-columns: 270px 1fr;
   grid-template-rows: 100vh;
   grid-template-areas: 'nav content';
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    grid-template-rows: 50px 1fr;
+    grid-template-areas:
+      'nav nav'
+      'content content';
+  } ;
 `;
 
 const MainContainer = styled.div`
   grid-area: content;
-  padding: 48px 0;
+  padding: 30px 0;
 `;
 
 type LayoutProps = {
   children: React.ReactNode;
+  loggedIn: boolean;
+  setLoggedIn: (value: boolean) => void;
 };
 
-export default function Layout({ children }: LayoutProps) {
+export default function Layout({ children, ...props }: LayoutProps) {
   return (
     <>
       <GlobalStyle />
       <PageContainer>
-        <Navbar />
+        <RegularNavbar
+          loggedIn={props.loggedIn}
+          setLoggedIn={props.setLoggedIn}
+        />
+        <MobileNavbar
+          loggedIn={props.loggedIn}
+          setLoggedIn={props.setLoggedIn}
+        />
         <MainContainer>{children}</MainContainer>
       </PageContainer>
     </>
