@@ -28,7 +28,6 @@ export const addSession = async (userId: string, token: string) => {
   const session = await db
     .collection('sessions')
     .insertOne({ userId, token, expiryTimestamp: new Date() });
-  console.log(session);
 
   const res = await db
     .collection('sessions')

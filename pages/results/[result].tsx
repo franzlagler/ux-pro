@@ -222,8 +222,6 @@ export async function getServerSideProps(context: NextPageContext) {
       };
     }
 
-    console.log(result);
-
     let topicQuestions = await findTopicQuestions(Number(topicNumber));
     topicQuestions = sortTopicQuestions(topicQuestions);
 

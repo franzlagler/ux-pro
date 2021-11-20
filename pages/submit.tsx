@@ -51,7 +51,6 @@ export default function Submit() {
       }),
     });
     setInputData({ title: '', textProposal: '' });
-    console.log(response);
 
     setStatus('Email has been successfully sent!');
   };

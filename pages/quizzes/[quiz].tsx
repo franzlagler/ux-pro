@@ -174,8 +174,6 @@ export default function Quiz({
         },
         body: JSON.stringify({ foundUser, finalAnswers }),
       });
-
-      console.log(result);
     }
     router.push('/results');
   };

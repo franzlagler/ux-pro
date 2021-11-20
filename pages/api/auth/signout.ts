@@ -8,7 +8,6 @@ export default async function LogInHandler(
 ) {
   if (req.method === 'DELETE') {
     const currentSessionToken = req.cookies.sessionTokenRegister;
-    console.log(currentSessionToken);
 
     const deletedToken = await deleteSessionByToken(currentSessionToken);
     if (deletedToken.acknowledged) {

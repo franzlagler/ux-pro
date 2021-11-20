@@ -38,7 +38,6 @@ export default function Profile({ foundUser }: ProfileProps) {
   }: ChangeEvent<HTMLInputElement>) => {
     const id = currentTarget.id;
     const value = currentTarget.value;
-    console.log(id);
 
     setProfileData({ ...profileData, [id]: value });
   };

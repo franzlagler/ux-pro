@@ -1,23 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { Session } from 'next-auth';
-import { getSession } from 'next-auth/client';
-import {
-  findProfile,
-  findSession,
-  findUserById,
-} from '../../util/DB/findQueries';
-import { connectToDatabase } from '../../util/DB/mongodb';
+import { findProfile, findSession } from '../../util/DB/findQueries';
 import { updateProfileFavoriteTopics } from '../../util/DB/updateQueries';
 import { updateLikedTopicsArray } from '../../util/topics';
-
-interface ExtendedSessionType extends Session {
-  user?: {
-    _id?: string;
-    name?: string | null | undefined;
-    email?: string | null | undefined;
-    image?: string | null | undefined;
-  };
-}
 
 export default async function handler(
   req: NextApiRequest,

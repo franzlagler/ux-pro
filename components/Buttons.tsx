@@ -67,7 +67,7 @@ export const AuthenticationButton = styled.button`
   background-color: inherit;
   border: none;
   font-size: 20px;
-  font-weight: 800;
+  font-weight: 600;
   cursor: pointer;
 `;
 
@@ -77,7 +77,7 @@ export const AuthenticationLink = styled.a`
   border: none;
   color: #212529;
   font-size: 20px;
-  font-weight: 800;
+  font-weight: 600;
   cursor: pointer;
   text-decoration: none;
 `;
