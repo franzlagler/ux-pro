@@ -53,7 +53,9 @@ export default function Submit({ session }: SessionProp) {
       }),
     });
     setInputData({ title: '', textProposal: '' });
-    setStatus(response.message);
+    console.log(response);
+
+    setStatus('Email has been successfully sent!');
   };
   return (
     <NarrowContainer>

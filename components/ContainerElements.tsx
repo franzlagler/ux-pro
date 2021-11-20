@@ -2,6 +2,10 @@ import styled from 'styled-components';
 
 export const WideContainer = styled.div`
   padding: 0 40px;
+
+  @media (max-width: 500px) {
+    padding: 0 20px;
+  } ;
 `;
 
 export const PrimHeadingContainer = styled.div`
@@ -12,6 +16,10 @@ export const NarrowContainer = styled.div`
   max-width: 600px;
   margin: 0 auto;
   padding: 1% 0;
+
+  @media (max-width: 620px) {
+    padding: 0 20px;
+  } ;
 `;
 
 export const CodeBlock = styled.span``;
@@ -25,6 +33,10 @@ export const ImageContainer = styled.div`
   border: 5px solid black;
   border-radius: 10px;
   overflow: hidden;
+
+  @media (max-width: 400px) {
+    height: 300px;
+  } ;
 `;
 
 export const ButtonContainer = styled.div`
@@ -46,12 +58,16 @@ export const TopicsContainer = styled.div`
 
 export const SingleTopicContainer = styled.div`
   width: 480px;
-  height: 320px;
+  height: 300px;
   background-color: #fff;
   border: 5px solid #212529;
   border-radius: 3%;
   text-align: center;
   overflow: hidden;
+
+  @media (max-width: 500px) {
+    height: 240px;
+  }
 `;
 
 export const SingleTopicContainerLink = styled.a`

@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { findUser } from '../../../util/DB/findQueries';
+import { findUserById } from '../../../util/DB/findQueries';
 import { addProfile, addUser } from '../../../util/DB/insertQueries';
 import { validateRegistrationDataServerSide } from '../../../util/validation';
 
@@ -13,7 +13,7 @@ export default async function registrationHandler(
     const validData = validateRegistrationDataServerSide(name, email, password);
 
     if (validData) {
-      const userExists = await findUser(user._id);
+      const userExists = await findUserById(user._id);
 
       if (!userExists) {
         const newUserId = await addUser(name, email, password);

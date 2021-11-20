@@ -1,31 +1,29 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { Session } from 'next-auth';
-import { getSession } from 'next-auth/client';
+import { findSession } from '../../util/DB/findQueries';
 import { updateUser } from '../../util/DB/updateQueries';
-
-interface ExtendedSessionType extends Session {
-  user?: {
-    _id?: string;
-    name?: string | null | undefined;
-    email?: string | null | undefined;
-    image?: string | null | undefined;
-  };
-}
 
 export default async function updateUserHandler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
   if (req.method === 'PATCH') {
-    const session: ExtendedSessionType | null = await getSession({ req });
-    if (session) {
-      const { updateKey, updateValue } = req.body;
-      const userId = session.user?._id;
+    const validSession = await findSession(req.cookies.sessionTokenRegister);
 
-      const result = await updateUser(userId, updateKey, updateValue);
-      console.log(result);
+    if (validSession) {
+      try {
+        const { updateKey, updateValue } = req.body;
 
-      res.status(201).json({ message: result });
+        const result = await updateUser(
+          validSession.userId,
+          updateKey,
+          updateValue,
+        );
+        console.log(result);
+
+        res.status(201).json({ message: result });
+      } catch (err) {
+        res.status(500).json({ message: err });
+      }
     } else {
       res.status(401).json({ message: 'Unauthorized action' });
     }

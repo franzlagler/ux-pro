@@ -1,7 +1,7 @@
-import { ObjectId } from 'bson';
+import { ObjectId, ObjectID } from 'bson';
 import { connectToDatabase } from './mongodb';
 
-export const getAllTopics = async () => {
+export const findAllTopics = async () => {
   const { db } = await connectToDatabase();
   const allTopics = await db.collection('topics').find().toArray();
   for (let i = 0; i < allTopics.length; i++) {
@@ -61,20 +61,44 @@ export const findCurrentQuestion = async (keyword: string) => {
   return currentQuestion;
 };
 
-export const findUser = async (userId: string | undefined) => {
-  if (userId) {
+export const findUserByEmail = async (email: string | undefined) => {
+  if (email) {
     const { db } = await connectToDatabase();
-    const user = await db
-      .collection('users')
-      .findOne({ _id: new ObjectId(userId) });
+    const user = await db.collection('users').findOne({ email });
 
     return user;
   }
 };
 
+export const findUserById = async (userId: string | undefined) => {
+  if (userId) {
+    const { db } = await connectToDatabase();
+    const user = await db
+      .collection('users')
+      .findOne({ _id: new ObjectID(userId) });
+
+    if (user) {
+      delete user.passwordHashed;
+      user._id = user._id.toString();
+    }
+
+    return user;
+  }
+};
+
+export const findSession = async (token: string | undefined) => {
+  const { db } = await connectToDatabase();
+  const session = await db.collection('sessions').findOne({ token });
+  return session;
+};
+
 export const findProfile = async (userId: string | undefined) => {
   const { db } = await connectToDatabase();
   const foundProfile = await db.collection('profiles').findOne({ userId });
+
+  if (foundProfile) {
+    foundProfile._id = foundProfile._id.toString();
+  }
 
   return foundProfile;
 };

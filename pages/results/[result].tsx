@@ -1,3 +1,4 @@
+import { Document } from 'bson';
 import { NextPageContext } from 'next';
 import { Session } from 'next-auth';
 import { getSession } from 'next-auth/client';
@@ -14,6 +15,7 @@ import { removeCookie } from '../../util/cookies';
 import {
   findProfile,
   findResult,
+  findSession,
   findTopicQuestions,
 } from '../../util/DB/findQueries';
 import { sortTopicQuestions } from '../../util/quiz';
@@ -65,7 +67,21 @@ const Checkbox = styled.input`
   }
 `;
 
-export default function Results({ result, topicQuestions }) {
+interface TopicQuestions extends Document {
+  _id: string;
+  question: string;
+  answer1: string;
+  answer2: string;
+  answer3: string;
+  answer4: string;
+}
+
+interface ResultsProps {
+  result: Document;
+  topicQuestions: TopicQuestions[];
+}
+
+export default function Results({ result, topicQuestions }: ResultsProps) {
   const router = useRouter();
 
   const redoQuiz = () => {
@@ -181,25 +197,24 @@ export default function Results({ result, topicQuestions }) {
 }
 
 export async function getServerSideProps(context: NextPageContext) {
-  const session: ExtendedSessionType | null = await getSession({
-    req: context.req,
-  });
-  if (!session) {
+  const currentSessionToken = context.req?.headers.cookie;
+
+  const validSession = await findSession(currentSessionToken);
+  if (!validSession) {
     return {
-      destination: '/auth/signin',
-      permanent: false,
+      redirect: {
+        destination: '/auth/signin',
+        permanent: false,
+      },
     };
   }
 
   if (typeof context.query.result === 'string') {
     const [enteredProfileId, topicNumber] = context.query.result.split('-');
 
-    const userId = session.user?._id;
+    const foundProfile = await findProfile(validSession.userId);
 
-    const foundProfile = await findProfile(userId?.toString());
-    const profileId = foundProfile?._id.toString();
-
-    if (profileId !== enteredProfileId) {
+    if (foundProfile?._id !== enteredProfileId) {
       return {
         redirect: {
           destination: '/',
@@ -208,7 +223,7 @@ export async function getServerSideProps(context: NextPageContext) {
       };
     }
 
-    const result = await findResult(profileId, Number(topicNumber));
+    const result = await findResult(foundProfile._id, Number(topicNumber));
     if (!result) {
       return {
         redirect: {

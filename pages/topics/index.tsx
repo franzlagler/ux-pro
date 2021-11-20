@@ -8,7 +8,7 @@ import {
   WideContainer,
 } from '../../components/ContainerElements';
 import { PrimHeading, SecHeading } from '../../components/TextElements';
-import { getAllTopics } from '../../util/DB/findQueries';
+import { findAllTopics } from '../../util/DB/findQueries';
 
 export default function Topics({
   allTopics,
@@ -39,7 +39,7 @@ export default function Topics({
 }
 
 export async function getServerSideProps() {
-  const allTopics = await getAllTopics();
+  const allTopics = await findAllTopics();
 
   return {
     props: { allTopics },

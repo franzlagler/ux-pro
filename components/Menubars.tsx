@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { MouseEvent, useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { getCookies } from '../util/cookies';
 
 const RegularNavbarContainer = styled.nav`
   position: fixed;
@@ -50,8 +51,11 @@ const RegularNavbarItemText = styled.li`
   color: #212529;
 `;
 
-export function RegularNavbar() {
+export function RegularNavbar({ loggedIn }: { loggedIn: boolean }) {
+  console.log(loggedIn);
+
   const [session] = useSession();
+  console.log(getCookies('sessionTokenRegister'));
 
   return (
     <RegularNavbarContainer>
@@ -77,7 +81,7 @@ export function RegularNavbar() {
           </RegularNavbarLink>
         </Link>
 
-        {session && (
+        {loggedIn && (
           <>
             <Link href="/submit" passHref>
               <RegularNavbarLink>
@@ -173,7 +177,7 @@ const MobileNavbarItemText = styled.li`
   color: #212529;
 `;
 
-export function MobileNavbar() {
+export function MobileNavbar({ loggedIn }: { loggedIn: boolean }) {
   const router = useRouter();
   const [displayMenuItems, setDisplayMenuItems] = useState(false);
 
@@ -185,7 +189,7 @@ export function MobileNavbar() {
     const itemName = e.currentTarget.id;
 
     router.push(`/${itemName}`);
-    setTimeout(() => setDisplayMenuItems(!displayMenuItems), 500);
+    setTimeout(() => setDisplayMenuItems(!displayMenuItems), 700);
   };
 
   useEffect(() => {
@@ -216,16 +220,20 @@ export function MobileNavbar() {
           </MobileNavbarItemButton>
           <MobileNavbarItemButton id="topics" onClick={handleItemClick}>
             <Image src="/images/topics.svg" width="30px" height="30px" />
-            <MobileNavbarItemText>Topic</MobileNavbarItemText>
+            <MobileNavbarItemText>Topics</MobileNavbarItemText>
           </MobileNavbarItemButton>
-          <MobileNavbarItemButton id="submit" onClick={handleItemClick}>
-            <Image src="/images/submit.svg" width="30px" height="30px" />
-            <MobileNavbarItemText>Submit</MobileNavbarItemText>
-          </MobileNavbarItemButton>
-          <MobileNavbarItemButton id="profile" onClick={handleItemClick}>
-            <Image src="/images/profile.svg" width="30px" height="30px" />
-            <MobileNavbarItemText>Profile</MobileNavbarItemText>
-          </MobileNavbarItemButton>
+          {loggedIn && (
+            <>
+              <MobileNavbarItemButton id="submit" onClick={handleItemClick}>
+                <Image src="/images/submit.svg" width="30px" height="30px" />
+                <MobileNavbarItemText>Submit</MobileNavbarItemText>
+              </MobileNavbarItemButton>
+              <MobileNavbarItemButton id="profile" onClick={handleItemClick}>
+                <Image src="/images/profile.svg" width="30px" height="30px" />
+                <MobileNavbarItemText>Profile</MobileNavbarItemText>
+              </MobileNavbarItemButton>
+            </>
+          )}
         </MobileNavbarMenuItemsContainer>
       )}
     </>

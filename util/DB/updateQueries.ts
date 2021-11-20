@@ -33,6 +33,16 @@ export const updateUser = async (
   }
 };
 
+export const updateProfileFavoriteTopics = async (
+  userId: string,
+  favoriteTopics: number[],
+) => {
+  const { db } = await connectToDatabase();
+  return await db
+    .collection('profiles')
+    .updateOne({ userId }, { $set: { favoriteTopics } });
+};
+
 export const updateProfileResults = async (
   userId: string | undefined,
   newResults: number[],

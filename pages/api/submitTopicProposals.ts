@@ -1,7 +1,8 @@
-import sgMail from '@sendgrid/mail';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { DefaultSession, Session, User } from 'next-auth';
+import { Session } from 'next-auth';
 import { getSession } from 'next-auth/client';
+
+const nodemailer = require('nodemailer');
 
 interface ExtendedSessionType extends Session {
   user?: {
@@ -20,30 +21,33 @@ export default async function submitTopicProposalsHandler(
     const session: ExtendedSessionType | null = await getSession({ req });
 
     if (session) {
-      const user = session.user;
-      const userId = user?._id;
-      const { title, textProposal } = req.body;
+      try {
+        const user = session.user;
+        const { title, textProposal } = req.body;
 
-      const msg = {
-        to: 'fglagler@gmail.com',
-        from: String(user?.email),
-        subject: `New Topic Proposal by ${userId}`,
-        text: `${title}
-        ${textProposal}`,
-        html: '',
-      };
-      const sgAPIKey = process.env.SENDGRID_API_KEY;
-      sgMail.setApiKey(sgAPIKey);
-      sgMail
-        .send(msg)
-        .then(() => {
-          res.status(201).send({ message: 'Email successfully sent' });
-        })
-        .catch((err) => {
-          console.log(err);
-
-          res.status(500).send({ message: err });
+        const transporter = nodemailer.createTransport({
+          host: 'smtp.ethereal.email',
+          port: 587,
+          auth: {
+            user: 'christy.ferry53@ethereal.email',
+            pass: 'v4jqpxURZ8DcsHrrZr',
+          },
         });
+
+        const info = await transporter.sendMail({
+          from: `${user?.name}<${user?.email}>`,
+          to: 'christy.ferry53@ethereal.email',
+          subject: 'New Topic Proposal',
+          text: `${title}
+        ${textProposal}`,
+        });
+
+        res.status(201).json({
+          message: `Successfuly sent message with ID: ${info.messageId}`,
+        });
+      } catch (err) {
+        res.status(500).json({ message: err });
+      }
     } else {
       res.status(401).json({ message: 'Unauthorized Action' });
     }

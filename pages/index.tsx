@@ -1,16 +1,9 @@
 import { NextPageContext } from 'next';
-import { Session } from 'next-auth';
-import { getSession, signIn } from 'next-auth/client';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import {
-  DropdownButton,
-  LinkButton,
-  LinkLink,
-  RegularButton,
-} from '../components/Buttons';
+import { DropdownButton, LinkButton, LinkLink } from '../components/Buttons';
 import {
   ButtonContainer,
   SingleTopicContainer,
@@ -25,11 +18,13 @@ import {
   PrimHeading,
   SecHeading,
 } from '../components/TextElements';
-import { removeCookie } from '../util/cookies';
+import { getSessionCookie, removeCookie } from '../util/cookies';
 import {
+  findAllTopics,
   findProfile,
+  findSession,
   findThreeLatestQuizResults,
-  getAllTopics,
+  findUserById,
 } from '../util/DB/findQueries';
 import { getPreviousQuizTitle } from '../util/quiz';
 import { filterFavoriteTopics } from '../util/topics';
@@ -52,19 +47,9 @@ const PreviousQuizContentContainer = styled.div`
   border-top: 5px solid #212529;
 `;
 
-interface NewSession extends Session {
-  user?: {
-    _id?: string;
-    name?: string | null | undefined;
-    email?: string | null | undefined;
-    image?: string | null | undefined;
-  };
-}
-
 interface HomeProps {
-  session: NewSession | undefined;
-  userFavoriteTopics: { file: string; title: string }[];
-  userQuizzesResults: {
+  userFavoriteTopics?: { file: string; title: string }[];
+  userQuizzesResults?: {
     title: string;
     isCorrectlyAnswered: boolean[];
     keyword: string;
@@ -72,7 +57,6 @@ interface HomeProps {
 }
 
 export default function Home({
-  session,
   userFavoriteTopics,
   userQuizzesResults,
 }: HomeProps) {
@@ -84,8 +68,6 @@ export default function Home({
   ]);
 
   const checkDateOfQuiz = (date: string) => {
-    console.log(session);
-
     const [quizDay, quizMonth, quizYear] = date.split('/');
 
     const [currentDay, currentMonth, currentYear] = new Date()
@@ -98,13 +80,13 @@ export default function Home({
   return (
     <WideContainer>
       <PrimHeading>Dashboard</PrimHeading>
-      {session && (
+      {userFavoriteTopics && (
         <>
           <ParaText>Explore your previous UX learning journey.</ParaText>
           <SecHeading>Previous Quizzes</SecHeading>
-          {userQuizzesResults.length !== 0 && (
+          {userQuizzesResults?.length !== 0 && (
             <PreviousQuizzesContainer>
-              {userQuizzesResults.map(
+              {userQuizzesResults?.map(
                 (
                   quizResult: {
                     title: string;
@@ -151,7 +133,7 @@ export default function Home({
               )}
             </PreviousQuizzesContainer>
           )}
-          {userQuizzesResults.length === 0 && (
+          {userQuizzesResults?.length === 0 && (
             <ParaText>No quizzes done yet.</ParaText>
           )}
           <SecHeading>Favorite Topics</SecHeading>
@@ -183,12 +165,13 @@ export default function Home({
           )}
         </>
       )}
-      {!session && (
+      {!userFavoriteTopics && (
         <>
           <ParaText>Please log in to use the dashboard.</ParaText>
           <ButtonContainer>
-            {' '}
-            <RegularButton onClick={() => signIn()}>Log In</RegularButton>
+            <Link href="/auth/signin" passHref>
+              <LinkButton>Log In</LinkButton>
+            </Link>
             <Link href="/auth/signup" passHref>
               <LinkButton purple>Register</LinkButton>
             </Link>
@@ -200,40 +183,40 @@ export default function Home({
 }
 
 export async function getServerSideProps(context: NextPageContext) {
-  const session: NewSession | null = await getSession({ req: context.req });
+  const sessionToken = getSessionCookie(context.req?.headers.cookie);
 
-  if (session) {
-    const allTopics = await getAllTopics();
-
-    const foundProfile = await findProfile(session.user?._id);
-    console.log(foundProfile);
-
-    const userFavoriteTopics = filterFavoriteTopics(
-      allTopics,
-      foundProfile?.favoriteTopics,
-    );
-
-    const previousQuizzesTitle = await getPreviousQuizTitle(
-      foundProfile?.results,
-      allTopics,
-    );
-
-    const userQuizzesResults = await findThreeLatestQuizResults(
-      foundProfile?._id.toString(),
-      foundProfile?.results,
-      previousQuizzesTitle,
-    );
-
+  if (!sessionToken) {
     return {
-      props: {
-        session,
-        userFavoriteTopics,
-        userQuizzesResults,
-      },
+      props: {},
     };
   }
+  const sessionEntry = await findSession(sessionToken);
+  const foundUser = await findUserById(sessionEntry?.userId);
+  const foundProfile = await findProfile(foundUser?._id.toString());
+
+  const allTopics = await findAllTopics();
+  // User Profile
+
+  const userFavoriteTopics = filterFavoriteTopics(
+    allTopics,
+    foundProfile?.favoriteTopics,
+  );
+
+  const previousQuizzesTitle = await getPreviousQuizTitle(
+    foundProfile?.results,
+    allTopics,
+  );
+
+  const userQuizzesResults = await findThreeLatestQuizResults(
+    foundProfile?._id.toString(),
+    foundProfile?.results,
+    previousQuizzesTitle,
+  );
 
   return {
-    props: {},
+    props: {
+      userFavoriteTopics,
+      userQuizzesResults,
+    },
   };
 }

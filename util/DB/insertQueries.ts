@@ -22,6 +22,20 @@ export const addUser = async (
   return addedUser.insertedId.toString();
 };
 
+export const addSession = async (userId: string, token: string) => {
+  const { db } = await connectToDatabase();
+  await db.collection('sessions').dropIndexes();
+  const session = await db
+    .collection('sessions')
+    .insertOne({ userId, token, expiryTimestamp: new Date() });
+  console.log(session);
+
+  const res = await db
+    .collection('sessions')
+    .createIndex({ expiryTimestamp: 1 }, { expireAfterSeconds: 60*60*12 });
+  const indexes = await db.collection('sessions').listIndexes().toArray();
+};
+
 export const addProfile = async (userId: string) => {
   const { db } = await connectToDatabase();
   await db

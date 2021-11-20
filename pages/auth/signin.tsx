@@ -15,10 +15,14 @@ import {
 } from '../../components/FormFields';
 import { ErrorMessage, PrimHeading } from '../../components/TextElements';
 
-export default function SignIn() {
+export default function SignIn({
+  setLoggedIn,
+}: {
+  setLoggedIn: (value: boolean) => void;
+}) {
   const router = useRouter();
   const [credentials, setCredentials] = useState({ email: '', password: '' });
-  const [errorMessage, setErrorMessage] = useState<String | undefined>();
+  const [errorMessage, setErrorMessage] = useState({ email: '', password: '' });
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const fieldId = e.currentTarget.id;
@@ -29,19 +33,26 @@ export default function SignIn() {
     e.preventDefault();
 
     const { email, password } = credentials;
-    const res = await signIn('credentials', {
-      redirect: false,
-      email: email,
-      password: password,
+    const res = await fetch('/api/auth/signin', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
     });
 
-    const signInSuccesful = !res?.error;
-
-    if (signInSuccesful) {
-      setErrorMessage('');
-      router.push('/profile');
+    if (res.ok) {
+      setLoggedIn(true);
+      router.push('/');
     } else {
-      setErrorMessage(res.error);
+      const message = await res.json();
+      console.log(message);
+
+      if (message.email) {
+        setErrorMessage({ password: '', email: message.email });
+        return;
+      }
+      setErrorMessage({ email: '', password: message.password });
     }
   };
 
@@ -58,6 +69,9 @@ export default function SignIn() {
             value={credentials.email}
             onChange={handleInputChange}
           />
+          {errorMessage.email && (
+            <ErrorMessage>{errorMessage.email}</ErrorMessage>
+          )}
         </FieldContainer>
         <FieldContainer>
           <Label htmlFor="password">Password</Label>
@@ -67,8 +81,10 @@ export default function SignIn() {
             value={credentials.password}
             onChange={handleInputChange}
           />
+          {errorMessage.password && (
+            <ErrorMessage>{errorMessage.password}</ErrorMessage>
+          )}
         </FieldContainer>
-        {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         <RegularButton>Sign In</RegularButton>
       </Form>
     </NarrowContainer>

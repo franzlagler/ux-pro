@@ -22,6 +22,12 @@ export const LinkButton = styled.a`
     transform: translateX(1px);
     box-shadow: none;
   }
+
+  @media (max-width: 500px) {
+    width: 160px;
+    height: 50px;
+    font-size: 20px;
+  }
 `;
 
 export const RegularButton = styled.button<{
@@ -48,6 +54,12 @@ export const RegularButton = styled.button<{
     background-color: #dee2e6;
     opacity: 0.7;
   }
+
+  @media (max-width: 500px) {
+    width: 160px;
+    height: 50px;
+    font-size: 20px;
+  }
 `;
 
 export const AnswerButton = styled.button`
@@ -73,9 +85,9 @@ export const AnswerButton = styled.button`
 export const LikeButton = styled.button`
   position: relative;
   width: 100px;
-  height: 50px;
+  height: 60px;
   margin: 20px 0;
-  background-image: ${(props: { liked: boolean }) =>
+  background-image: ${(props: { liked?: boolean }) =>
     props.liked
       ? "url('/images/heart_liked.svg')"
       : "url('/images/heart_not_liked.svg')"};
@@ -94,11 +106,17 @@ export const LikeButton = styled.button`
     transform: translateX(1px);
     box-shadow: none;
   }
+
+  @media (max-width: 500px) {
+    width: 80px;
+    height: 50px;
+    margin: 10px 0;
+  }
 `;
 
 export const SocialMediaButton = styled.a`
   width: 100px;
-  height: 50px;
+  height: 60px;
   margin: 20px 0;
   background-image: ${(props: { url: string }) => 'url(' + props.url + ')'};
   background-repeat: no-repeat;
@@ -114,6 +132,12 @@ export const SocialMediaButton = styled.a`
   &:active {
     transform: translateX(1px);
     box-shadow: none;
+  }
+
+  @media (max-width: 500px) {
+    width: 80px;
+    height: 50px;
+    margin: 10px 0;
   }
 `;
 
@@ -140,6 +164,11 @@ export const DropdownButton = styled.button`
   font-weight: 800;
   cursor: pointer;
   z-index: 1;
+
+  @media (max-width: 400px) {
+    padding: 0 12px;
+    font-size: 20px;
+  } ;
 `;
 
 export const LinkLink = styled.a`

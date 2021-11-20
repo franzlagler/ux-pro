@@ -1,6 +1,7 @@
 import { NextPageContext } from 'next';
-import { getSession } from 'next-auth/client';
 import styled, { createGlobalStyle } from 'styled-components';
+import { getSessionCookie } from '../util/cookies';
+import { findSession, findUserById } from '../util/DB/findQueries';
 import { MobileNavbar, RegularNavbar } from './Menubars';
 
 const GlobalStyle = createGlobalStyle`
@@ -42,26 +43,18 @@ const MainContainer = styled.div`
 
 type LayoutProps = {
   children: React.ReactNode;
+  loggedIn: boolean;
 };
 
-export default function Layout({ children }: LayoutProps) {
+export default function Layout({ children, ...props }: LayoutProps) {
   return (
     <>
       <GlobalStyle />
       <PageContainer>
-        <RegularNavbar />
-        <MobileNavbar />
+        <RegularNavbar loggedIn={props.loggedIn} />
+        <MobileNavbar loggedIn={props.loggedIn} />
         <MainContainer>{children}</MainContainer>
       </PageContainer>
     </>
   );
-}
-
-export async function getServerSideProps(context: NextPageContext) {
-  const session = await getSession({ req: context.req });
-  console.log(session);
-
-  return {
-    props: session,
-  };
 }

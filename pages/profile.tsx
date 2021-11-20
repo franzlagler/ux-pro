@@ -1,5 +1,4 @@
 import { NextPageContext } from 'next';
-import { getSession } from 'next-auth/client';
 import { ChangeEvent, MouseEvent, useState } from 'react';
 import { RegularButton } from '../components/Buttons';
 import {
@@ -9,27 +8,26 @@ import {
 } from '../components/ContainerElements';
 import { Field, FieldContainer, Label } from '../components/FormFields';
 import { ParaText, PrimHeading } from '../components/TextElements';
+import { getSessionCookie } from '../util/cookies';
+import { findSession, findUserById } from '../util/DB/findQueries';
 
-interface SessionProps {
-  session: {
-    user: {
-      name: string;
-      email: string;
-    };
+interface ProfileProps {
+  foundUser: {
+    name: string;
+    email: string;
   };
 }
 
 interface ProfileData {
   name: string;
   email: string;
-  passwordHashed: string;
   [key: string]: string | undefined;
 }
 
-export default function Profile({ session }: SessionProps) {
+export default function Profile({ foundUser }: ProfileProps) {
   const [profileData, setProfileData] = useState<ProfileData>({
-    name: session.user.name,
-    email: session.user.email,
+    name: foundUser.name,
+    email: foundUser.email,
     passwordHashed: '*****',
   });
 
@@ -57,7 +55,7 @@ export default function Profile({ session }: SessionProps) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ session, updateKey, updateValue }),
+      body: JSON.stringify({ updateKey, updateValue }),
     });
 
     setProfileData({ ...profileData, [updateKey]: updateValue });
@@ -196,17 +194,23 @@ export default function Profile({ session }: SessionProps) {
 }
 
 export async function getServerSideProps(context: NextPageContext) {
-  const session = await getSession({ req: context.req });
+  const sessionToken = getSessionCookie(context.req?.headers.cookie);
 
-  if (!session) {
+  if (sessionToken) {
+    const validSession = await findSession(sessionToken);
+
+    if (!validSession) {
+      return {
+        redirect: {
+          destination: '/auth/login',
+          permanent: false,
+        },
+      };
+    }
+    const foundUser = await findUserById(validSession.userId);
+    delete foundUser?._id;
     return {
-      redirect: {
-        destination: '/auth/signin',
-        permanent: false,
-      },
+      props: { foundUser },
     };
   }
-  return {
-    props: { session },
-  };
 }

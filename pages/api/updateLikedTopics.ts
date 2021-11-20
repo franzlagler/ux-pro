@@ -1,7 +1,13 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Session } from 'next-auth';
 import { getSession } from 'next-auth/client';
+import {
+  findProfile,
+  findSession,
+  findUserById,
+} from '../../util/DB/findQueries';
 import { connectToDatabase } from '../../util/DB/mongodb';
+import { updateProfileFavoriteTopics } from '../../util/DB/updateQueries';
 import { updateLikedTopicsArray } from '../../util/topics';
 
 interface ExtendedSessionType extends Session {
@@ -20,33 +26,26 @@ export default async function handler(
   if (req.method === 'PATCH') {
     const { topicNumber } = req.body;
 
-    const session: ExtendedSessionType | null = await getSession({ req });
+    const currentSessionToken = req.cookies.sessionTokenRegister;
+    const validSession = await findSession(currentSessionToken);
 
-    if (session) {
+    if (validSession) {
       try {
-        const userId = session.user?._id;
-        const { db } = await connectToDatabase();
-        const foundProfile = await db
-          .collection('profiles')
-          .find({ userId })
-          .toArray();
-
-        const likedTopicsArray = foundProfile[0].favoriteTopics;
-
+        const foundProfile = await findProfile(validSession.userId);
         const newLikedTopicsArray = updateLikedTopicsArray(
           topicNumber,
-          likedTopicsArray,
+          foundProfile?.favoriteTopics,
         );
-        await db
-          .collection('profiles')
-          .updateOne(
-            { userId: userId },
-            { $set: { favoriteTopics: newLikedTopicsArray } },
-          );
+        const updatedProfile = await updateProfileFavoriteTopics(
+          foundProfile?.userId,
+          newLikedTopicsArray,
+        );
 
-        res
-          .status(201)
-          .json({ message: 'Upating Favorite Topics ways successful' });
+        if (updatedProfile.acknowledged) {
+          res
+            .status(201)
+            .json({ message: 'Upating Favorite Topics ways successful' });
+        }
       } catch (err) {
         res.status(500).json({ message: err });
       }

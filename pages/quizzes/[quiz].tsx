@@ -1,6 +1,4 @@
 import { NextPageContext } from 'next';
-import { Session } from 'next-auth';
-import { getSession } from 'next-auth/client';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -8,10 +6,17 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { AnswerButton, RegularButton } from '../../components/Buttons';
 import { NarrowContainer } from '../../components/ContainerElements';
-import { getCookies, setCookies, setCookieValue } from '../../util/cookies';
+import {
+  getCookies,
+  getSessionCookie,
+  setCookies,
+  setCookieValue,
+} from '../../util/cookies';
 import {
   findCurrentQuestion,
+  findSession,
   findTopicQuestions,
+  findUserById,
 } from '../../util/DB/findQueries';
 import { updateAnswers } from '../../util/quiz';
 
@@ -25,19 +30,33 @@ const QuestionContainer = styled.div`
 `;
 const PrimHeadingContainer = styled.div`
   padding: 20px 10px;
+  @media (max-width: 500px) {
+    padding: 10px;
+  }
 `;
 
 const AnswersContainer = styled.div`
   display: grid;
+  flex-wrap: wrap;
   grid-gap: 20px;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
+
+  @media (max-width: 500px) {
+    display: flex;
+  }
 `;
 
 const ImageContainer = styled.div`
   position: relative;
   width: 100%;
-  height: 380px;
+  height: 400px;
+  @media (max-width: 500px) {
+    height: 300px;
+  }
+  @media (max-width: 500px) {
+    height: 200px;
+  }
 `;
 
 const ButtonContainer = styled.div`
@@ -57,15 +76,6 @@ const QuestionNumber = styled.p`
   font-weight: 600;
 `;
 
-interface ExtendedSessionType extends Session {
-  user?: {
-    _id?: string;
-    name?: string | null | undefined;
-    email?: string | null | undefined;
-    image?: string | null | undefined;
-  };
-}
-
 type QuizProps = {
   currentQuestion: {
     _id: string;
@@ -78,13 +88,13 @@ type QuizProps = {
     answer4: string;
   };
   allQuestions: {}[];
-  user: {} | null;
+  foundUser: {} | null;
 };
 
 export default function Quiz({
   currentQuestion,
   allQuestions,
-  user,
+  foundUser,
 }: QuizProps) {
   const numberOfQuestions = allQuestions.length;
   const currentQuestionNumber = Number(
@@ -108,15 +118,15 @@ export default function Quiz({
   };
 
   const goToNextQuestion = () => {
-    let questionAnswers = getCookies('questionAnswers');
+    let userAnswers = getCookies('userAnswers');
 
-    questionAnswers = updateAnswers(
+    userAnswers = updateAnswers(
       selectedAnswers,
-      questionAnswers,
+      userAnswers,
       currentQuestionNumber,
     );
 
-    setCookies('questionAnswers', questionAnswers);
+    setCookies('userAnswers', userAnswers);
 
     router.push(
       `/quizzes/${currentQuestion.keyword.slice(
@@ -127,15 +137,15 @@ export default function Quiz({
   };
 
   const goToLastQuestion = () => {
-    let questionAnswers = getCookies('questionAnswers');
+    let userAnswers = getCookies('userAnswers');
 
-    questionAnswers = updateAnswers(
+    userAnswers = updateAnswers(
       selectedAnswers,
-      questionAnswers,
+      userAnswers,
       currentQuestionNumber,
     );
 
-    setCookies('questionAnswers', questionAnswers);
+    setCookies('userAnswers', userAnswers);
     router.push(
       `/quizzes/${currentQuestion.keyword.slice(
         0,
@@ -145,24 +155,24 @@ export default function Quiz({
   };
 
   const finishQuiz = async () => {
-    let questionAnswers = getCookies('questionAnswers');
+    let userAnswers = getCookies('userAnswers');
 
-    questionAnswers = updateAnswers(
+    userAnswers = updateAnswers(
       selectedAnswers,
-      questionAnswers,
+      userAnswers,
       currentQuestionNumber,
     );
 
-    setCookies('questionAnswers', questionAnswers);
-    const finalAnswers = getCookies('questionAnswers');
+    setCookies('userAnswers', userAnswers);
+    const finalAnswers = getCookies('userAnswers');
 
-    if (user) {
+    if (foundUser) {
       const result = await fetch('/api/submitResults', {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ user, finalAnswers }),
+        body: JSON.stringify({ foundUser, finalAnswers }),
       });
 
       console.log(result);
@@ -171,13 +181,13 @@ export default function Quiz({
   };
 
   useEffect(() => {
-    if (!getCookies('questionAnswers')) {
+    if (!getCookies('userAnswers')) {
       setCookies(
-        'questionAnswers',
+        'userAnswers',
         setCookieValue(currentQuestion.topicNumber, numberOfQuestions),
       );
     }
-    const allAnswers = getCookies('questionAnswers');
+    const allAnswers = getCookies('userAnswers');
 
     const currentlySelectedAnswers = allAnswers[currentQuestionNumber];
     setSelectedAnswers(currentlySelectedAnswers);
@@ -259,10 +269,6 @@ export default function Quiz({
 }
 
 export async function getServerSideProps(context: NextPageContext) {
-  const session: ExtendedSessionType | null = await getSession({
-    req: context.req,
-  });
-  const user = session?.user;
   const keyword = context.query.quiz;
 
   if (typeof keyword === 'string') {
@@ -277,12 +283,23 @@ export async function getServerSideProps(context: NextPageContext) {
     }
     const allQuestions = await findTopicQuestions(currentQuestion.topicNumber);
 
-    return {
-      props: {
-        currentQuestion,
-        allQuestions,
-        user,
-      },
-    };
+    const currentSessionToken = getSessionCookie(context.req?.headers.cookie);
+    const validSession = await findSession(currentSessionToken);
+
+    if (validSession) {
+      const foundUser = await findUserById(validSession.userId);
+
+      return {
+        props: {
+          currentQuestion,
+          allQuestions,
+          foundUser,
+        },
+      };
+    } else {
+      return {
+        props: { currentQuestion, allQuestions },
+      };
+    }
   }
 }

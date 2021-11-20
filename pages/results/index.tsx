@@ -1,4 +1,3 @@
-import cookie from 'cookie';
 import { NextPageContext } from 'next';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -9,7 +8,7 @@ import {
   WideContainer,
 } from '../../components/ContainerElements';
 import { PrimHeading, SecHeading } from '../../components/TextElements';
-import { parseAnswerCookieServerSide, removeCookie } from '../../util/cookies';
+import { getUserAnswersCookie, removeCookie } from '../../util/cookies';
 import { findTopicQuestions } from '../../util/DB/findQueries';
 import { checkIfAnswersCorrect, sortTopicQuestions } from '../../util/quiz';
 
@@ -26,7 +25,7 @@ const SingleResultContainer = styled.div`
 
 const AnswerContainer = styled.div`
   display: flex;
-  grid-gap: 10px;
+  grid-gap: 16px;
   align-items: center;
   padding: 10px;
   margin-bottom: 5px;
@@ -41,8 +40,8 @@ const AnswerText = styled.p`
 
 const Checkbox = styled.input`
   appearance: none;
-  width: 20px;
-  height: 20px;
+  min-width: 20px;
+  min-height: 20px;
   border: 1px solid #212529;
   border-radius: 3px;
 
@@ -62,19 +61,20 @@ interface ResultsProps {
     answer4: string;
     correctAnswers: boolean[];
   }[];
-  questionAnswers: (number | boolean[])[];
+  userAnswers: boolean[][];
   correctlyAnsweredQuestions: boolean[];
 }
 
 export default function Results({
-  questionAnswers,
+  userAnswers,
   topicQuestions,
   correctlyAnsweredQuestions,
 }: ResultsProps) {
+
   const router = useRouter();
 
   const redoQuiz = () => {
-    removeCookie('questionAnswers');
+    removeCookie('userAnswers');
     router.push(`/quizzes/${topicQuestions[0].keyword}`);
   };
   return (
@@ -111,7 +111,7 @@ export default function Results({
               <AnswerContainer
                 backgroundColor={
                   topicQuestions[index].correctAnswers[0] === true &&
-                  questionAnswers[index + 1][0] === true
+                  userAnswers[index][0] === true
                     ? '#76f5c0'
                     : ''
                 }
@@ -119,16 +119,14 @@ export default function Results({
                 <Checkbox
                   type="checkbox"
                   disabled
-                  checked={
-                    questionAnswers[index + 1][0] === true ? true : false
-                  }
+                  checked={userAnswers[index][0] === true ? true : false}
                 />
                 <AnswerText>{el.answer1}</AnswerText>
               </AnswerContainer>
               <AnswerContainer
                 backgroundColor={
                   topicQuestions[index].correctAnswers[1] === true &&
-                  questionAnswers[index + 1][1] === true
+                  userAnswers[index][1] === true
                     ? '#76f5c0'
                     : ''
                 }
@@ -136,16 +134,14 @@ export default function Results({
                 <Checkbox
                   type="checkbox"
                   disabled
-                  checked={
-                    questionAnswers[index + 1][1] === true ? true : false
-                  }
+                  checked={userAnswers[index][1] === true ? true : false}
                 />
                 <AnswerText>{el.answer2}</AnswerText>
               </AnswerContainer>
               <AnswerContainer
                 backgroundColor={
                   topicQuestions[index].correctAnswers[2] === true &&
-                  questionAnswers[index + 1][2] === true
+                  userAnswers[index][2] === true
                     ? '#76f5c0'
                     : ''
                 }
@@ -153,16 +149,14 @@ export default function Results({
                 <Checkbox
                   type="checkbox"
                   disabled
-                  checked={
-                    questionAnswers[index + 1][2] === true ? true : false
-                  }
+                  checked={userAnswers[index][2] === true ? true : false}
                 />
                 <AnswerText>{el.answer3}</AnswerText>
               </AnswerContainer>
               <AnswerContainer
                 backgroundColor={
                   topicQuestions[index].correctAnswers[3] === true &&
-                  questionAnswers[index + 1][3] === true
+                  userAnswers[index][3] === true
                     ? '#76f5c0'
                     : ''
                 }
@@ -170,9 +164,7 @@ export default function Results({
                 <Checkbox
                   type="checkbox"
                   disabled
-                  checked={
-                    questionAnswers[index + 1][3] === true ? true : false
-                  }
+                  checked={userAnswers[index][3] === true ? true : false}
                 />
                 <AnswerText>{el.answer4}</AnswerText>
               </AnswerContainer>
@@ -186,7 +178,9 @@ export default function Results({
 }
 
 export async function getServerSideProps(context: NextPageContext) {
-  if (!context.req?.headers.cookie) {
+  const userAnswers = getUserAnswersCookie(context.req?.headers.cookie);
+
+  if (!userAnswers) {
     return {
       redirect: {
         destination: '/topics',
@@ -195,20 +189,17 @@ export async function getServerSideProps(context: NextPageContext) {
     };
   }
 
-  let { questionAnswers } = cookie.parse(context.req.headers.cookie);
-  questionAnswers = parseAnswerCookieServerSide(context.req.headers.cookie);
-
-  const topicNumber = Number(questionAnswers[0]);
+  const topicNumber = Number(userAnswers[0]);
   let topicQuestions = await findTopicQuestions(topicNumber);
   topicQuestions = sortTopicQuestions(topicQuestions);
   const correctlyAnsweredQuestions = await checkIfAnswersCorrect(
-    questionAnswers.slice(1),
+    userAnswers.slice(1),
     topicQuestions,
   );
 
   return {
     props: {
-      questionAnswers,
+      userAnswers: userAnswers.slice(1),
       topicNumber,
       topicQuestions,
       correctlyAnsweredQuestions,
