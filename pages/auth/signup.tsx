@@ -19,14 +19,6 @@ import {
 import { PrimHeading } from '../../components/TextElements';
 import { validateRegistrationDataClientSide } from '../../util/validation';
 
-interface ExtendedSessionType extends Session {
-  user?: {
-    _id?: string;
-    name?: string | null | undefined;
-    email?: string | null | undefined;
-    image?: string | null | undefined;
-  };
-}
 interface CredentialsType {
   name: string;
   email: string;
@@ -39,7 +31,11 @@ interface Errors {
   password?: string;
 }
 
-export default function SignUp({ user }: ExtendedSessionType) {
+export default function SignUp({
+  setLoggedIn,
+}: {
+  setLoggedIn: (value: boolean) => void;
+}) {
   const router = useRouter();
   const [credentials, setCredentials] = useState<CredentialsType>({
     name: '',
@@ -71,13 +67,12 @@ export default function SignUp({ user }: ExtendedSessionType) {
     const { name, email, password } = credentials;
 
     if (Object.values(errors).every((el) => el === undefined)) {
-      const res = await fetch('/api/auth/register', {
+      const res = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          user,
           name,
           email,
           password,
@@ -88,6 +83,7 @@ export default function SignUp({ user }: ExtendedSessionType) {
       setErrors(message);
 
       if (ok) {
+        setLoggedIn(true);
         setTimeout(() => router.push('/auth/signin'), 2000);
       }
     }
@@ -137,15 +133,4 @@ export default function SignUp({ user }: ExtendedSessionType) {
       </Form>
     </NarrowContainer>
   );
-}
-
-export async function getServerSideProps(context: NextPageContext) {
-  const session: ExtendedSessionType | null = await getSession({
-    req: context.req,
-  });
-  if (session) {
-    return {
-      props: session.user,
-    };
-  }
 }

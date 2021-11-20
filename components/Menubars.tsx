@@ -1,10 +1,50 @@
-import { useSession } from 'next-auth/client';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { MouseEvent, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { getCookies } from '../util/cookies';
+import { AuthenticationButton } from './Buttons';
+
+// General Styled Components
+
+const NavbarAllItemsList = styled.ul`
+  height: 100%;
+  display: grid;
+  align-content: space-between;
+`;
+
+const NavbarFirstItemBlock = styled.div`
+  display: grid;
+  grid-gap: 30px;
+`;
+
+const NavbarSecondItemBlock = styled.div`
+  display: grid;
+  grid-gap: 20px;
+`;
+
+const NavbarLink = styled.a`
+  display: block;
+  text-decoration: none;
+  cursor: pointer;
+`;
+
+const NavbarItemBlock = styled.div`
+  display: flex;
+  grid-gap: 16px;
+  align-items: center;
+  width: 90%;
+  padding-bottom: 5px;
+`;
+
+const NavbarItemText = styled.li`
+  list-style-type: none;
+  font-size: 20px;
+  font-weight: 600;
+  color: #212529;
+`;
+
+// Regular Navbar Styled Components
 
 const RegularNavbarContainer = styled.nav`
   position: fixed;
@@ -25,87 +65,7 @@ const RegularLogoContainer = styled.div`
   height: 60px;
 `;
 
-const RegularNavbarItemContainer = styled.ul`
-  display: grid;
-  grid-gap: 30px;
-`;
-
-const RegularNavbarLink = styled.a`
-  display: block;
-  text-decoration: none;
-  cursor: pointer;
-`;
-
-const RegularNavbarItemBlock = styled.div`
-  display: flex;
-  grid-gap: 16px;
-  align-items: center;
-  width: 90%;
-  padding-bottom: 5px;
-`;
-
-const RegularNavbarItemText = styled.li`
-  list-style-type: none;
-  font-size: 20px;
-  font-weight: 600;
-  color: #212529;
-`;
-
-export function RegularNavbar({ loggedIn }: { loggedIn: boolean }) {
-  console.log(loggedIn);
-
-  const [session] = useSession();
-  console.log(getCookies('sessionTokenRegister'));
-
-  return (
-    <RegularNavbarContainer>
-      <RegularNavbarItemContainer>
-        <RegularLogoContainer>
-          <Image src="/images/logo.svg" layout="fill" />
-        </RegularLogoContainer>
-
-        <Link href="/" passHref>
-          <RegularNavbarLink>
-            <RegularNavbarItemBlock>
-              <Image src="/images/dashboard.svg" width="30px" height="30px" />
-              <RegularNavbarItemText>Dashboard</RegularNavbarItemText>
-            </RegularNavbarItemBlock>
-          </RegularNavbarLink>
-        </Link>
-        <Link href="/topics" passHref>
-          <RegularNavbarLink>
-            <RegularNavbarItemBlock>
-              <Image src="/images/topics.svg" width="30px" height="30px" />
-              <RegularNavbarItemText>Topics</RegularNavbarItemText>
-            </RegularNavbarItemBlock>
-          </RegularNavbarLink>
-        </Link>
-
-        {loggedIn && (
-          <>
-            <Link href="/submit" passHref>
-              <RegularNavbarLink>
-                <RegularNavbarItemBlock>
-                  <Image src="/images/submit.svg" width="30px" height="30px" />
-
-                  <RegularNavbarItemText>Submit</RegularNavbarItemText>
-                </RegularNavbarItemBlock>
-              </RegularNavbarLink>
-            </Link>
-            <Link href="/profile" passHref>
-              <RegularNavbarLink>
-                <RegularNavbarItemBlock>
-                  <Image src="/images/profile.svg" width="30px" height="30px" />
-                  <RegularNavbarItemText>User Profile</RegularNavbarItemText>
-                </RegularNavbarItemBlock>
-              </RegularNavbarLink>
-            </Link>
-          </>
-        )}
-      </RegularNavbarItemContainer>
-    </RegularNavbarContainer>
-  );
-}
+// Mobile Navbar Styled Components
 
 const MobileNavbarContainer = styled.nav`
   position: fixed;
@@ -144,20 +104,23 @@ const MobileNavbarMenuButton = styled.button`
   cursor: pointer;
 `;
 
-const MobileNavbarMenuItemsContainer = styled.ul`
-  display: grid;
-  grid-gap: 40px;
-  align-content: flex-start;
+const MobileBarDropDownMenu = styled.div`
   position: fixed;
   top: 70px;
   width: 100%;
   height: 100vh;
-  padding: 60px 30px;
+  padding: 30px 30px;
   z-index: 1;
   background-color: #76f5c0;
   @media (min-width: 900px) {
     display: none;
   }
+`;
+
+const MobileNavbarAllItemsList = styled.ul`
+  height: 90%;
+  display: grid;
+  align-content: space-between;
 `;
 
 const MobileNavbarItemButton = styled.button`
@@ -177,7 +140,108 @@ const MobileNavbarItemText = styled.li`
   color: #212529;
 `;
 
-export function MobileNavbar({ loggedIn }: { loggedIn: boolean }) {
+// Navbar Components
+
+export function RegularNavbar({
+  loggedIn,
+  setLoggedIn,
+}: {
+  loggedIn: boolean;
+  setLoggedIn: (value: boolean) => void;
+}) {
+  const router = useRouter();
+
+  const handleSignOutClick = async () => {
+    const response = await fetch('/api/auth/signout', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    const status = await response.json();
+    if (status.ok) {
+      setLoggedIn(false);
+      router.reload();
+    }
+  };
+  return (
+    <RegularNavbarContainer>
+      <NavbarAllItemsList>
+        <NavbarFirstItemBlock>
+          <RegularLogoContainer>
+            <Image src="/images/logo.svg" layout="fill" />
+          </RegularLogoContainer>
+
+          <Link href="/" passHref>
+            <NavbarLink>
+              <NavbarItemBlock>
+                <Image src="/images/dashboard.svg" width="30px" height="30px" />
+                <NavbarItemText>Dashboard</NavbarItemText>
+              </NavbarItemBlock>
+            </NavbarLink>
+          </Link>
+          <Link href="/topics" passHref>
+            <NavbarLink>
+              <NavbarItemBlock>
+                <Image src="/images/topics.svg" width="30px" height="30px" />
+                <NavbarItemText>Topics</NavbarItemText>
+              </NavbarItemBlock>
+            </NavbarLink>
+          </Link>
+
+          {loggedIn && (
+            <>
+              <Link href="/submit" passHref>
+                <NavbarLink>
+                  <NavbarItemBlock>
+                    <Image
+                      src="/images/submit.svg"
+                      width="30px"
+                      height="30px"
+                    />
+
+                    <NavbarItemText>Submit</NavbarItemText>
+                  </NavbarItemBlock>
+                </NavbarLink>
+              </Link>
+              <Link href="/profile" passHref>
+                <NavbarLink>
+                  <NavbarItemBlock>
+                    <Image
+                      src="/images/profile.svg"
+                      width="30px"
+                      height="30px"
+                    />
+                    <NavbarItemText>User Profile</NavbarItemText>
+                  </NavbarItemBlock>
+                </NavbarLink>
+              </Link>
+            </>
+          )}
+        </NavbarFirstItemBlock>
+        <NavbarSecondItemBlock>
+          {!loggedIn && <AuthenticationButton>Log In</AuthenticationButton>}
+          {loggedIn && (
+            <AuthenticationButton onClick={handleSignOutClick}>
+              Log Out
+            </AuthenticationButton>
+          )}
+          <AuthenticationButton onClick={() => router.push('/auth/signup')}>
+            Register
+          </AuthenticationButton>
+        </NavbarSecondItemBlock>
+      </NavbarAllItemsList>
+    </RegularNavbarContainer>
+  );
+}
+
+export function MobileNavbar({
+  loggedIn,
+  setLoggedIn,
+}: {
+  loggedIn: boolean;
+  setLoggedIn: (value: boolean) => void;
+}) {
   const router = useRouter();
   const [displayMenuItems, setDisplayMenuItems] = useState(false);
 
@@ -190,6 +254,19 @@ export function MobileNavbar({ loggedIn }: { loggedIn: boolean }) {
 
     router.push(`/${itemName}`);
     setTimeout(() => setDisplayMenuItems(!displayMenuItems), 700);
+  };
+
+  const handleSignOutClick = async () => {
+    const response = await fetch('/api/auth/signout', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    const status = await response.json();
+    if (status.ok) {
+      setLoggedIn(false);
+    }
   };
 
   useEffect(() => {
@@ -213,28 +290,52 @@ export function MobileNavbar({ loggedIn }: { loggedIn: boolean }) {
         />
       </MobileNavbarContainer>
       {displayMenuItems && (
-        <MobileNavbarMenuItemsContainer>
-          <MobileNavbarItemButton id="" onClick={handleItemClick}>
-            <Image src="/images/dashboard.svg" width="30px" height="30px" />
-            <MobileNavbarItemText>Dashboard</MobileNavbarItemText>
-          </MobileNavbarItemButton>
-          <MobileNavbarItemButton id="topics" onClick={handleItemClick}>
-            <Image src="/images/topics.svg" width="30px" height="30px" />
-            <MobileNavbarItemText>Topics</MobileNavbarItemText>
-          </MobileNavbarItemButton>
-          {loggedIn && (
-            <>
-              <MobileNavbarItemButton id="submit" onClick={handleItemClick}>
-                <Image src="/images/submit.svg" width="30px" height="30px" />
-                <MobileNavbarItemText>Submit</MobileNavbarItemText>
+        <MobileBarDropDownMenu>
+          <MobileNavbarAllItemsList>
+            <NavbarFirstItemBlock>
+              <MobileNavbarItemButton id="" onClick={handleItemClick}>
+                <Image src="/images/dashboard.svg" width="30px" height="30px" />
+                <MobileNavbarItemText>Dashboard</MobileNavbarItemText>
               </MobileNavbarItemButton>
-              <MobileNavbarItemButton id="profile" onClick={handleItemClick}>
-                <Image src="/images/profile.svg" width="30px" height="30px" />
-                <MobileNavbarItemText>Profile</MobileNavbarItemText>
+              <MobileNavbarItemButton id="topics" onClick={handleItemClick}>
+                <Image src="/images/topics.svg" width="30px" height="30px" />
+                <MobileNavbarItemText>Topics</MobileNavbarItemText>
               </MobileNavbarItemButton>
-            </>
-          )}
-        </MobileNavbarMenuItemsContainer>
+              {loggedIn && (
+                <>
+                  <MobileNavbarItemButton id="submit" onClick={handleItemClick}>
+                    <Image
+                      src="/images/submit.svg"
+                      width="30px"
+                      height="30px"
+                    />
+                    <MobileNavbarItemText>Submit</MobileNavbarItemText>
+                  </MobileNavbarItemButton>
+                  <MobileNavbarItemButton
+                    id="profile"
+                    onClick={handleItemClick}
+                  >
+                    <Image
+                      src="/images/profile.svg"
+                      width="30px"
+                      height="30px"
+                    />
+                    <MobileNavbarItemText>Profile</MobileNavbarItemText>
+                  </MobileNavbarItemButton>
+                </>
+              )}
+            </NavbarFirstItemBlock>
+            <NavbarSecondItemBlock>
+              {!loggedIn && <AuthenticationButton>Log In</AuthenticationButton>}
+              {loggedIn && (
+                <AuthenticationButton onClick={handleSignOutClick}>
+                  Log Out
+                </AuthenticationButton>
+              )}
+              <AuthenticationButton>Register</AuthenticationButton>
+            </NavbarSecondItemBlock>
+          </MobileNavbarAllItemsList>
+        </MobileBarDropDownMenu>
       )}
     </>
   );

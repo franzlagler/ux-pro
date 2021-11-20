@@ -33,7 +33,8 @@ export const getUserAnswersCookie = (cookieToParse: string | undefined) => {
     return undefined;
   }
   const foundCookie = cookie.parse(cookieToParse);
-  return JSON.parse(foundCookie.questionAnswers);
+
+  return JSON.parse(foundCookie.userAnswers);
 };
 
 export const createSerializedRegisterSessionTokenCookie = (token: string) => {

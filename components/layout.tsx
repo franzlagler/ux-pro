@@ -1,7 +1,4 @@
-import { NextPageContext } from 'next';
 import styled, { createGlobalStyle } from 'styled-components';
-import { getSessionCookie } from '../util/cookies';
-import { findSession, findUserById } from '../util/DB/findQueries';
 import { MobileNavbar, RegularNavbar } from './Menubars';
 
 const GlobalStyle = createGlobalStyle`
@@ -44,6 +41,7 @@ const MainContainer = styled.div`
 type LayoutProps = {
   children: React.ReactNode;
   loggedIn: boolean;
+  setLoggedIn: (value: boolean) => void;
 };
 
 export default function Layout({ children, ...props }: LayoutProps) {
@@ -51,8 +49,14 @@ export default function Layout({ children, ...props }: LayoutProps) {
     <>
       <GlobalStyle />
       <PageContainer>
-        <RegularNavbar loggedIn={props.loggedIn} />
-        <MobileNavbar loggedIn={props.loggedIn} />
+        <RegularNavbar
+          loggedIn={props.loggedIn}
+          setLoggedIn={props.setLoggedIn}
+        />
+        <MobileNavbar
+          loggedIn={props.loggedIn}
+          setLoggedIn={props.setLoggedIn}
+        />
         <MainContainer>{children}</MainContainer>
       </PageContainer>
     </>

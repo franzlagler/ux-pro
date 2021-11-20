@@ -10,6 +10,8 @@ import {
   PrimHeading,
   SuccessMessage,
 } from '../components/TextElements';
+import { getSessionCookie } from '../util/cookies';
+import { findSession, findUserById } from '../util/DB/findQueries';
 
 const TextArea = styled.textarea`
   width: 100%;
@@ -23,11 +25,7 @@ const TextArea = styled.textarea`
   resize: none;
 `;
 
-interface SessionProp {
-  session: { _id: string };
-}
-
-export default function Submit({ session }: SessionProp) {
+export default function Submit() {
   const [inputData, setInputData] = useState({ title: '', textProposal: '' });
   const [status, setStatus] = useState('');
 
@@ -86,18 +84,19 @@ export default function Submit({ session }: SessionProp) {
 }
 
 export async function getServerSideProps(context: NextPageContext) {
-  const session = await getSession({ req: context.req });
+  const currentSessionToken = getSessionCookie(context.req?.headers.cookie);
+  const validSession = await findSession(currentSessionToken);
 
-  if (!session) {
+  if (!validSession) {
     return {
       redirect: {
-        destination: '/auth/login',
+        destination: '/auth/signin',
         permanent: false,
       },
     };
   }
 
   return {
-    props: { session },
+    props: {},
   };
 }

@@ -27,7 +27,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, [checkSession]);
   return (
     <ReduxProvider store={store}>
-      <Layout loggedIn={loggedIn}>
+      <Layout loggedIn={loggedIn} setLoggedIn={setLoggedIn}>
         <Component {...pageProps} setLoggedIn={setLoggedIn} />
       </Layout>
     </ReduxProvider>

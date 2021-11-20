@@ -19,7 +19,6 @@ export default async function LogInHandler(
       const matchingPasswords = await compare(password, user.passwordHashed);
       if (matchingPasswords) {
         const token = crypto.randomBytes(64).toString('base64');
-        console.log(token);
 
         await addSession(user._id.toString(), token);
 

@@ -62,6 +62,15 @@ export const RegularButton = styled.button<{
   }
 `;
 
+export const AuthenticationButton = styled.button`
+  width: fit-content;
+  background-color: inherit;
+  border: none;
+  font-size: 20px;
+  font-weight: 800;
+  cursor: pointer;
+`;
+
 export const AnswerButton = styled.button`
   display: flex;
   justify-content: center;

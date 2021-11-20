@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { Session } from 'next-auth';
-import { getSession } from 'next-auth/client';
+import { findSession, findUserById } from '../../util/DB/findQueries';
 
 const nodemailer = require('nodemailer');
 
@@ -18,11 +17,13 @@ export default async function submitTopicProposalsHandler(
   res: NextApiResponse,
 ) {
   if (req.method === 'POST') {
-    const session: ExtendedSessionType | null = await getSession({ req });
+    const currentSessionToken = req.cookies.sessionTokenRegister;
 
-    if (session) {
+    const validSession = await findSession(currentSessionToken);
+
+    if (validSession) {
       try {
-        const user = session.user;
+        const foundUser = await findUserById(validSession.userId);
         const { title, textProposal } = req.body;
 
         const transporter = nodemailer.createTransport({
@@ -35,7 +36,7 @@ export default async function submitTopicProposalsHandler(
         });
 
         const info = await transporter.sendMail({
-          from: `${user?.name}<${user?.email}>`,
+          from: `${foundUser?.name}<${foundUser?.email}>`,
           to: 'christy.ferry53@ethereal.email',
           subject: 'New Topic Proposal',
           text: `${title}

@@ -1,7 +1,5 @@
 import { Document } from 'bson';
 import { NextPageContext } from 'next';
-import { Session } from 'next-auth';
-import { getSession } from 'next-auth/client';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
@@ -19,15 +17,6 @@ import {
   findTopicQuestions,
 } from '../../util/DB/findQueries';
 import { sortTopicQuestions } from '../../util/quiz';
-
-interface ExtendedSessionType extends Session {
-  user?: {
-    _id?: string;
-    name?: string | null | undefined;
-    email?: string | null | undefined;
-    image?: string | null | undefined;
-  };
-}
 
 const SingleResultContainer = styled.div`
   position: relative;

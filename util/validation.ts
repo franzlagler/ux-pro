@@ -10,7 +10,7 @@ export const validateRegistrationDataServerSide = (
   } else if (!email || !email.includes('@')) {
     return false;
   } else if (
-    !/^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!"§$%&/()\[\]{}?+*#'\-_])[A-Za-z0-9!"§$%&/()\[\]{}?+*#'\-_]{8,}$/.test(
+    !/^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!"§$%&/()[\]{}?+*#'\-_])[A-Za-z0-9!"§$%&/()[\]{}?+*#'\-_]{8,}$/.test(
       password,
     )
   ) {
@@ -44,7 +44,7 @@ const validatePassword = (givenValue: string) => {
   if (!givenValue) {
     return 'Enter a password.';
   } else if (
-    !/^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!"§$%&/()\[\]{}?+*#'\-_])[A-Za-z0-9!"§$%&/()\[\]{}?+*#'\-_]{8,}$/.test(
+    !/^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!"§$%&/()\[\]{}?+*#'\-_])[A-Za-z0-9!"§$%&/()[\]{}?+*#'\-_]{8,}$/.test(
       givenValue,
     )
   ) {
@@ -63,19 +63,4 @@ export const validateRegistrationDataClientSide = (
   } else if (fieldId === 'password') {
     return validatePassword(fieldValue);
   }
-};
-
-export const validateTopicProposalServerSide = (
-  title: string,
-  textProposal: string,
-) => {
-  if (!/^[a-zA-Z/d.,;:-!?()/§$%&+*#]{5,}$/.test(title)) {
-    return false;
-  }
-
-  if (!/^[a-zA-Z/d.,;:-!?()/§$%&+*#]{30,}$/.test(textProposal)) {
-    return false;
-  }
-
-  return true;
 };

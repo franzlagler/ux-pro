@@ -185,13 +185,13 @@ export default function Home({
 export async function getServerSideProps(context: NextPageContext) {
   const sessionToken = getSessionCookie(context.req?.headers.cookie);
 
-  if (!sessionToken) {
+  const validSession = await findSession(sessionToken);
+  if (!validSession) {
     return {
       props: {},
     };
   }
-  const sessionEntry = await findSession(sessionToken);
-  const foundUser = await findUserById(sessionEntry?.userId);
+  const foundUser = await findUserById(validSession?.userId);
   const foundProfile = await findProfile(foundUser?._id.toString());
 
   const allTopics = await findAllTopics();

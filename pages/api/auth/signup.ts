@@ -1,6 +1,12 @@
+import crypto from 'node:crypto';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { findUserById } from '../../../util/DB/findQueries';
-import { addProfile, addUser } from '../../../util/DB/insertQueries';
+import { createSerializedRegisterSessionTokenCookie } from '../../../util/cookies';
+import { findUserByEmail, findUserById } from '../../../util/DB/findQueries';
+import {
+  addProfile,
+  addSession,
+  addUser,
+} from '../../../util/DB/insertQueries';
 import { validateRegistrationDataServerSide } from '../../../util/validation';
 
 export default async function registrationHandler(
@@ -8,20 +14,27 @@ export default async function registrationHandler(
   res: NextApiResponse,
 ) {
   if (req.method === 'POST') {
-    const { user, name, email, password } = req.body;
+    const { name, email, password } = req.body;
 
     const validData = validateRegistrationDataServerSide(name, email, password);
 
     if (validData) {
-      const userExists = await findUserById(user._id);
+      const userExists = await findUserByEmail(email);
 
       if (!userExists) {
         const newUserId = await addUser(name, email, password);
         await addProfile(newUserId);
 
+        const token = crypto.randomBytes(64).toString('base64');
+
+        await addSession(newUserId, token);
+
+        const cookie = createSerializedRegisterSessionTokenCookie(token);
+
         res
-          .status(201)
-          .json({ ok: true, message: 'User successfully created' });
+          .status(200)
+          .setHeader('set-Cookie', cookie)
+          .json({ ok: true, message: 'User has been succesfully created.' });
       } else {
         res.status(422).json({ ok: false, message: 'User already exists' });
       }
