@@ -1,5 +1,4 @@
 import { NextPageContext } from 'next';
-import { getSession } from 'next-auth/client';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import styled from 'styled-components';
 import { RegularButton } from '../components/Buttons';
@@ -11,7 +10,7 @@ import {
   SuccessMessage,
 } from '../components/TextElements';
 import { getSessionCookie } from '../util/cookies';
-import { findSession, findUserById } from '../util/DB/findQueries';
+import { findSession } from '../util/DB/findQueries';
 
 const TextArea = styled.textarea`
   width: 100%;
@@ -50,9 +49,14 @@ export default function Submit() {
         textProposal: inputData.textProposal,
       }),
     });
-    setInputData({ title: '', textProposal: '' });
 
-    setStatus('Email has been successfully sent!');
+    if (response.ok) {
+      setInputData({ title: '', textProposal: '' });
+
+      setStatus('Email has been successfully sent!');
+    } else {
+      setStatus('Sending proposal failed. Try again.');
+    }
   };
   return (
     <NarrowContainer>

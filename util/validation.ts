@@ -44,7 +44,7 @@ const validatePassword = (givenValue: string) => {
   if (!givenValue) {
     return 'Enter a password.';
   } else if (
-    !/^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!"§$%&/()\[\]{}?+*#'\-_])[A-Za-z0-9!"§$%&/()[\]{}?+*#'\-_]{8,}$/.test(
+    !/^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!"§$%&/()[\]{}?+*#'\-_])[A-Za-z0-9!"§$%&/()[\]{}?+*#'\-_]{8,}$/.test(
       givenValue,
     )
   ) {

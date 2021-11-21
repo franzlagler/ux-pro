@@ -35,15 +35,16 @@ export default async function submitTopicProposalsHandler(
         });
 
         res.status(201).json({
+          ok: true,
           message: `Successfuly sent message with ID: ${info.messageId}`,
         });
       } catch (err) {
-        res.status(500).json({ message: err });
+        res.status(500).json({ ok: false, message: err });
       }
     } else {
-      res.status(401).json({ message: 'Unauthorized Action' });
+      res.status(401).json({ ok: false, message: 'Unauthorized Action' });
     }
   } else {
-    res.status(401).json({ message: 'Unauthorized Method' });
+    res.status(401).json({ ok: false, message: 'Unauthorized Method' });
   }
 }

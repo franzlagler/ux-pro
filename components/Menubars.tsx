@@ -2,7 +2,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { MouseEvent, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
+import { checkSession, logOut } from '../state/loggedInSlice';
+import { RootState } from '../state/store';
 import { AuthenticationButton, AuthenticationLink } from './Buttons';
 
 // General Styled Components
@@ -142,14 +145,11 @@ const MobileNavbarItemText = styled.li`
 
 // Navbar Components
 
-export function RegularNavbar({
-  loggedIn,
-  setLoggedIn,
-}: {
-  loggedIn: boolean;
-  setLoggedIn: (value: boolean) => void;
-}) {
+export function RegularNavbar() {
   const router = useRouter();
+
+  const loggedIn = useSelector((state: RootState) => state.loggedIn.isLoggedIn);
+  const dispatch = useDispatch();
 
   const handleSignOutClick = async () => {
     const response = await fetch('/api/auth/signout', {
@@ -160,10 +160,14 @@ export function RegularNavbar({
     });
     const status = await response.json();
     if (status.ok) {
-      setLoggedIn(false);
+      dispatch(logOut);
       router.reload();
     }
   };
+
+  useEffect(() => {
+    dispatch(checkSession());
+  }, [dispatch]);
   return (
     <RegularNavbarContainer>
       <NavbarAllItemsList>
@@ -239,14 +243,10 @@ export function RegularNavbar({
   );
 }
 
-export function MobileNavbar({
-  loggedIn,
-  setLoggedIn,
-}: {
-  loggedIn: boolean;
-  setLoggedIn: (value: boolean) => void;
-}) {
+export function MobileNavbar() {
   const router = useRouter();
+  const loggedIn = useSelector((state: RootState) => state.loggedIn.isLoggedIn);
+  const dispatch = useDispatch();
   const [displayMenuItems, setDisplayMenuItems] = useState(false);
 
   const handleMenuClick = () => {
@@ -269,7 +269,7 @@ export function MobileNavbar({
     });
     const status = await response.json();
     if (status.ok) {
-      setLoggedIn(false);
+      dispatch(logOut());
       router.reload();
     }
   };
@@ -281,6 +281,10 @@ export function MobileNavbar({
       }
     });
   }, []);
+
+  useEffect(() => {
+    dispatch(checkSession());
+  }, [dispatch]);
   return (
     <>
       <MobileNavbarContainer>

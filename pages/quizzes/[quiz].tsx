@@ -167,7 +167,7 @@ export default function Quiz({
     const finalAnswers = getCookies('userAnswers');
 
     if (foundUser) {
-      const result = await fetch('/api/submitResults', {
+      await fetch('/api/submitResults', {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

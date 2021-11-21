@@ -40,8 +40,6 @@ const MainContainer = styled.div`
 
 type LayoutProps = {
   children: React.ReactNode;
-  loggedIn: boolean;
-  setLoggedIn: (value: boolean) => void;
 };
 
 export default function Layout({ children, ...props }: LayoutProps) {
@@ -49,14 +47,8 @@ export default function Layout({ children, ...props }: LayoutProps) {
     <>
       <GlobalStyle />
       <PageContainer>
-        <RegularNavbar
-          loggedIn={props.loggedIn}
-          setLoggedIn={props.setLoggedIn}
-        />
-        <MobileNavbar
-          loggedIn={props.loggedIn}
-          setLoggedIn={props.setLoggedIn}
-        />
+        <RegularNavbar />
+        <MobileNavbar />
         <MainContainer>{children}</MainContainer>
       </PageContainer>
     </>

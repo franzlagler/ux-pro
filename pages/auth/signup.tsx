@@ -3,6 +3,7 @@ import { Session } from 'next-auth';
 import { getSession } from 'next-auth/client';
 import { useRouter } from 'next/router';
 import React, { ChangeEvent, FocusEvent, FormEvent, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { RegularButton } from '../../components/Buttons';
 import {
   ButtonContainer,
@@ -17,6 +18,7 @@ import {
   Label,
 } from '../../components/FormFields';
 import { PrimHeading } from '../../components/TextElements';
+import { logIn } from '../../state/loggedInSlice';
 import { validateRegistrationDataClientSide } from '../../util/validation';
 
 interface CredentialsType {
@@ -44,6 +46,8 @@ export default function SignUp({
   });
 
   const [errors, setErrors] = useState<Errors>({});
+
+  const dispatch = useDispatch();
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const fieldId = e.currentTarget.id;
@@ -83,7 +87,7 @@ export default function SignUp({
       setErrors(message);
 
       if (ok) {
-        setLoggedIn(true);
+        dispatch(logIn());
         setTimeout(() => router.push('/auth/signin'), 2000);
       }
     }

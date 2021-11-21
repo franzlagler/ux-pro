@@ -1,7 +1,7 @@
 import crypto from 'node:crypto';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createSerializedRegisterSessionTokenCookie } from '../../../util/cookies';
-import { findUserByEmail, findUserById } from '../../../util/DB/findQueries';
+import { findUserByEmail } from '../../../util/DB/findQueries';
 import {
   addProfile,
   addSession,

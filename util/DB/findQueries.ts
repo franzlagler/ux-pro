@@ -1,4 +1,4 @@
-import { ObjectId, ObjectID } from 'bson';
+import { ObjectID } from 'bson';
 import { connectToDatabase } from './mongodb';
 
 export const findAllTopics = async () => {

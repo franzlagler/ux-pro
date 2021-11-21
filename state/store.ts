@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { createWrapper } from 'next-redux-wrapper';
-import currentTopicReducer from './selectedAnswers';
+import loggedInReducer from './loggedInSlice';
 
 export const store = configureStore({
   reducer: {
-    currentTopic: currentTopicReducer,
+    loggedIn: loggedInReducer,
   },
 });
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;

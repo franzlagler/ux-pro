@@ -1,4 +1,3 @@
-import { Document } from 'bson';
 import cookie, { serialize } from 'cookie';
 import Cookies from 'js-cookie';
 

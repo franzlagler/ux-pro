@@ -1,6 +1,7 @@
 import { NextPageContext } from 'next';
 import { useRouter } from 'next/router';
 import { ChangeEvent, FormEvent, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { RegularButton } from '../../components/Buttons';
 import {
   NarrowContainer,
@@ -13,6 +14,7 @@ import {
   Label,
 } from '../../components/FormFields';
 import { ErrorMessage, PrimHeading } from '../../components/TextElements';
+import { logIn } from '../../state/loggedInSlice';
 import { getSessionCookie } from '../../util/cookies';
 import { findSession } from '../../util/DB/findQueries';
 
@@ -24,6 +26,8 @@ export default function SignIn({
   const router = useRouter();
   const [credentials, setCredentials] = useState({ email: '', password: '' });
   const [errorMessage, setErrorMessage] = useState({ email: '', password: '' });
+
+  const dispatch = useDispatch();
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const fieldId = e.currentTarget.id;
@@ -43,7 +47,7 @@ export default function SignIn({
     });
 
     if (res.ok) {
-      setLoggedIn(true);
+      dispatch(logIn());
       router.push('/');
     } else {
       const message = await res.json();

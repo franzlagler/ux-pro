@@ -1,7 +1,5 @@
 import Markdown from 'markdown-to-jsx';
 import { NextPageContext } from 'next';
-import { Session } from 'next-auth';
-import { getSession } from 'next-auth/client';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
