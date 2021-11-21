@@ -15,7 +15,7 @@ export const LinkButton = styled.a`
   font-size: 20px;
   font-weight: 600;
   text-decoration: none;
-  color: inherit;
+  color: #212529;
   box-shadow: 1px 1px 0 1px #212529;
   cursor: pointer;
   &:active {
@@ -43,7 +43,7 @@ export const RegularButton = styled.button<{
   font-size: 20px;
   font-weight: 600;
   text-decoration: none;
-  color: inherit;
+  color: #212529;
   box-shadow: 1px 1px 0 1px #212529;
   cursor: pointer;
   &:active {
@@ -68,6 +68,7 @@ export const AuthenticationButton = styled.button`
   border: none;
   font-size: 20px;
   font-weight: 600;
+  color: #212529;
   cursor: pointer;
 `;
 
@@ -92,7 +93,7 @@ export const AnswerButton = styled.button`
   border: 5px solid #212529;
   border-radius: 15px;
   box-shadow: 1px 1px 0 1px #212529;
-
+  color: #212529;
   font-size: 20px;
   font-weight: 600;
   cursor: pointer;
@@ -180,6 +181,7 @@ export const DropdownButton = styled.button`
   border-top: ${(props: { firstOfType: boolean; open: boolean }) =>
     props.firstOfType ? '0' : '5px solid #212529'};
   border-radius: 2px;
+  color: #212529;
   font-size: 24px;
   font-weight: 800;
   cursor: pointer;
