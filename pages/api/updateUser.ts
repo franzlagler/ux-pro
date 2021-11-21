@@ -18,7 +18,6 @@ export default async function updateUserHandler(
           updateKey,
           updateValue,
         );
-        console.log(result);
 
         res.status(201).json({ message: result });
       } catch (err) {

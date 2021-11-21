@@ -19,7 +19,6 @@ export const setCookieValue = (topic: number, length: number) => {
   for (let i = 1; i <= length; i++) {
     array.push([false, false, false, false]);
   }
-  console.log(array);
 
   return array;
 };

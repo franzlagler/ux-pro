@@ -47,7 +47,7 @@ export default function Topic({
   const [likeTopic, setLikeTopic] = useState(isTopicLiked);
 
   const handleLikeClick = async () => {
-    setLikeTopic(!isTopicLiked);
+    setLikeTopic(!likeTopic);
     await fetch('/api/updateLikedTopics', {
       method: 'PATCH',
       headers: {

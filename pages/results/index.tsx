@@ -27,8 +27,8 @@ const AnswerContainer = styled.div`
   display: flex;
   grid-gap: 16px;
   align-items: center;
-  padding: 10px;
   margin-bottom: 5px;
+  padding: 10px;
   background-color: ${(props: { backgroundColor: string }) =>
     props.backgroundColor};
   border-radius: 5px;
@@ -42,7 +42,7 @@ const Checkbox = styled.input`
   appearance: none;
   min-width: 20px;
   min-height: 20px;
-  border: 1px solid #212529;
+  border: 5px solid #212529;
   border-radius: 3px;
 
   &:checked {
@@ -70,7 +70,6 @@ export default function Results({
   topicQuestions,
   correctlyAnsweredQuestions,
 }: ResultsProps) {
-
   const router = useRouter();
 
   const redoQuiz = () => {

@@ -1,17 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { Session } from 'next-auth';
-import { getSession } from 'next-auth/client';
 import { findProfile, findSession } from '../../util/DB/findQueries';
 import { insertLatestResults } from '../../util/DB/insertQueries';
-
-interface ExtendedSessionType extends Session {
-  user?: {
-    _id?: string;
-    name?: string | null | undefined;
-    email?: string | null | undefined;
-    image?: string | null | undefined;
-  };
-}
 
 export default async function submitResultsHandler(
   req: NextApiRequest,
@@ -37,12 +26,11 @@ export default async function submitResultsHandler(
         if (results.length > 3) {
           results.pop();
         }
-        console.log(results);
 
         await insertLatestResults(validSession.userId, results, finalAnswers);
 
         res
-          .status(201)
+          .status(200)
           .json({ message: 'Successfully implemented new result' });
       } catch (err) {
         res.status(500).json({ message: err });

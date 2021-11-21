@@ -21,8 +21,8 @@ export default async function submitTopicProposalsHandler(
           host: 'smtp.ethereal.email',
           port: 587,
           auth: {
-            user: 'christy.ferry53@ethereal.email',
-            pass: 'v4jqpxURZ8DcsHrrZr',
+            user: process.env.ETHEREAL_EMAIL,
+            pass: process.env.ETHEREAL_PASSWORD,
           },
         });
 

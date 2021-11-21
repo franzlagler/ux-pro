@@ -33,8 +33,8 @@ const AnswerContainer = styled.div`
   display: flex;
   grid-gap: 10px;
   align-items: center;
-  padding: 10px;
   margin-bottom: 5px;
+  padding: 10px;
   background-color: ${(props: { backgroundColor: string }) =>
     props.backgroundColor};
   border-radius: 5px;
@@ -221,8 +221,6 @@ export async function getServerSideProps(context: NextPageContext) {
         },
       };
     }
-
-    console.log(result);
 
     let topicQuestions = await findTopicQuestions(Number(topicNumber));
     topicQuestions = sortTopicQuestions(topicQuestions);

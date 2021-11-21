@@ -1,5 +1,4 @@
 import { NextPageContext } from 'next';
-import { getSession, signIn } from 'next-auth/client';
 import { useRouter } from 'next/router';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { RegularButton } from '../../components/Buttons';
@@ -14,6 +13,8 @@ import {
   Label,
 } from '../../components/FormFields';
 import { ErrorMessage, PrimHeading } from '../../components/TextElements';
+import { getSessionCookie } from '../../util/cookies';
+import { findSession } from '../../util/DB/findQueries';
 
 export default function SignIn({
   setLoggedIn,
@@ -46,7 +47,6 @@ export default function SignIn({
       router.push('/');
     } else {
       const message = await res.json();
-      console.log(message);
 
       if (message.email) {
         setErrorMessage({ password: '', email: message.email });
@@ -92,9 +92,11 @@ export default function SignIn({
 }
 
 export async function getServerSideProps(context: NextPageContext) {
-  const session = await getSession({ req: context.req });
+  const currentSessionToken = getSessionCookie(context.req?.headers.cookie);
 
-  if (session) {
+  const validSession = await findSession(currentSessionToken);
+
+  if (validSession) {
     return {
       redirect: {
         destination: '/profile',

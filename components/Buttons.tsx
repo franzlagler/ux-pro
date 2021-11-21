@@ -5,7 +5,7 @@ export const LinkButton = styled.a`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 200px;
+  width: 220px;
   height: 50px;
   margin: 20px 0;
   background-color: ${(props: { purple?: Boolean }) =>
@@ -15,7 +15,7 @@ export const LinkButton = styled.a`
   font-size: 20px;
   font-weight: 600;
   text-decoration: none;
-  color: inherit;
+  color: #212529;
   box-shadow: 1px 1px 0 1px #212529;
   cursor: pointer;
   &:active {
@@ -24,7 +24,7 @@ export const LinkButton = styled.a`
   }
 
   @media (max-width: 500px) {
-    width: 160px;
+    width: 200px;
     height: 50px;
     font-size: 20px;
   }
@@ -34,16 +34,16 @@ export const RegularButton = styled.button<{
   purple?: boolean;
   center?: boolean;
 }>`
-  width: 220px;
-  height: 50px;
   margin: ${(props) => (props.center ? '20px auto' : '20px 0')};
   background-color: ${(props) => (props.purple ? '#ada7ff' : '#76f5c0')};
+  width: 220px;
+  height: 50px;
   border: 5px solid #212529;
   border-radius: 15px;
   font-size: 20px;
   font-weight: 600;
   text-decoration: none;
-  color: inherit;
+  color: #212529;
   box-shadow: 1px 1px 0 1px #212529;
   cursor: pointer;
   &:active {
@@ -56,7 +56,7 @@ export const RegularButton = styled.button<{
   }
 
   @media (max-width: 500px) {
-    width: 160px;
+    width: 200px;
     height: 50px;
     font-size: 20px;
   }
@@ -67,7 +67,8 @@ export const AuthenticationButton = styled.button`
   background-color: inherit;
   border: none;
   font-size: 20px;
-  font-weight: 800;
+  font-weight: 600;
+  color: #212529;
   cursor: pointer;
 `;
 
@@ -77,7 +78,7 @@ export const AuthenticationLink = styled.a`
   border: none;
   color: #212529;
   font-size: 20px;
-  font-weight: 800;
+  font-weight: 600;
   cursor: pointer;
   text-decoration: none;
 `;
@@ -92,13 +93,17 @@ export const AnswerButton = styled.button`
   border: 5px solid #212529;
   border-radius: 15px;
   box-shadow: 1px 1px 0 1px #212529;
-
+  color: #212529;
   font-size: 20px;
   font-weight: 600;
   cursor: pointer;
   &:active {
     transform: translateX(1px);
     box-shadow: none;
+  }
+  @media (max-width: 500px) {
+    width: 100%;
+    height: 140px;
   }
 `;
 
@@ -180,6 +185,7 @@ export const DropdownButton = styled.button`
   border-top: ${(props: { firstOfType: boolean; open: boolean }) =>
     props.firstOfType ? '0' : '5px solid #212529'};
   border-radius: 2px;
+  color: #212529;
   font-size: 24px;
   font-weight: 800;
   cursor: pointer;

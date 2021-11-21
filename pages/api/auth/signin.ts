@@ -13,7 +13,6 @@ export default async function LogInHandler(
     const { email, password } = req.body;
 
     const user = await findUserByEmail(email);
-    console.log(user);
 
     if (user) {
       const matchingPasswords = await compare(password, user.passwordHashed);
