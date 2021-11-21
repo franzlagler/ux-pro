@@ -101,7 +101,7 @@ export default function Results({
         ) => {
           return (
             <SingleResultContainer key={el._id}>
-              <HeadingContainer>
+              <QuestionContainer>
                 <SecHeading>
                   {index + 1}. {el.question}
                 </SecHeading>
@@ -114,7 +114,7 @@ export default function Results({
                   width="30px"
                   height="30px"
                 />
-              </HeadingContainer>
+              </QuestionContainer>
               <AnswerContainer
                 backgroundColor={
                   topicQuestions[index].correctAnswers[0] === true &&
