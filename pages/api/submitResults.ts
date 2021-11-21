@@ -26,7 +26,6 @@ export default async function submitResultsHandler(
         if (results.length > 3) {
           results.pop();
         }
-        .log(results);
 
         await insertLatestResults(validSession.userId, results, finalAnswers);
 

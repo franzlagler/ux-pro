@@ -51,6 +51,8 @@ export const checkIfAnswersCorrect = (
     }
     questionIsCorrectlyAnswered.push(isCorrect);
   }
+  console.log(questionIsCorrectlyAnswered);
+
   return questionIsCorrectlyAnswered;
 };
 
