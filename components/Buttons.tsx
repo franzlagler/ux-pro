@@ -24,7 +24,7 @@ export const LinkButton = styled.a`
   }
 
   @media (max-width: 500px) {
-    width: 160px;
+    width: 200px;
     height: 50px;
     font-size: 20px;
   }
@@ -56,7 +56,7 @@ export const RegularButton = styled.button<{
   }
 
   @media (max-width: 500px) {
-    width: 160px;
+    width: 200px;
     height: 50px;
     font-size: 20px;
   }
