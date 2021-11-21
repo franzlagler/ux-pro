@@ -26,7 +26,7 @@ import {
   findThreeLatestQuizResults,
   findUserById,
 } from '../util/DB/findQueries';
-import { getPreviousQuizTitle } from '../util/quiz';
+import { checkDateOfQuiz, getPreviousQuizTitle } from '../util/quiz';
 import { filterFavoriteTopics } from '../util/topics';
 
 const PreviousQuizzesContainer = styled.div`
@@ -53,6 +53,7 @@ interface HomeProps {
     title: string;
     isCorrectlyAnswered: boolean[];
     keyword: string;
+    date: Date;
   }[];
 }
 
@@ -67,13 +68,6 @@ export default function Home({
     false,
   ]);
 
-  const checkDateOfQuiz = (date: string) => {
-    const [quizDay, quizMonth, quizYear] = date.split('/');
-
-    const [currentDay, currentMonth, currentYear] = new Date()
-      .toLocaleDateString()
-      .split('/');
-  };
   useEffect(() => {
     removeCookie('userAnswers');
   }, []);
@@ -90,6 +84,7 @@ export default function Home({
                 (
                   quizResult: {
                     title: string;
+                    date: Date;
                     isCorrectlyAnswered: boolean[];
                     keyword: string;
                   },
@@ -120,8 +115,8 @@ export default function Home({
                             : ' All questions were answered correctly last time.'}
                         </ParaText>
                         <ParaText>
-                          <BoldText>Last Attempt:</BoldText> More than three
-                          days ago.
+                          <BoldText>Last Attempt:</BoldText>{' '}
+                          {checkDateOfQuiz(quizResult.date)}
                         </ParaText>
                         <Link href={`/results/${quizResult.keyword}`} passHref>
                           <LinkLink>View Results in Detail</LinkLink>
@@ -191,7 +186,7 @@ export async function getServerSideProps(context: NextPageContext) {
       props: {},
     };
   }
-  const foundUser = await findUserById(validSession?.userId);
+  const foundUser = await findUserById(validSession.userId);
   const foundProfile = await findProfile(foundUser?._id.toString());
 
   const allTopics = await findAllTopics();

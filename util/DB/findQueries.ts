@@ -133,6 +133,7 @@ export const findThreeLatestQuizResults = async (
     if (singleResult) {
       delete singleResult._id;
       singleResult.title = previousQuizzesTitle[i].title;
+      singleResult.date = singleResult.date.toString();
       latestThreeQuizResults.push(singleResult);
     }
   }

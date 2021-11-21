@@ -33,11 +33,7 @@ interface Errors {
   password?: string;
 }
 
-export default function SignUp({
-  setLoggedIn,
-}: {
-  setLoggedIn: (value: boolean) => void;
-}) {
+export default function SignUp() {
   const router = useRouter();
   const [credentials, setCredentials] = useState<CredentialsType>({
     name: '',

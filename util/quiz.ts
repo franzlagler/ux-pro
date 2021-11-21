@@ -67,3 +67,20 @@ export const sortTopicQuestions = (topicQuestions: Document[]) => {
     return curQuestionNumber - nextQuestionNumber;
   });
 };
+
+export const checkDateOfQuiz = (date: Date) => {
+  const currentDate = new Date().getTime();
+
+  const storedDate = new Date(date).getTime();
+
+  if (currentDate - storedDate < 24 * 60 * 60 * 1000) {
+    return 'Today';
+  } else if (
+    currentDate - storedDate >= 24 * 60 * 60 * 1000 &&
+    currentDate - storedDate <= 2 * 24 * 60 * 60 * 1000
+  ) {
+    return 'Yesterday';
+  } else {
+    return 'More than two days ago';
+  }
+};

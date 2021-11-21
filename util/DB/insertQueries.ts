@@ -51,7 +51,7 @@ export const insertNewResultEntry = async (
     profileId,
     keyword: `${profileId}-${finalAnswers[0]}`,
     topicNumber: finalAnswers[0],
-    date: new Date().toLocaleDateString(),
+    date: new Date(),
     questionAnswers: finalAnswers.slice(1),
     isCorrectlyAnswered,
   });

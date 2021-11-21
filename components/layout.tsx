@@ -1,6 +1,7 @@
 import styled, { createGlobalStyle } from 'styled-components';
 import { MobileNavbar, RegularNavbar } from './Menubars';
 
+/*eslint-disable */
 const GlobalStyle = createGlobalStyle`
 * {
   box-sizing: border-box;
@@ -14,8 +15,9 @@ body {
   background-color: #f8f9fa;
   font-family: 'Inter', sans-serif;
   font-weight: 400;
-}
 
+
+}
 
 `;
 
@@ -42,7 +44,7 @@ type LayoutProps = {
   children: React.ReactNode;
 };
 
-export default function Layout({ children, ...props }: LayoutProps) {
+export default function Layout({ children }: LayoutProps) {
   return (
     <>
       <GlobalStyle />
