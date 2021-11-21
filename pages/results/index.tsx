@@ -27,8 +27,8 @@ const AnswerContainer = styled.div`
   display: flex;
   grid-gap: 16px;
   align-items: center;
-  padding: 10px;
   margin-bottom: 5px;
+  padding: 10px;
   background-color: ${(props: { backgroundColor: string }) =>
     props.backgroundColor};
   border-radius: 5px;
