@@ -82,9 +82,3 @@ export const SingleTopicImageContainer = styled.div`
   border-radius: 0 0 3% 3%;
   overflow-y: hidden;
 `;
-
-export const HeadingContainer = styled.div`
-  display: flex;
-  align-items: center;
-  grid-gap: 20px;
-`;

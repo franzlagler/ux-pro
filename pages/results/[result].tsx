@@ -4,10 +4,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { RegularButton } from '../../components/Buttons';
-import {
-  HeadingContainer,
-  WideContainer,
-} from '../../components/ContainerElements';
+import { WideContainer } from '../../components/ContainerElements';
 import { PrimHeading, SecHeading } from '../../components/TextElements';
 import { getSessionCookie, removeCookie } from '../../util/cookies';
 import {
@@ -30,8 +27,18 @@ const SingleResultContainer = styled.div`
   /* Hello*/
 `;
 
+export const QuestionContainer = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 30px;
+  grid-template-rows: 1fr;
+  align-items: center;
+  grid-gap: 20px;
+`;
+
 const AnswerContainer = styled.div`
-  display: flex;
+  display: grid;
+  grid-template-columns: 35px 1fr;
+  grid-template-rows: 1fr;
   grid-gap: 10px;
   align-items: center;
   margin-bottom: 5px;
@@ -95,7 +102,7 @@ export default function Results({ result, topicQuestions }: ResultsProps) {
         ) => {
           return (
             <SingleResultContainer key={el._id}>
-              <HeadingContainer>
+              <QuestionContainer>
                 <SecHeading>
                   {index + 1}. {el.question}
                 </SecHeading>
@@ -108,7 +115,7 @@ export default function Results({ result, topicQuestions }: ResultsProps) {
                   width="30px"
                   height="30px"
                 />
-              </HeadingContainer>
+              </QuestionContainer>
               <AnswerContainer
                 backgroundColor={
                   topicQuestions[index].correctAnswers[0] === true &&

@@ -21,11 +21,22 @@ const SingleResultContainer = styled.div`
   background-color: #fff;
   border: 5px solid #212529;
   border-radius: 15px;
+  /* Hello*/
+`;
+
+export const QuestionContainer = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 30px;
+  grid-template-rows: 1fr;
+  align-items: center;
+  grid-gap: 20px;
 `;
 
 const AnswerContainer = styled.div`
-  display: flex;
-  grid-gap: 16px;
+  display: grid;
+  grid-template-columns: 35px 1fr;
+  grid-template-rows: 1fr;
+  grid-gap: 10px;
   align-items: center;
   margin-bottom: 5px;
   padding: 10px;
@@ -40,8 +51,8 @@ const AnswerText = styled.p`
 
 const Checkbox = styled.input`
   appearance: none;
-  min-width: 20px;
-  min-height: 20px;
+  width: 25px;
+  height: 25px;
   border: 5px solid #212529;
   border-radius: 3px;
 
