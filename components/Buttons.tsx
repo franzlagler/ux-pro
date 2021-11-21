@@ -5,7 +5,7 @@ export const LinkButton = styled.a`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 200px;
+  width: 220px;
   height: 50px;
   margin: 20px 0;
   background-color: ${(props: { purple?: Boolean }) =>
@@ -34,10 +34,10 @@ export const RegularButton = styled.button<{
   purple?: boolean;
   center?: boolean;
 }>`
-  width: 220px;
-  height: 50px;
   margin: ${(props) => (props.center ? '20px auto' : '20px 0')};
   background-color: ${(props) => (props.purple ? '#ada7ff' : '#76f5c0')};
+  width: 220px;
+  height: 50px;
   border: 5px solid #212529;
   border-radius: 15px;
   font-size: 20px;
@@ -100,6 +100,10 @@ export const AnswerButton = styled.button`
   &:active {
     transform: translateX(1px);
     box-shadow: none;
+  }
+  @media (max-width: 500px) {
+    width: 100%;
+    height: 140px;
   }
 `;
 
