@@ -27,7 +27,7 @@ const SingleResultContainer = styled.div`
   /* Hello*/
 `;
 
-export const QuestionContainer = styled.div`
+const QuestionContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 30px;
   grid-template-rows: 1fr;

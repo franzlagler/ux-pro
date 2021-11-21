@@ -3,10 +3,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { RegularButton } from '../../components/Buttons';
-import {
-  HeadingContainer,
-  WideContainer,
-} from '../../components/ContainerElements';
+import { WideContainer } from '../../components/ContainerElements';
 import { PrimHeading, SecHeading } from '../../components/TextElements';
 import { getUserAnswersCookie, removeCookie } from '../../util/cookies';
 import { findTopicQuestions } from '../../util/DB/findQueries';
@@ -24,7 +21,7 @@ const SingleResultContainer = styled.div`
   /* Hello*/
 `;
 
-export const QuestionContainer = styled.div`
+const QuestionContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 30px;
   grid-template-rows: 1fr;
