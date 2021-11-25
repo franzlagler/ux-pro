@@ -1,6 +1,6 @@
 const clickElement = (attr: string) => {
   cy.get(attr).should('be.visible').click();
-  cy.wait(500);
+  cy.wait(1000);
 };
 
 describe('DoQuiz', () => {
