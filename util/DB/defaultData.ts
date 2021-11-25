@@ -57,8 +57,8 @@ export const defaultQuizQuestions = [
     question: 'What is problematic about the styling of the shown button?',
     answer1: 'No class selector was used for the styling.',
     answer2: 'Its pseudo class :focus was changed.',
-    answer3: "The outline property was set to 'none'",
-    answer4: 'The color of the button was changed',
+    answer3: "The outline property was set to 'none'.",
+    answer4: 'The color of the button was changed.',
     correctAnswers: [false, false, true, false],
   },
   {
