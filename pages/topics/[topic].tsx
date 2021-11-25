@@ -42,7 +42,10 @@ export default function Topic({
   isTopicLiked,
   foundProfile,
 }: TopicProps) {
-  const [likeTopic, setLikeTopic] = useState(isTopicLiked);
+  const [likeTopic, setLikeTopic] = useState(() => {
+    if (isTopicLiked) return isTopicLiked;
+    return false;
+  });
 
   const handleLikeClick = async () => {
     setLikeTopic(!likeTopic);
@@ -72,7 +75,13 @@ export default function Topic({
 
       <PrimHeading>{foundTopic.title}</PrimHeading>
       <ButtonContainer>
-        <LikeButton liked={likeTopic} onClick={handleLikeClick} />
+        {foundProfile && (
+          <LikeButton
+            liked={likeTopic}
+            onClick={handleLikeClick}
+            data-cy="like-button"
+          />
+        )}
         <Link href="https://twitter.com/intent/tweet" passHref>
           <SocialMediaButton url="/images/twitter.svg" />
         </Link>
@@ -108,6 +117,7 @@ export default function Topic({
       <CenteredButtonContainer>
         <LinkButton
           href={`/quizzes/${foundTopic.file}-${foundTopic.topicNumber}-1`}
+          data-cy="start-quiz-button"
         >
           Start Quiz
         </LinkButton>

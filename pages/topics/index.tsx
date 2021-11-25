@@ -19,11 +19,11 @@ export default function Topics({
     <WideContainer>
       <PrimHeading>Topics</PrimHeading>
       <TopicsContainer>
-        {allTopics.map((topic) => {
+        {allTopics.map((topic, index) => {
           return (
             <SingleTopicContainer key={topic.file}>
               <Link href={`/topics/${topic.file}`} passHref>
-                <SingleTopicContainerLink>
+                <SingleTopicContainerLink data-cy={`topic-${index}`}>
                   <SecHeading>{topic.title}</SecHeading>
                   <SingleTopicImageContainer>
                     <Image src={`/images/${topic.file}-1.svg`} layout="fill" />

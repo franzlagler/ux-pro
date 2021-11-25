@@ -210,6 +210,7 @@ export default function Quiz({
           id="1"
           name="answer1"
           onClick={updateSelectedAnswers}
+          data-cy="answer-button-1"
         >
           {currentQuestion.answer1}
         </AnswerButton>
@@ -246,13 +247,17 @@ export default function Quiz({
           Back
         </RegularButton>
         {currentQuestionNumber < 3 && (
-          <RegularButton purple onClick={goToNextQuestion}>
+          <RegularButton
+            purple
+            data-cy="next-button"
+            onClick={goToNextQuestion}
+          >
             Next
           </RegularButton>
         )}
         {currentQuestionNumber === 3 && (
           <Link href="/results" passHref>
-            <RegularButton purple onClick={finishQuiz}>
+            <RegularButton purple data-cy="finish-button" onClick={finishQuiz}>
               Finish
             </RegularButton>
           </Link>

@@ -1,4 +1,5 @@
 import { ObjectID } from 'bson';
+import { userInfo } from 'os';
 import { connectToDatabase } from './mongodb';
 
 export const findAllTopics = async () => {
@@ -61,6 +62,7 @@ export const findCurrentQuestion = async (keyword: string) => {
   return currentQuestion;
 };
 
+// Only used for signing in
 export const findUserByEmail = async (email: string | undefined) => {
   if (email) {
     const { db } = await connectToDatabase();

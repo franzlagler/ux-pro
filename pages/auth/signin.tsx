@@ -68,6 +68,7 @@ export default function SignIn() {
             id="email"
             value={credentials.email}
             onChange={handleInputChange}
+            data-cy="email-field"
           />
           {errorMessage.email && (
             <ErrorMessage>{errorMessage.email}</ErrorMessage>
@@ -80,12 +81,13 @@ export default function SignIn() {
             id="password"
             value={credentials.password}
             onChange={handleInputChange}
+            data-cy="password-field"
           />
           {errorMessage.password && (
             <ErrorMessage>{errorMessage.password}</ErrorMessage>
           )}
         </FieldContainer>
-        <RegularButton>Sign In</RegularButton>
+        <RegularButton data-cy="signIn-button">Sign In</RegularButton>
       </Form>
     </NarrowContainer>
   );

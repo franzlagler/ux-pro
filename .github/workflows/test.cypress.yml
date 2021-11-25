@@ -1,0 +1,35 @@
+name: Cypress tests
+on: [push]
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    steps:
+      # Use Cypress GitHub action to run tests
+      # https://github.com/cypress-io/github-action
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          build: yarn migrate up
+          start: yarn dev
+        # Environment variables for Ley and Next.js
+        # to be able to connect to the database
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          PGPASSWORD: ${{ secrets.PGPASSWORD }}
+          CYPRESS_test_email: ${{secrets.CYPRESS_test_email}}
+          CYPRESS_test_password: ${{secrets.CYPRESS_test_password}}
+
+      # Store any Cypress screenshots on test failure
+      - uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+      # Store any Cypress videos on test failure
+      - uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: cypress-videos
+          path: cypress/videos

@@ -74,13 +74,18 @@ export const checkDateOfQuiz = (date: Date) => {
   const storedDate = new Date(date).getTime();
 
   if (currentDate - storedDate < 24 * 60 * 60 * 1000) {
-    return 'Today';
+    return 'Today.';
   } else if (
     currentDate - storedDate >= 24 * 60 * 60 * 1000 &&
-    currentDate - storedDate <= 2 * 24 * 60 * 60 * 1000
+    currentDate - storedDate < 2 * 24 * 60 * 60 * 1000
   ) {
-    return 'Yesterday';
+    return 'Yesterday.';
+  } else if (
+    currentDate - storedDate >= 2 * 24 * 60 * 60 * 1000 &&
+    currentDate - storedDate < 3 * 24 * 60 * 60 * 1000
+  ) {
+    return 'Two days ago.';
   } else {
-    return 'More than two days ago';
+    return 'More than two days ago.';
   }
 };

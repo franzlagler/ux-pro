@@ -86,7 +86,7 @@ export default function Results({
   };
   return (
     <WideContainer>
-      <PrimHeading>Results</PrimHeading>
+      <PrimHeading data-cy="results-heading">Results</PrimHeading>
       {topicQuestions.map(
         (
           el: {

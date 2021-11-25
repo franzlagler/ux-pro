@@ -77,7 +77,7 @@ export default function Home({
       {userFavoriteTopics && (
         <>
           <ParaText>Explore your previous UX learning journey.</ParaText>
-          <SecHeading>Previous Quizzes</SecHeading>
+          <SecHeading data-cy="previous-quizzes">Previous Quizzes</SecHeading>
           {userQuizzesResults?.length !== 0 && (
             <PreviousQuizzesContainer>
               {userQuizzesResults?.map(
@@ -140,7 +140,9 @@ export default function Home({
                     <SingleTopicContainer key={topic.file}>
                       <Link href={`/topics/${topic.file}`} passHref>
                         <SingleTopicContainerLink>
-                          <SecHeading>{topic.title}</SecHeading>
+                          <SecHeading data-cy="liked-topic-0">
+                            {topic.title}
+                          </SecHeading>
                           <SingleTopicImageContainer>
                             <Image
                               src={`/images/${topic.file}-1.svg`}

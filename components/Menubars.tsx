@@ -161,6 +161,7 @@ export function RegularNavbar() {
     const status = await response.json();
     if (status.ok) {
       dispatch(logOut);
+      router.push('/');
       router.reload();
     }
   };
@@ -180,7 +181,9 @@ export function RegularNavbar() {
             <NavbarLink>
               <NavbarItemBlock>
                 <Image src="/images/dashboard.svg" width="30px" height="30px" />
-                <NavbarItemText>Dashboard</NavbarItemText>
+                <NavbarItemText data-cy="dashboard-item">
+                  Dashboard
+                </NavbarItemText>
               </NavbarItemBlock>
             </NavbarLink>
           </Link>
@@ -188,7 +191,7 @@ export function RegularNavbar() {
             <NavbarLink>
               <NavbarItemBlock>
                 <Image src="/images/topics.svg" width="30px" height="30px" />
-                <NavbarItemText>Topics</NavbarItemText>
+                <NavbarItemText data-cy="topic-item">Topics</NavbarItemText>
               </NavbarItemBlock>
             </NavbarLink>
           </Link>

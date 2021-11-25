@@ -3,8 +3,12 @@ import { Document } from 'bson';
 
 export const fetchTopicData = (file: string) => {
   if (/^[a-z-]*$/.test(file)) {
-    const data = fs.readFileSync(`public/texts/${file}.md`, 'utf-8');
-    return data;
+    try {
+      const data = fs.readFileSync(`public/texts/${file}.md`, 'utf-8');
+      return data;
+    } catch (err) {
+      return null;
+    }
   }
 };
 
