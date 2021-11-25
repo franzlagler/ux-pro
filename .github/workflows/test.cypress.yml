@@ -19,16 +19,3 @@ jobs:
           PGPASSWORD: ${{ secrets.PGPASSWORD }}
           CYPRESS_test_email: ${{secrets.CYPRESS_test_email}}
           CYPRESS_test_password: ${{secrets.CYPRESS_test_password}}
-
-      # Store any Cypress screenshots on test failure
-      - uses: actions/upload-artifact@v2
-        if: failure()
-        with:
-          name: cypress-screenshots
-          path: cypress/screenshots
-      # Store any Cypress videos on test failure
-      - uses: actions/upload-artifact@v2
-        if: failure()
-        with:
-          name: cypress-videos
-          path: cypress/videos
