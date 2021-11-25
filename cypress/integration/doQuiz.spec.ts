@@ -19,3 +19,5 @@ describe('DoQuiz', () => {
     cy.get('[data-cy="results-heading"]').should('be.visible');
   });
 });
+
+export {};

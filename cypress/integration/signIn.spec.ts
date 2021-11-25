@@ -13,3 +13,5 @@ describe('SignIn', () => {
     cy.get('[data-cy="previous-quizzes"]').should('be.visible');
   });
 });
+
+export {};
