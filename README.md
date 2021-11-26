@@ -51,6 +51,10 @@ If you would like to set up the project yourself, follow these steps:
 - You need to create a JSON object in there with the following two properties
   - "test_email" with the same value as in CYPRESS_TEST_EMAIL
   - "test_password" with the same value as in CYPRESS_TEST_PASSWORD
-- The next step is to insert the default data (such as topics and questions) into the database.
-- Under util/DB/ you will find a file called defaultData that has all the necessary information.
--
+- The next step is to migrate the default data (such as topics and questions) to the database.
+- Under util/DB/ you will find a file called 'defaultData' that contains everything you need.
+- In the same you will also find a commented out API Handler. We're going to use that in order to inser the data into the database.
+- Copy all of the commented out code and create a new file under 'pages/api'. You can call it whatever you like.
+- Insert the copied code into the file.
+- Now it's time to start the server. In Next.js, you can do that by typing 'yarn dev' into the terminal.
+- You can now access the project
