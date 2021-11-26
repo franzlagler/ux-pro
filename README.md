@@ -1,34 +1,56 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# UX Pro (Learning Platform)
 
-## Getting Started
+## Description
 
-First, run the development server:
+UX Pro is a full-stack application that enables developers to improve their knowledge about UX and accessiblity. Users can choose from a variety of topics. Each topic comes with a short text that tells essential aspects about the respective topic. Once the user thinks they have familiarized themselves enough with the content of the text, they can test their knowledge in a little quiz.
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+Each question within the quiz consists of 4 answers from which at least one is correct. Users can move from forth and back between questions if they want to make changes. After pressing the 'Finish' button, the answers of the user are being checked and the results will be displayed. If an a question has been answered entirely correct, there will be a tick beside the question. Moreover, each individual answers that has been answered correctly will also be highlighted.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+If a user additionally also creates an account and logs in to it, the functionality increases even more: The three latest quiz results will be stored in the database and can be accessed on the dashboard. Furthermore, users can like their favorite topics which will then also appear on the dashboard.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+## Technologies
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+- Next.js
+- Typescript
+- Redux Toolkit
+- MongoDB
+- Styled Components
+- Jest unit tests
+- Cypress E2E tests
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## Setup
 
-## Learn More
+If you would like to set up the project yourself, follow these steps:
 
-To learn more about Next.js, take a look at the following resources:
+### MongoDB Atlas
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- The application requires MongoDB Atlas in order to work.
+- It is therefore necessary to create an [MongoDB Atlas account](https://account.mongodb.com/account/login) if you haven't already got one yet.
+- Once your done with that, you need to create a new cluster if you haven't go one yet.
+- Stick to the [instructions of the official documentation](https://docs.atlas.mongodb.com/tutorial/create-new-cluster/) to do tht.
+- Make sure to select a **shared database** as it is the only one that is for free.
+- After having done all of the previous steps you should see your cluster under Deployment/Databases.
+- Click on 'Browse Collections'.
+- Create a new database with a name you would like.
+- Once you've created the database go back to the main page under Deployment/Databases.
+- Click on connect and then click on 'Connect your application'.
+- Copy the connection string starting with 'mongodb+srv...'. You will need it at a later point.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+### Cloning the Project
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- Clone the project using git clone.
+- After you're done with that open your code editor and terminal.
+- Run yarn to install all the require dependencies.
+- Create a .env.local file in the root directory.
+- You need to declare four environment variables there.
+  - MONGODB_URI (with the value of the connection string you copied from MongoDB Atlas)
+  - DB_Name (with the value of the name of the database that is in the cluster)
+  - CYPRESS_TEST_EMAIL (with the value of a test user email that you would use for Cypress tests. Make sure to also create the respective account for that):
+  - CYPRESS_TEST_PASSWORD (with the value of a test user password that you would use for Cypress tests. Make sure this is the same test user as in your CYPRESS_TEST_EMAIL)
+- Create a cypress.env.json file.
+- You need to create a JSON object in there with the following two properties
+  - "test_email" with the same value as in CYPRESS_TEST_EMAIL
+  - "test_password" with the same value as in CYPRESS_TEST_PASSWORD
+- The next step is to insert the default data (such as topics and questions) into the database.
+- Under util/DB/ you will find a file called defaultData that has all the necessary information.
+-

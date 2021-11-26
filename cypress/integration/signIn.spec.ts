@@ -8,7 +8,6 @@ describe('SignIn', () => {
       .should('be.visible')
       .type(Cypress.env('test_password'));
     cy.get('[data-cy="signIn-button"]').should('be.visible').click();
-    cy.wait(2000);
 
     cy.get('[data-cy="previous-quizzes"]').should('be.visible');
   });

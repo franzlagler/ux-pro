@@ -210,7 +210,7 @@ export default function Quiz({
           id="1"
           name="answer1"
           onClick={updateSelectedAnswers}
-          data-cy="answer-button-1"
+          data-cy={`answer-button-${currentQuestionNumber}`}
         >
           {currentQuestion.answer1}
         </AnswerButton>

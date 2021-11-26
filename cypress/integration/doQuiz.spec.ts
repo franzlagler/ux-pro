@@ -1,6 +1,5 @@
 const clickElement = (attr: string) => {
   cy.get(attr).should('be.visible').click();
-  cy.wait(1000);
 };
 
 describe('DoQuiz', () => {
@@ -11,9 +10,9 @@ describe('DoQuiz', () => {
     clickElement('[data-cy="start-quiz-button"]');
     clickElement('[data-cy="answer-button-1"]');
     clickElement('[data-cy="next-button"]');
-    clickElement('[data-cy="answer-button-1"]');
+    clickElement('[data-cy="answer-button-2"]');
     clickElement('[data-cy="next-button"]');
-    clickElement('[data-cy="answer-button-1"]');
+    clickElement('[data-cy="answer-button-3"]');
     clickElement('[data-cy="finish-button"]');
 
     cy.get('[data-cy="results-heading"]').should('be.visible');
