@@ -52,10 +52,11 @@ const ImageContainer = styled.div`
   width: 100%;
   height: 400px;
   @media (max-width: 500px) {
-    height: 300px;
+    height: 240px;
   }
-  @media (max-width: 500px) {
-    height: 200px;
+
+  @media (max-width: 380px) {
+    height: 210px;
   }
 `;
 
