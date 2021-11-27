@@ -16,6 +16,8 @@ export const NarrowContainer = styled.div`
   position: relative;
   min-height: 100vh;
   min-height: -webkit-fill-available;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
   max-width: 600px;
   margin: 0 auto;
   padding: 1% 0;
