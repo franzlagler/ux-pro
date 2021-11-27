@@ -1,6 +1,3 @@
-import { NextPageContext } from 'next';
-import { Session } from 'next-auth';
-import { getSession } from 'next-auth/client';
 import { useRouter } from 'next/router';
 import React, { ChangeEvent, FocusEvent, FormEvent, useState } from 'react';
 import { useDispatch } from 'react-redux';

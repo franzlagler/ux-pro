@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { findProfile, findSession } from '../../util/DB/findQueries';
-import { updateProfileFavoriteTopics } from '../../util/DB/updateQueries';
+import { updateProfile } from '../../util/DB/updateQueries';
 import { updateLikedTopicsArray } from '../../util/topics';
 
 export default async function handler(
@@ -20,8 +20,9 @@ export default async function handler(
           topicNumber,
           foundProfile?.favoriteTopics,
         );
-        const updatedProfile = await updateProfileFavoriteTopics(
+        const updatedProfile = await updateProfile(
           foundProfile?.userId,
+          'favoriteTopics',
           newLikedTopicsArray,
         );
 
