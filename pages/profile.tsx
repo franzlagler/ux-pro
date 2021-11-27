@@ -1,37 +1,47 @@
 import { NextPageContext } from 'next';
-import { ChangeEvent, MouseEvent, useState } from 'react';
+import React, { ChangeEvent, MouseEvent, useState } from 'react';
 import { RegularButton } from '../components/Buttons';
 import {
   ButtonContainer,
   NarrowContainer,
   PrimHeadingContainer,
 } from '../components/ContainerElements';
-import { Field, FieldContainer, Label } from '../components/FormFields';
+import {
+  Field,
+  FieldContainer,
+  Label,
+  ToggleRadioButton,
+} from '../components/FormFields';
 import { ParaText, PrimHeading } from '../components/TextElements';
 import { getSessionCookie } from '../util/cookies';
-import { findSession, findUserById } from '../util/DB/findQueries';
+import { findProfile, findSession, findUserById } from '../util/DB/findQueries';
 
 interface ProfileProps {
   foundUser: {
     name: string;
     email: string;
   };
+  showInstructions: boolean;
 }
 
 interface ProfileData {
   name: string;
   email: string;
-  [key: string]: string | undefined;
+  passwordHashed: string;
+  showInstructions: boolean;
+  [key: string]: string | undefined | boolean;
 }
 
-export default function Profile({ foundUser }: ProfileProps) {
+export default function Profile({ foundUser, showInstructions }: ProfileProps) {
   const [profileData, setProfileData] = useState<ProfileData>({
     name: foundUser.name,
     email: foundUser.email,
     passwordHashed: '*****',
+    showInstructions,
   });
 
   const [disabledFields, setDisabledFields] = useState([true, true, true]);
+  const [toggler, setToggler] = useState(showInstructions);
 
   const handleInputChange = ({
     currentTarget,
@@ -59,6 +69,19 @@ export default function Profile({ foundUser }: ProfileProps) {
 
     setProfileData({ ...profileData, [updateKey]: updateValue });
     setDisabledFields(disabledFields.map(() => true));
+  };
+
+  const handleUpdateShowInstructions = async ({
+    currentTarget,
+  }: ChangeEvent<HTMLInputElement>) => {
+    setToggler(!toggler);
+    await fetch('/api/updateShowInstructions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ newValue: currentTarget.checked }),
+    });
   };
 
   return (
@@ -188,6 +211,15 @@ export default function Profile({ foundUser }: ProfileProps) {
           </ButtonContainer>
         )}
       </FieldContainer>
+      <FieldContainer>
+        <Label htmlFor="showInstructions">Show Instructions</Label>
+        <ToggleRadioButton
+          id="showInstructions"
+          type="checkbox"
+          onChange={handleUpdateShowInstructions}
+          checked={toggler}
+        />
+      </FieldContainer>
     </NarrowContainer>
   );
 }
@@ -208,8 +240,10 @@ export async function getServerSideProps(context: NextPageContext) {
     }
     const foundUser = await findUserById(validSession.userId);
     delete foundUser?._id;
+    const foundProfile = await findProfile(validSession.userId);
+
     return {
-      props: { foundUser },
+      props: { foundUser, showInstructions: foundProfile?.showInstructions },
     };
   }
 }

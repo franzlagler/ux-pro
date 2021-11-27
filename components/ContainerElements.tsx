@@ -13,10 +13,14 @@ export const PrimHeadingContainer = styled.div`
   justify-content: center;
 `;
 export const NarrowContainer = styled.div`
+  position: relative;
   max-width: 600px;
   margin: 0 auto;
   padding: 1% 0;
-
+  overflow-x: ${(props: { noScroll?: boolean }) =>
+    props.noScroll ? 'hidden' : 'scroll'};
+  overflow-y: ${(props: { noScroll?: boolean }) =>
+    props.noScroll ? 'hidden' : 'scroll'};
   @media (max-width: 620px) {
     padding: 0 20px;
   } ;

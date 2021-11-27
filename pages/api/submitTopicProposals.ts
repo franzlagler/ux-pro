@@ -28,7 +28,7 @@ export default async function submitTopicProposalsHandler(
 
         const info = await transporter.sendMail({
           from: `${foundUser?.name}<${foundUser?.email}>`,
-          to: 'christy.ferry53@ethereal.email',
+          to: 'rolando.stroman55@ethereal.email',
           subject: 'New Topic Proposal',
           text: `${title}
         ${textProposal}`,

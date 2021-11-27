@@ -33,24 +33,15 @@ export const updateUser = async (
   }
 };
 
-export const updateProfileFavoriteTopics = async (
-  userId: string,
-  favoriteTopics: number[],
-) => {
-  const { db } = await connectToDatabase();
-  return await db
-    .collection('profiles')
-    .updateOne({ userId }, { $set: { favoriteTopics } });
-};
-
-export const updateProfileResults = async (
+export const updateProfile = async (
   userId: string | undefined,
-  newResults: number[],
+  key: string,
+  newValue: number | string | boolean | number[],
 ) => {
   const { db } = await connectToDatabase();
   return await db
     .collection('profiles')
-    .findOneAndUpdate({ userId }, { $set: { results: newResults } });
+    .updateOne({ userId }, { $set: { [key]: newValue } });
 };
 
 export const updateExistingResultEntry = async (

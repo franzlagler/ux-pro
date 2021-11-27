@@ -1,15 +1,17 @@
 import styled from 'styled-components';
 
-export const LinkButton = styled.a`
+export const LinkButton = styled.a<{
+  purple?: boolean;
+  center?: boolean;
+}>`
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   width: 220px;
   height: 50px;
-  margin: 20px 0;
-  background-color: ${(props: { purple?: Boolean }) =>
-    props.purple ? '#ada7ff' : '#76f5c0'};
+  margin: ${(props) => (props.center ? '20px auto' : '20px 0')};
+  background-color: ${(props) => (props.purple ? '#ada7ff' : '#76f5c0')};
   border: 5px solid #212529;
   border-radius: 15px;
   font-size: 20px;

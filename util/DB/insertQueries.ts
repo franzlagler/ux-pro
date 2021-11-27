@@ -1,10 +1,8 @@
 import { hash } from 'bcryptjs';
 import { checkIfAnswersCorrect, sortTopicQuestions } from '../quiz';
+import { findProfile } from './findQueries';
 import { connectToDatabase } from './mongodb';
-import {
-  updateExistingResultEntry,
-  updateProfileResults,
-} from './updateQueries';
+import { updateExistingResultEntry, updateProfile } from './updateQueries';
 
 export const addUser = async (
   name: string,
@@ -16,7 +14,7 @@ export const addUser = async (
     name,
     email,
     passwordHashed: await hash(password, 12),
-    role: 'student',
+    role: '61a24011bc509c30a527ce77',
   });
 
   return addedUser.insertedId.toString();
@@ -36,9 +34,12 @@ export const addSession = async (userId: string, token: string) => {
 
 export const addProfile = async (userId: string) => {
   const { db } = await connectToDatabase();
-  await db
-    .collection('profiles')
-    .insertOne({ userId, favoriteTopics: [], results: [] });
+  await db.collection('profiles').insertOne({
+    userId,
+    favoriteTopics: [],
+    results: [],
+    showInstructions: true,
+  });
 };
 
 export const insertNewResultEntry = async (
@@ -64,12 +65,12 @@ export const insertLatestResults = async (
 ) => {
   const { db } = await connectToDatabase();
 
-  const updatedProfile = await updateProfileResults(userId, results);
+  await updateProfile(userId, 'results', results);
 
-  const profileId = updatedProfile.value?._id.toString();
+  const foundUser = await findProfile(userId);
 
   const foundResult = await db.collection('results').findOne({
-    profileId,
+    profileId: foundUser?._id.toString(),
     topicNumber: userAnswers[0],
   });
 
@@ -87,26 +88,16 @@ export const insertLatestResults = async (
 
   if (foundResult) {
     await updateExistingResultEntry(
-      profileId,
+      foundUser?._id.toString(),
       userAnswers,
       isCorrectlyAnswered,
     );
     return;
   }
 
-  await insertNewResultEntry(profileId, userAnswers, isCorrectlyAnswered);
-};
-
-export const insertNewTopicProposal = async (
-  userId: string,
-  title: string,
-  fileName: string,
-) => {
-  const { db } = await connectToDatabase();
-  db.collection('submissions').insertOne({
-    userId,
-    date: new Date().toLocaleDateString(),
-    title,
-    fileName,
-  });
+  await insertNewResultEntry(
+    foundUser?._id.toString(),
+    userAnswers,
+    isCorrectlyAnswered,
+  );
 };
