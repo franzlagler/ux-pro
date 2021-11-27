@@ -100,12 +100,7 @@ const Checkbox = styled.input`
   }
 `;
 
-const MarkdownContainer = styled(Markdown)`
-  overflow-x: ${(props: { noScroll?: boolean }) =>
-    props.noScroll ? 'hidden' : 'scroll'};
-  overflow-y: ${(props: { noScroll?: boolean }) =>
-    props.noScroll ? 'hidden' : 'scroll'};
-`;
+const MarkdownContainer = styled(Markdown)``;
 
 export default function Topic({
   content,
@@ -165,7 +160,7 @@ export default function Topic({
   }, []);
 
   return (
-    <NarrowContainer noScroll={noScroll}>
+    <NarrowContainer>
       <CenteredButtonContainer>
         <LinkButton href="/topics" purple>
           <Image src="/images/arrow.svg" width="20px" height="20px" />{' '}
