@@ -100,6 +100,13 @@ const Checkbox = styled.input`
   }
 `;
 
+const MarkdownContainer = styled(Markdown)`
+  overflow-x: ${(props: { noScroll?: boolean }) =>
+    props.noScroll ? 'hidden' : 'scroll'};
+  overflow-y: ${(props: { noScroll?: boolean }) =>
+    props.noScroll ? 'hidden' : 'scroll'};
+`;
+
 export default function Topic({
   content,
   foundTopic,
@@ -187,7 +194,7 @@ export default function Topic({
           objectFit="cover"
         />
       </ImageContainer>
-      <Markdown
+      <MarkdownContainer
         options={{
           overrides: {
             h1: {
@@ -206,7 +213,7 @@ export default function Topic({
         }}
       >
         {content}
-      </Markdown>
+      </MarkdownContainer>
       <CenteredButtonContainer>
         <RegularButton
           data-cy="start-quiz-button"
