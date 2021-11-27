@@ -14,7 +14,8 @@ export const PrimHeadingContainer = styled.div`
 `;
 export const NarrowContainer = styled.div`
   position: relative;
-  height: 100vh;
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
   max-width: 600px;
   margin: 0 auto;
   padding: 1% 0;
