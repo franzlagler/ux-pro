@@ -8,7 +8,7 @@ Each question within the quiz consists of 4 answers from which at least one is c
 
 If a user additionally also creates an account and logs in to it, the functionality increases even more: The three latest quiz results will be stored in the database and can be accessed on the dashboard. Furthermore, users can like their favorite topics which will then also appear on the dashboard.
 
-[Test the app](ux-pro-learning-platform.herokuapp.com/)
+[Test the app](https://ux-pro-learning-platform.herokuapp.com/)
 
 ## Technologies
 
@@ -65,4 +65,12 @@ If you would like to set up the project yourself, follow these steps:
 
 ### Landing Page
 
-![Landing Page](/public/images/screenshots/topics_page.svg)
+![Landing Page](/public/images/screenshots/landing_page.svg)
+
+### Topic Page
+
+![Topic Page](/public/images/screenshots/topics_page.svg)
+
+### Quiz Page
+
+![Quiz Page](/public/images/screenshots/quiz_page.svg)
