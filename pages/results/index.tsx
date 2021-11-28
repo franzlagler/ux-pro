@@ -4,7 +4,11 @@ import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { RegularButton } from '../../components/Buttons';
 import { WideContainer } from '../../components/ContainerElements';
-import { PrimHeading, SecHeading } from '../../components/TextElements';
+import {
+  ParaText,
+  PrimHeading,
+  SecHeading,
+} from '../../components/TextElements';
 import { getUserAnswersCookie, removeCookie } from '../../util/cookies';
 import { findTopicQuestions } from '../../util/DB/findQueries';
 import { checkIfAnswersCorrect, sortTopicQuestions } from '../../util/quiz';
@@ -14,7 +18,7 @@ const SingleResultContainer = styled.div`
   width: 100%;
   height: auto;
   padding: 10px 20px;
-  margin-bottom: 20px;
+  margin: 20px 0;
   background-color: #fff;
   border: 5px solid #212529;
   border-radius: 15px;
@@ -29,7 +33,7 @@ const QuestionContainer = styled.div`
   grid-gap: 20px;
 `;
 
-const AnswerContainer = styled.div`
+const CheckboxContainer = styled.div`
   display: grid;
   grid-template-columns: 35px 1fr;
   grid-template-rows: 1fr;
@@ -37,19 +41,19 @@ const AnswerContainer = styled.div`
   align-items: center;
   margin-bottom: 5px;
   padding: 10px;
-  background-color: ${(props: { backgroundColor: string }) =>
+  background-color: ${(props: { backgroundColor?: string }) =>
     props.backgroundColor};
   border-radius: 5px;
 `;
 
-const AnswerText = styled.p`
+const CheckboxText = styled.p`
   font-size: 20px;
 `;
 
 const Checkbox = styled.input`
   appearance: none;
-  width: 25px;
-  height: 25px;
+  width: 30px;
+  height: 30px;
   border: 5px solid #212529;
   border-radius: 3px;
 
@@ -87,6 +91,24 @@ export default function Results({
   return (
     <WideContainer>
       <PrimHeading data-cy="results-heading">Results</PrimHeading>
+      <ParaText>Check out how well you performed in the quiz!</ParaText>
+      <SecHeading>Legend</SecHeading>
+      <CheckboxContainer>
+        <Image src="/images/correctAnswer.svg" width="30px" height="30px" />
+        <CheckboxText>The question is answered totally correct.</CheckboxText>
+      </CheckboxContainer>
+      <CheckboxContainer>
+        <Image src="/images/wrongAnswer.svg" width="30px" height="30px" />
+        <CheckboxText>
+          The question is not answered totally correct.
+        </CheckboxText>
+      </CheckboxContainer>
+      <CheckboxContainer backgroundColor="#76f5c0">
+        <Checkbox type="checkbox" disabled checked />
+        <CheckboxText>
+          The respective individual answer is correct.
+        </CheckboxText>
+      </CheckboxContainer>
       {topicQuestions.map(
         (
           el: {
@@ -115,7 +137,7 @@ export default function Results({
                   height="30px"
                 />
               </QuestionContainer>
-              <AnswerContainer
+              <CheckboxContainer
                 backgroundColor={
                   topicQuestions[index].correctAnswers[0] === true &&
                   userAnswers[index][0] === true
@@ -128,9 +150,9 @@ export default function Results({
                   disabled
                   checked={userAnswers[index][0] === true ? true : false}
                 />
-                <AnswerText>{el.answer1}</AnswerText>
-              </AnswerContainer>
-              <AnswerContainer
+                <CheckboxText>{el.answer1}</CheckboxText>
+              </CheckboxContainer>
+              <CheckboxContainer
                 backgroundColor={
                   topicQuestions[index].correctAnswers[1] === true &&
                   userAnswers[index][1] === true
@@ -143,9 +165,9 @@ export default function Results({
                   disabled
                   checked={userAnswers[index][1] === true ? true : false}
                 />
-                <AnswerText>{el.answer2}</AnswerText>
-              </AnswerContainer>
-              <AnswerContainer
+                <CheckboxText>{el.answer2}</CheckboxText>
+              </CheckboxContainer>
+              <CheckboxContainer
                 backgroundColor={
                   topicQuestions[index].correctAnswers[2] === true &&
                   userAnswers[index][2] === true
@@ -158,9 +180,9 @@ export default function Results({
                   disabled
                   checked={userAnswers[index][2] === true ? true : false}
                 />
-                <AnswerText>{el.answer3}</AnswerText>
-              </AnswerContainer>
-              <AnswerContainer
+                <CheckboxText>{el.answer3}</CheckboxText>
+              </CheckboxContainer>
+              <CheckboxContainer
                 backgroundColor={
                   topicQuestions[index].correctAnswers[3] === true &&
                   userAnswers[index][3] === true
@@ -173,8 +195,8 @@ export default function Results({
                   disabled
                   checked={userAnswers[index][3] === true ? true : false}
                 />
-                <AnswerText>{el.answer4}</AnswerText>
-              </AnswerContainer>
+                <CheckboxText>{el.answer4}</CheckboxText>
+              </CheckboxContainer>
             </SingleResultContainer>
           );
         },

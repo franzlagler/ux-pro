@@ -48,7 +48,14 @@ const PopupContainer = styled.div`
   width: 100vw;
   height: 100vh;
   padding: 20px;
+
   backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  /* For Firefox and older browsers */
+  @supports (not (backdrop-filter: blur(30px))) and
+    (not (-webkit-backdrop-filter: blur(30px))) {
+    background-color: #00000090;
+  }
 `;
 
 const PopupContentContainer = styled.div`
@@ -60,11 +67,11 @@ const PopupContentContainer = styled.div`
   background-color: #fff;
   border: 5px solid #212529;
   border-radius: 15px;
-  @media (max-width: 500px) {
+  @media (max-width: 900px) {
     position: absolute;
     top: calc(56%);
     width: 90%;
-    height: 80%;
+    height: fit-content;
     padding: 20px;
     overflow-x: auto;
     overflow-y: auto;
