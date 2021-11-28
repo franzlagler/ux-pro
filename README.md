@@ -63,14 +63,7 @@ If you would like to set up the project yourself, follow these steps:
 
 ## Gallery
 
-### Landing Page
-
 ![Landing Page](/public/images/screenshots/landing_page.svg)
-
-### Topic Page
-
 ![Topic Page](/public/images/screenshots/topics_page.svg)
-
-### Quiz Page
-
 ![Quiz Page](/public/images/screenshots/quiz_page.svg)
+![Mobile Version](/public/images/screenshots/mobile_version.svg)
