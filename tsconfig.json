@@ -34,7 +34,8 @@
     "**/*.js",
     "**/*.cjs",
     "**/*.mjs",
-    "**/*.test.ts"
+    "**/*.test.ts",
+    "cypress/plugins/index.cts"
   ],
   "exclude": [
     "node_modules",

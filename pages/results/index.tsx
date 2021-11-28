@@ -35,12 +35,11 @@ const QuestionContainer = styled.div`
 
 const CheckboxContainer = styled.div`
   display: grid;
-  grid-template-columns: 35px 1fr;
+  grid-template-columns: 30px 1fr;
   grid-template-rows: 1fr;
   grid-gap: 10px;
+  margin-bottom: 10px;
   align-items: center;
-  margin-bottom: 5px;
-  padding: 10px;
   background-color: ${(props: { backgroundColor?: string }) =>
     props.backgroundColor};
   border-radius: 5px;
@@ -55,7 +54,7 @@ const Checkbox = styled.input`
   width: 30px;
   height: 30px;
   border: 5px solid #212529;
-  border-radius: 3px;
+  border-radius: 5px;
 
   &:checked {
     background: url('/images/cross.svg') no-repeat center;

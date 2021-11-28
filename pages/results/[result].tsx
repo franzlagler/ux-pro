@@ -46,7 +46,6 @@ const CheckboxContainer = styled.div`
   grid-gap: 10px;
   align-items: center;
   margin-bottom: 5px;
-  padding: 10px;
   background-color: ${(props: { backgroundColor?: string }) =>
     props.backgroundColor};
   border-radius: 5px;
