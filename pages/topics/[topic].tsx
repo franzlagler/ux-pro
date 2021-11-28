@@ -38,6 +38,7 @@ type TopicProps = {
   };
   isTopicLiked?: boolean;
   foundProfile?: { userId: string; showInstructions: boolean };
+  url: string;
 };
 
 const PopupContainer = styled.div`
@@ -114,6 +115,7 @@ export default function Topic({
   foundTopic,
   isTopicLiked,
   foundProfile,
+  url,
 }: TopicProps) {
   const [likeTopic, setLikeTopic] = useState(() => {
     if (isTopicLiked) return isTopicLiked;
@@ -124,6 +126,7 @@ export default function Topic({
   const router = useRouter();
   const [openPopup, setOpenPopup] = useState(false);
   const [noScroll, setNoScroll] = useState(false);
+  console.log(router.pathname);
 
   const handleLikeClick = async () => {
     setLikeTopic(!likeTopic);
@@ -184,10 +187,9 @@ export default function Topic({
             data-cy="like-button"
           />
         )}
-        <Link href="https://twitter.com/intent/tweet" passHref>
+        <Link href={`https://twitter.com/intent/tweet?url=${url}`} passHref>
           <SocialMediaButton url="/images/twitter.svg" />
         </Link>
-        <SocialMediaButton url="/images/linkedin.svg" />
       </ButtonContainer>
       <ImageContainer>
         <Image
@@ -272,6 +274,7 @@ export async function getServerSideProps(context: NextPageContext) {
         },
       };
     }
+    const url = `https://${context.req?.headers.host}${context.req.url}`;
 
     const content = await fetchTopicData(keyword);
 
@@ -286,18 +289,17 @@ export async function getServerSideProps(context: NextPageContext) {
         foundTopic.topicNumber,
       );
 
-      console.log(foundProfile);
-
       return {
         props: {
           content,
           foundTopic,
           isTopicLiked,
           foundProfile,
+          url,
         },
       };
     } else {
-      return { props: { foundTopic, content } };
+      return { props: { foundTopic, content, url } };
     }
   }
 }

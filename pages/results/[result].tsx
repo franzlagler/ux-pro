@@ -57,8 +57,8 @@ const CheckboxText = styled.p`
 
 const Checkbox = styled.input`
   appearance: none;
-  width: 30px30px;
-  height: 25px;
+  width: 30px;
+  height: 30px;
   border: 5px solid #212529;
   border-radius: 3px;
 
