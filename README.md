@@ -4,9 +4,9 @@
 
 UX Pro is a full-stack application that enables developers to improve their knowledge about UX and accessiblity. Users can choose from a variety of topics. Each topic comes with a short text that tells essential aspects about the respective topic. Once the user thinks they have familiarized themselves enough with the content of the text, they can test their knowledge in a little quiz.
 
-Each question within the quiz consists of 4 answers from which at least one is correct. Users can move from forth and back between questions if they want to make changes. After pressing the 'Finish' button, the answers of the user are being checked and the results will be displayed. If an a question has been answered entirely correct, there will be a tick beside the question. Moreover, each individual answers that has been answered correctly will also be highlighted.
+The quiz consists of a series of questions. Each question consists of the question itself, an image and four possible answers. Per question either one, two, three or all answers can be correct. Users can move from forth and back between questions if they want to make changes. After pressing the 'Finish' button, the answers of the user are being checked and the results will be displayed. If an a question has been answered entirely correct, there will be a tick beside the question. Moreover, each individual answers that has been answered correctly will also be highlighted in green.
 
-If a user additionally also creates an account and logs in to it, the functionality increases even more: The three latest quiz results will be stored in the database and can be accessed on the dashboard. Furthermore, users can like their favorite topics which will then also appear on the dashboard.
+If a user additionally also creates an account and logs in to it, they will have access to even more features: They can like topics, view their latest quiz results as well as submit their own topic proposals.
 
 [Test the app](https://ux-pro-learning-platform.herokuapp.com/)
 

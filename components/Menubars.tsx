@@ -263,6 +263,11 @@ export function MobileNavbar() {
     setTimeout(() => setDisplayMenuItems(!displayMenuItems), 700);
   };
 
+  const handleSignInClick = () => {
+    router.push('/auth/signin');
+    setDisplayMenuItems(false);
+  };
+
   const handleSignOutClick = async () => {
     const response = await fetch('/api/auth/signout', {
       method: 'DELETE',
@@ -275,6 +280,11 @@ export function MobileNavbar() {
       dispatch(logOut());
       router.reload();
     }
+  };
+
+  const handleSignUpClick = () => {
+    router.push('/auth/signup');
+    setDisplayMenuItems(false);
   };
 
   useEffect(() => {
@@ -339,9 +349,9 @@ export function MobileNavbar() {
             </NavbarFirstItemBlock>
             <NavbarSecondItemBlock>
               {!loggedIn && (
-                <Link href="/auth/signin" passHref>
-                  <AuthenticationLink>Log In</AuthenticationLink>
-                </Link>
+                <AuthenticationButton onClick={handleSignInClick}>
+                  Log In
+                </AuthenticationButton>
               )}
               {loggedIn && (
                 <AuthenticationButton onClick={handleSignOutClick}>
@@ -349,7 +359,9 @@ export function MobileNavbar() {
                 </AuthenticationButton>
               )}
               <Link href="/auth/signup" passHref>
-                <AuthenticationLink>Register</AuthenticationLink>
+                <AuthenticationButton onClick={handleSignUpClick}>
+                  Register
+                </AuthenticationButton>
               </Link>
             </NavbarSecondItemBlock>
           </MobileNavbarAllItemsList>
