@@ -274,7 +274,7 @@ export async function getServerSideProps(context: NextPageContext) {
         },
       };
     }
-    const url = `https://${context.req?.headers.host}${context.req.url}`;
+    const url = `https://${context.req?.headers.host}${context.req?.url}`;
 
     const content = await fetchTopicData(keyword);
 
