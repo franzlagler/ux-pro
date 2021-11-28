@@ -41,7 +41,7 @@ const QuestionContainer = styled.div`
 
 const CheckboxContainer = styled.div`
   display: grid;
-  grid-template-columns: 35px 1fr;
+  grid-template-columns: 30px 1fr;
   grid-template-rows: 1fr;
   grid-gap: 10px;
   align-items: center;
