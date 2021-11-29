@@ -45,7 +45,6 @@ export default function SignIn() {
     if (res.ok) {
       dispatch(logIn());
       router.push('/');
-      router.replace(router.asPath);
     } else {
       const message = await res.json();
 

@@ -227,23 +227,21 @@ export default function Profile({ foundUser, showInstructions }: ProfileProps) {
 export async function getServerSideProps(context: NextPageContext) {
   const sessionToken = getSessionCookie(context.req?.headers.cookie);
 
-  if (sessionToken) {
-    const validSession = await findSession(sessionToken);
+  const validSession = await findSession(sessionToken);
 
-    if (!validSession) {
-      return {
-        redirect: {
-          destination: '/auth/login',
-          permanent: false,
-        },
-      };
-    }
-    const foundUser = await findUserById(validSession.userId);
-    delete foundUser?._id;
-    const foundProfile = await findProfile(validSession.userId);
-
+  if (!validSession) {
     return {
-      props: { foundUser, showInstructions: foundProfile?.showInstructions },
+      redirect: {
+        destination: '/auth/login',
+        permanent: false,
+      },
     };
   }
+  const foundUser = await findUserById(validSession.userId);
+  delete foundUser?._id;
+  const foundProfile = await findProfile(validSession.userId);
+
+  return {
+    props: { foundUser, showInstructions: foundProfile?.showInstructions },
+  };
 }
