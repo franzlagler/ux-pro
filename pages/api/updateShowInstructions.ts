@@ -17,7 +17,6 @@ export default async function CheckSessionHandler(
           'showInstructions',
           newValue,
         );
-        console.log(updatedProfile);
 
         res.status(200).json({ message: 'Updated profile successfully.' });
       } else {

@@ -126,7 +126,6 @@ export default function Topic({
   const router = useRouter();
   const [openPopup, setOpenPopup] = useState(false);
   const [noScroll, setNoScroll] = useState(false);
-  console.log(router.pathname);
 
   const handleLikeClick = async () => {
     setLikeTopic(!likeTopic);
