@@ -43,8 +43,7 @@ export default function SignIn() {
     });
     if (res.ok) {
       dispatch(logIn());
-      setTimeout(() => router.push('/'), 1500);
-      router.push('/');
+      router.push('/profile');
     } else {
       const { message } = await res.json();
 
