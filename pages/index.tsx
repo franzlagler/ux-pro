@@ -184,7 +184,7 @@ export default function Home({
 }
 
 export async function getServerSideProps(context: NextPageContext) {
-  const sessionToken = getSessionCookie(context.req?.headers.cookie);
+  const sessionToken = await getSessionCookie(context.req?.headers.cookie);
 
   const validSession = await findSession(sessionToken);
 

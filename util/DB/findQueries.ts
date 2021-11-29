@@ -90,6 +90,11 @@ export const findUserById = async (userId: string | undefined) => {
 export const findSession = async (token: string | undefined) => {
   const { db } = await connectToDatabase();
   const session = await db.collection('sessions').findOne({ token });
+
+  if (session) {
+    delete session._id;
+    delete session.expiryTimestamp;
+  }
   return session;
 };
 
