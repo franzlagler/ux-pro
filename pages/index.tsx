@@ -19,7 +19,7 @@ import {
   PrimHeading,
   SecHeading,
 } from '../components/TextElements';
-import { getSessionCookie, removeCookie } from '../util/cookies';
+import { removeCookie } from '../util/cookies';
 import {
   findAllTopics,
   findProfile,

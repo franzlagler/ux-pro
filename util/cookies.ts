@@ -36,7 +36,7 @@ export const getUserAnswersCookie = (cookieToParse: string | undefined) => {
 };
 
 export const createSerializedRegisterSessionTokenCookie = (token: string) => {
-  const isProduction = process.env.NODE_ENV === 'production';
+  const isProduction = process.env.NODE_ENV !== 'production';
 
   const maxAge = 60 * 60 * 12;
 

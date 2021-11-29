@@ -2,7 +2,7 @@ import crypto from 'node:crypto';
 import { compare } from 'bcryptjs';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createSerializedRegisterSessionTokenCookie } from '../../../util/cookies';
-import { findSession, findUserByEmail } from '../../../util/DB/findQueries';
+import { findUserByEmail } from '../../../util/DB/findQueries';
 import { addSession } from '../../../util/DB/insertQueries';
 
 export default async function LogInHandler(
