@@ -184,7 +184,6 @@ export default function Home({
 
 export async function getServerSideProps(context: NextPageContext) {
   const { sessionTokenRegister } = nookies.get(context);
-
   const validSession = await findSession(sessionTokenRegister);
 
   if (!validSession) {
