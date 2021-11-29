@@ -134,9 +134,9 @@ export default function Home({
             <ParaText>No quizzes done yet.</ParaText>
           )}
           <SecHeading>Favorite Topics</SecHeading>
-          {userFavoriteTopics.length !== 0 && (
+          {userFavoriteTopics?.length !== 0 && (
             <TopicsContainer>
-              {userFavoriteTopics.map(
+              {userFavoriteTopics?.map(
                 (topic: { file: string; title: string }) => {
                   return (
                     <SingleTopicContainer key={topic.file}>
@@ -159,7 +159,7 @@ export default function Home({
               )}
             </TopicsContainer>
           )}
-          {userFavoriteTopics.length === 0 && (
+          {userFavoriteTopics?.length === 0 && (
             <ParaText>No favorite topics yet.</ParaText>
           )}
         </>
@@ -185,6 +185,8 @@ export async function getServerSideProps(context: NextPageContext) {
   const sessionToken = getSessionCookie(context.req?.headers.cookie);
 
   const validSession = await findSession(sessionToken);
+  console.log(validSession);
+
   if (!validSession) {
     return {
       props: {},
