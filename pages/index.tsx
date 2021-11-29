@@ -70,6 +70,8 @@ export default function Home({
     false,
   ]);
 
+  console.log(validSession);
+
   useEffect(() => {
     removeCookie('userAnswers');
   }, []);
@@ -185,7 +187,6 @@ export async function getServerSideProps(context: NextPageContext) {
   const sessionToken = getSessionCookie(context.req?.headers.cookie);
 
   const validSession = await findSession(sessionToken);
-  console.log(validSession);
 
   if (!validSession) {
     return {
