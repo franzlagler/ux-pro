@@ -41,13 +41,12 @@ export default function SignIn() {
       },
       body: JSON.stringify({ email, password }),
     });
-
     if (res.ok) {
       dispatch(logIn());
-      setTimeout(() => router.push('/'), 1000);
+      setTimeout(() => router.push('/'), 1500);
       router.push('/');
     } else {
-      const message = await res.json();
+      const { message } = await res.json();
 
       if (message.email) {
         setErrorMessage({ password: '', email: message.email });
