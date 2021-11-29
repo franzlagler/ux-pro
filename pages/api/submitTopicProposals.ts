@@ -17,6 +17,7 @@ export default async function submitTopicProposalsHandler(
         const foundUser = await findUserById(validSession.userId);
         const { title, textProposal } = req.body;
 
+        // Sends Email to Ethereal Mail Account
         const transporter = nodemailer.createTransport({
           host: 'smtp.ethereal.email',
           port: 587,

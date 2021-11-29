@@ -265,7 +265,7 @@ export function MobileNavbar() {
 
   const handleSignInClick = () => {
     router.push('/auth/signin');
-    setDisplayMenuItems(false);
+    setDisplayMenuItems(!displayMenuItems);
   };
 
   const handleSignOutClick = async () => {
@@ -284,7 +284,7 @@ export function MobileNavbar() {
 
   const handleSignUpClick = () => {
     router.push('/auth/signup');
-    setDisplayMenuItems(false);
+    setDisplayMenuItems(!displayMenuItems);
   };
 
   useEffect(() => {

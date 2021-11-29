@@ -113,6 +113,7 @@ export const findResult = async (profileId: string, topicNumber: number) => {
 
   if (result) {
     delete result._id;
+    result.date = result.date.toString();
   }
   return result;
 };

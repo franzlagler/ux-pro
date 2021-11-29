@@ -12,8 +12,6 @@ export default async function CheckSessionHandler(
 
       if (validSession) {
         const { newValue } = req.body;
-        console.log(newValue);
-
         const updatedProfile = await updateProfile(
           validSession.userId,
           'showInstructions',

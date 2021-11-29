@@ -33,6 +33,10 @@ const QuestionContainer = styled.div`
   grid-gap: 20px;
 `;
 
+const LegendContainer = styled.div`
+  margin-bottom: 30px;
+`;
+
 const CheckboxContainer = styled.div`
   display: grid;
   grid-template-columns: 30px 1fr;
@@ -91,23 +95,29 @@ export default function Results({
     <WideContainer>
       <PrimHeading data-cy="results-heading">Results</PrimHeading>
       <ParaText>Check out how well you performed in the quiz!</ParaText>
-      <SecHeading>Legend</SecHeading>
-      <CheckboxContainer>
-        <Image src="/images/correctAnswer.svg" width="30px" height="30px" />
-        <CheckboxText>The question is answered totally correct.</CheckboxText>
-      </CheckboxContainer>
-      <CheckboxContainer>
-        <Image src="/images/wrongAnswer.svg" width="30px" height="30px" />
-        <CheckboxText>
-          The question is not answered totally correct.
-        </CheckboxText>
-      </CheckboxContainer>
-      <CheckboxContainer backgroundColor="#76f5c0">
-        <Checkbox type="checkbox" disabled checked />
-        <CheckboxText>
-          The respective individual answer is correct.
-        </CheckboxText>
-      </CheckboxContainer>
+      <LegendContainer>
+        <SecHeading>Legend</SecHeading>
+        <CheckboxContainer>
+          <Image src="/images/correctAnswer.svg" width="30px" height="30px" />
+          <CheckboxText>
+            The entire question has been answered totally correct.
+          </CheckboxText>
+        </CheckboxContainer>
+        <CheckboxContainer>
+          <Image src="/images/wrongAnswer.svg" width="30px" height="30px" />
+          <CheckboxText>
+            There is at least one error in the answers.
+          </CheckboxText>
+        </CheckboxContainer>
+        <CheckboxContainer>
+          <Checkbox type="checkbox" disabled checked />
+          <CheckboxText>This answer has been selected.</CheckboxText>
+        </CheckboxContainer>
+        <CheckboxContainer backgroundColor="#76f5c0">
+          <Checkbox type="checkbox" disabled checked />
+          <CheckboxText>The selected answer is correct.</CheckboxText>
+        </CheckboxContainer>
+      </LegendContainer>
       {topicQuestions.map(
         (
           el: {
