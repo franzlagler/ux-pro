@@ -221,9 +221,5 @@ export async function getServerSideProps(context: NextPageContext) {
         foundUser,
       },
     };
-  } else {
-    return {
-      props: {},
-    };
   }
 }
