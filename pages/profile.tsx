@@ -245,5 +245,9 @@ export async function getServerSideProps(context: NextPageContext) {
     return {
       props: { foundUser, showInstructions: foundProfile?.showInstructions },
     };
+  } else {
+    return {
+      props: {},
+    };
   }
 }
