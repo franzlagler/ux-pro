@@ -15,8 +15,11 @@ export default async function LogInHandler(
         .status(200)
         .setHeader(
           'set-Cookie',
-          serialize('sessionTokenRegister', '', {
-            maxAge: -1,
+          serialize('sessionTokenRegister', 'false', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV !== 'development',
+            sameSite: true,
+            maxAge: 5,
             path: '/',
           }),
         )

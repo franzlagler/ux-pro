@@ -12,11 +12,7 @@ export default async function CheckSessionHandler(
 
       if (validSession) {
         const { newValue } = req.body;
-        const updatedProfile = await updateProfile(
-          validSession.userId,
-          'showInstructions',
-          newValue,
-        );
+        await updateProfile(validSession.userId, 'showInstructions', newValue);
 
         res.status(200).json({ message: 'Updated profile successfully.' });
       } else {
