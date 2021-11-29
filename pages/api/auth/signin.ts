@@ -23,18 +23,10 @@ export default async function LogInHandler(
 
         const cookie = createSerializedRegisterSessionTokenCookie(token);
 
-        const validSession = await findSession(token);
-
-        if (validSession) {
-          res
-            .status(200)
-            .setHeader('set-Cookie', cookie)
-            .json({ message: 'User has been logged in.' });
-        } else {
-          res
-            .status(500)
-            .json({ message: 'Session was not properly generated.' });
-        }
+        res
+          .status(200)
+          .setHeader('set-Cookie', cookie)
+          .json({ message: 'User has been logged in.' });
       } else {
         res.status(500).json({ password: 'Password is incorrect.' });
       }
