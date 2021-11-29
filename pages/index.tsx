@@ -1,6 +1,7 @@
 import { NextPageContext } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
+import nookies from 'nookies';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { DropdownButton, LinkButton, LinkLink } from '../components/Buttons';
@@ -182,44 +183,42 @@ export default function Home({
 }
 
 export async function getServerSideProps(context: NextPageContext) {
-  const sessionToken = getSessionCookie(context.req?.headers.cookie);
+  const { sessionTokenRegister } = nookies.get(context);
 
-  if (sessionToken) {
-    const validSession = await findSession(sessionToken);
+  const validSession = await findSession(sessionTokenRegister);
 
-    if (!validSession) {
-      return {
-        props: {},
-      };
-    }
-    const foundUser = await findUserById(validSession.userId);
-    const foundProfile = await findProfile(foundUser?._id.toString());
-
-    const allTopics = await findAllTopics();
-    // User Profile
-
-    const userFavoriteTopics = filterFavoriteTopics(
-      allTopics,
-      foundProfile?.favoriteTopics,
-    );
-
-    const previousQuizzesTitle = await getPreviousQuizTitle(
-      foundProfile?.results,
-      allTopics,
-    );
-
-    const userQuizzesResults = await findThreeLatestQuizResults(
-      foundProfile?._id.toString(),
-      foundProfile?.results,
-      previousQuizzesTitle,
-    );
-
+  if (!validSession) {
     return {
-      props: {
-        userFavoriteTopics,
-        userQuizzesResults,
-        foundUser,
-      },
+      props: {},
     };
   }
+  const foundUser = await findUserById(validSession.userId);
+  const foundProfile = await findProfile(foundUser?._id.toString());
+
+  const allTopics = await findAllTopics();
+  // User Profile
+
+  const userFavoriteTopics = filterFavoriteTopics(
+    allTopics,
+    foundProfile?.favoriteTopics,
+  );
+
+  const previousQuizzesTitle = await getPreviousQuizTitle(
+    foundProfile?.results,
+    allTopics,
+  );
+
+  const userQuizzesResults = await findThreeLatestQuizResults(
+    foundProfile?._id.toString(),
+    foundProfile?.results,
+    previousQuizzesTitle,
+  );
+
+  return {
+    props: {
+      userFavoriteTopics,
+      userQuizzesResults,
+      foundUser,
+    },
+  };
 }
