@@ -70,8 +70,6 @@ export default function Home({
     false,
   ]);
 
-  console.log(validSession);
-
   useEffect(() => {
     removeCookie('userAnswers');
   }, []);
