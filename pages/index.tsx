@@ -184,40 +184,42 @@ export default function Home({
 export async function getServerSideProps(context: NextPageContext) {
   const sessionToken = getSessionCookie(context.req?.headers.cookie);
 
-  const validSession = await findSession(sessionToken);
+  if (sessionToken) {
+    const validSession = await findSession(sessionToken);
 
-  if (!validSession) {
+    if (!validSession) {
+      return {
+        props: {},
+      };
+    }
+    const foundUser = await findUserById(validSession.userId);
+    const foundProfile = await findProfile(foundUser?._id.toString());
+
+    const allTopics = await findAllTopics();
+    // User Profile
+
+    const userFavoriteTopics = filterFavoriteTopics(
+      allTopics,
+      foundProfile?.favoriteTopics,
+    );
+
+    const previousQuizzesTitle = await getPreviousQuizTitle(
+      foundProfile?.results,
+      allTopics,
+    );
+
+    const userQuizzesResults = await findThreeLatestQuizResults(
+      foundProfile?._id.toString(),
+      foundProfile?.results,
+      previousQuizzesTitle,
+    );
+
     return {
-      props: {},
+      props: {
+        userFavoriteTopics,
+        userQuizzesResults,
+        foundUser,
+      },
     };
   }
-  const foundUser = await findUserById(validSession.userId);
-  const foundProfile = await findProfile(foundUser?._id.toString());
-
-  const allTopics = await findAllTopics();
-  // User Profile
-
-  const userFavoriteTopics = filterFavoriteTopics(
-    allTopics,
-    foundProfile?.favoriteTopics,
-  );
-
-  const previousQuizzesTitle = await getPreviousQuizTitle(
-    foundProfile?.results,
-    allTopics,
-  );
-
-  const userQuizzesResults = await findThreeLatestQuizResults(
-    foundProfile?._id.toString(),
-    foundProfile?.results,
-    previousQuizzesTitle,
-  );
-
-  return {
-    props: {
-      userFavoriteTopics,
-      userQuizzesResults,
-      foundUser,
-    },
-  };
 }
