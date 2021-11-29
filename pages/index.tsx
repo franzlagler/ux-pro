@@ -189,7 +189,6 @@ export async function getServerSideProps(context: NextPageContext) {
   if (!validSession) {
     return {
       props: {},
-      deferOnClientSideNavigation: true,
     };
   }
   const foundUser = await findUserById(validSession.userId);
