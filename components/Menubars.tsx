@@ -358,11 +358,9 @@ export function MobileNavbar() {
                   Log Out
                 </AuthenticationButton>
               )}
-              <Link href="/auth/signup" passHref>
-                <AuthenticationButton onClick={handleSignUpClick}>
-                  Register
-                </AuthenticationButton>
-              </Link>
+              <AuthenticationButton onClick={handleSignUpClick}>
+                Register
+              </AuthenticationButton>
             </NavbarSecondItemBlock>
           </MobileNavbarAllItemsList>
         </MobileBarDropDownMenu>
