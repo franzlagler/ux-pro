@@ -55,13 +55,13 @@ interface HomeProps {
     keyword: string;
     date: Date;
   }[];
-  validSession: {} | undefined;
+  foundUser: {} | undefined;
 }
 
 export default function Home({
   userFavoriteTopics,
   userQuizzesResults,
-  validSession,
+  foundUser,
 }: HomeProps) {
   const [openAccordions, setOpenAccordions] = useState([
     false,
@@ -78,7 +78,7 @@ export default function Home({
   return (
     <WideContainer>
       <PrimHeading>Dashboard</PrimHeading>
-      {validSession && (
+      {foundUser && (
         <>
           <ParaText>Explore your previous UX learning journey.</ParaText>
           <SecHeading data-cy="previous-quizzes">Previous Quizzes</SecHeading>
@@ -219,7 +219,7 @@ export async function getServerSideProps(context: NextPageContext) {
     props: {
       userFavoriteTopics,
       userQuizzesResults,
-      validSession,
+      foundUser,
     },
   };
 }
