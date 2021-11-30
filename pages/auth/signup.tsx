@@ -81,7 +81,7 @@ export default function SignUp() {
 
       if (ok) {
         dispatch(logIn());
-        router.push('/auth/profile');
+        router.push('/profile');
       }
     }
   };

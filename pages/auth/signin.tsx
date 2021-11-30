@@ -44,12 +44,8 @@ export default function SignIn() {
     const { message } = await res.json();
 
     if (res.ok) {
-      const destination =
-        typeof router.query.returnTo === 'string' && router.query.returnTo
-          ? router.query.returnTo
-          : '/';
       dispatch(logIn());
-      router.push(destination);
+      router.push('/profile');
     } else {
       if (message.email) {
         setErrorMessage({ password: '', email: message.email });
