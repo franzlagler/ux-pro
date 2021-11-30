@@ -60,7 +60,7 @@ export default function SignIn() {
         sameSite: 'lax',
       });
       dispatch(logIn());
-      router.push('/profile');
+      router.push('/');
     } else {
       const { message } = await res.json();
 
