@@ -177,16 +177,14 @@ export function RegularNavbar() {
             <Image src="/images/logo.svg" layout="fill" />
           </RegularLogoContainer>
 
-          <Link href="/" passHref>
-            <NavbarLink>
-              <NavbarItemBlock>
-                <Image src="/images/dashboard.svg" width="30px" height="30px" />
-                <NavbarItemText data-cy="dashboard-item">
-                  Dashboard
-                </NavbarItemText>
-              </NavbarItemBlock>
-            </NavbarLink>
-          </Link>
+          <NavbarLink href="/">
+            <NavbarItemBlock>
+              <Image src="/images/dashboard.svg" width="30px" height="30px" />
+              <NavbarItemText data-cy="dashboard-item">
+                Dashboard
+              </NavbarItemText>
+            </NavbarItemBlock>
+          </NavbarLink>
           <Link href="/topics" passHref>
             <NavbarLink>
               <NavbarItemBlock>
