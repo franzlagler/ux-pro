@@ -45,19 +45,12 @@ export default function SignIn() {
     });
 
     if (res.ok) {
-      const { token } = await res.json();
-      const maxAge = 60 * 60 * 12;
-
-      setCookie('sessionTokenRegister', JSON.stringify(token), {
-        maxAge: maxAge,
-        expires: new Date(Date.now() + maxAge * 1000),
-        httpOnly: true,
-        secure: process.env.NODE_ENV !== 'production',
-        path: '/',
-        sameSite: 'lax',
-      });
+      const destination =
+        typeof router.query.returnTo === 'string' && router.query.returnTo
+          ? router.query.returnTo
+          : '/';
       dispatch(logIn());
-      router.push('/');
+      router.push(destination);
     } else {
       const { message } = await res.json();
 
@@ -114,7 +107,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   ) {
     return {
       redirect: {
-        destination: `https://${context.req.headers.host}/login`,
+        destination: `https://${context.req.headers.host}/auth/signin`,
         permanent: true,
       },
     };

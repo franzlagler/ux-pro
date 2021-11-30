@@ -26,15 +26,15 @@ export default async function LogInHandler(
 
         res
           .status(200)
-          .setHeader('set-Cookie', cookie)
-          .json({ message: 'User has been logged in.' });
+          .setHeader('Set-Cookie', cookie)
+          .send({ message: 'User has been logged in.' });
       } else {
-        res.status(500).json({ password: 'Password is incorrect.' });
+        res.status(500).send({ password: 'Password is incorrect.' });
       }
     } else {
-      res.status(500).json({ email: 'User not found' });
+      res.status(500).send({ email: 'User not found' });
     }
   } else {
-    res.status(401).json({ message: 'Unauthorized action' });
+    res.status(401).send({ message: 'Unauthorized action' });
   }
 }
