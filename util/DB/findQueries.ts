@@ -81,9 +81,10 @@ export const findUserById = async (userId: string | undefined) => {
     if (user) {
       delete user.passwordHashed;
       user._id = user._id.toString();
+      return user;
     }
 
-    return user;
+    return undefined;
   }
 };
 
@@ -94,8 +95,10 @@ export const findSession = async (token: string | undefined) => {
   if (session) {
     delete session._id;
     delete session.expiryTimestamp;
+    return session;
   }
-  return session;
+
+  return undefined;
 };
 
 export const findProfile = async (userId: string | undefined) => {
@@ -104,9 +107,10 @@ export const findProfile = async (userId: string | undefined) => {
 
   if (foundProfile) {
     foundProfile._id = foundProfile._id.toString();
+    return foundProfile;
   }
 
-  return foundProfile;
+  return undefined;
 };
 
 export const findResult = async (profileId: string, topicNumber: number) => {
@@ -119,8 +123,10 @@ export const findResult = async (profileId: string, topicNumber: number) => {
   if (result) {
     delete result._id;
     result.date = result.date.toString();
+    return result;
   }
-  return result;
+
+  return undefined;
 };
 
 export const findThreeLatestQuizResults = async (

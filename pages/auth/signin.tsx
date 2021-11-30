@@ -1,7 +1,6 @@
-import { GetServerSideProps, GetServerSidePropsContext } from 'next';
+import { GetServerSidePropsContext } from 'next';
 import { useRouter } from 'next/router';
 import { ChangeEvent, FormEvent, useState } from 'react';
-import { useCookies } from 'react-cookie';
 import { useDispatch } from 'react-redux';
 import { RegularButton } from '../../components/Buttons';
 import {
@@ -16,12 +15,10 @@ import {
 } from '../../components/FormFields';
 import { ErrorMessage, PrimHeading } from '../../components/TextElements';
 import { logIn } from '../../state/loggedInSlice';
-import { getSessionCookie } from '../../util/cookies';
 import { findSession } from '../../util/DB/findQueries';
 
 export default function SignIn() {
   const router = useRouter();
-  const [cookie, setCookie] = useCookies(['sessionTokenRegister']);
   const [credentials, setCredentials] = useState({ email: '', password: '' });
   const [errorMessage, setErrorMessage] = useState({ email: '', password: '' });
 
@@ -44,6 +41,8 @@ export default function SignIn() {
       body: JSON.stringify({ email, password }),
     });
 
+    const { message } = await res.json();
+
     if (res.ok) {
       const destination =
         typeof router.query.returnTo === 'string' && router.query.returnTo
@@ -52,8 +51,6 @@ export default function SignIn() {
       dispatch(logIn());
       router.push(destination);
     } else {
-      const { message } = await res.json();
-
       if (message.email) {
         setErrorMessage({ password: '', email: message.email });
         return;
