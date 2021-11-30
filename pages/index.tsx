@@ -70,13 +70,15 @@ export default function Home({
     false,
   ]);
 
+  const [activeUser] = useState(foundUser);
+
   useEffect(() => {
     removeCookie('userAnswers');
   }, []);
   return (
     <WideContainer>
       <PrimHeading>Dashboard</PrimHeading>
-      {foundUser && (
+      {activeUser && (
         <>
           <ParaText>Explore your previous UX learning journey.</ParaText>
           <SecHeading data-cy="previous-quizzes">Previous Quizzes</SecHeading>
@@ -183,12 +185,6 @@ export default function Home({
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { sessionTokenRegister } = context.req.cookies;
-
-  if (!sessionTokenRegister) {
-    return {
-      props: {},
-    };
-  }
 
   const validSession = await findSession(sessionTokenRegister);
 
