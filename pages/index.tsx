@@ -184,6 +184,12 @@ export default function Home({
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { sessionTokenRegister } = context.req.cookies;
 
+  if (!sessionTokenRegister) {
+    return {
+      props: {},
+    };
+  }
+
   const validSession = await findSession(sessionTokenRegister);
 
   if (!validSession) {
