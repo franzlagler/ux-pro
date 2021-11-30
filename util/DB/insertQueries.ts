@@ -22,7 +22,6 @@ export const addUser = async (
 
 export const addSession = async (userId: string, token: string) => {
   const { db } = await connectToDatabase();
-  await db.collection('sessions').dropIndexes();
   await db
     .collection('sessions')
     .insertOne({ userId, token, expiryTimestamp: new Date() });
