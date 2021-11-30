@@ -22,7 +22,6 @@ import { removeCookie } from '../util/cookies';
 import {
   findAllTopics,
   findProfile,
-  findSession,
   findThreeLatestQuizResults,
   findUserById,
 } from '../util/DB/findQueries';
@@ -184,6 +183,7 @@ export default function Home({
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const { findSession } = await import('../util/DB/findQueries');
   const { sessionTokenRegister } = context.req.cookies;
 
   const validSession = await findSession(sessionTokenRegister);
