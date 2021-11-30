@@ -1,4 +1,4 @@
-import { NextPageContext } from 'next';
+import { GetServerSideProps, GetServerSidePropsContext } from 'next';
 import { useRouter } from 'next/router';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { useCookies } from 'react-cookie';
@@ -16,10 +16,7 @@ import {
 } from '../../components/FormFields';
 import { ErrorMessage, PrimHeading } from '../../components/TextElements';
 import { logIn } from '../../state/loggedInSlice';
-import {
-  createSerializedRegisterSessionTokenCookie,
-  getSessionCookie,
-} from '../../util/cookies';
+import { getSessionCookie } from '../../util/cookies';
 import { findSession } from '../../util/DB/findQueries';
 
 export default function SignIn() {
@@ -109,10 +106,23 @@ export default function SignIn() {
   );
 }
 
-export async function getServerSideProps(context: NextPageContext) {
-  const currentSessionToken = getSessionCookie(context.req?.headers.cookie);
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  if (
+    context.req.headers.host &&
+    context.req.headers['x-forwarded-proto'] &&
+    context.req.headers['x-forwarded-proto'] !== 'https'
+  ) {
+    return {
+      redirect: {
+        destination: `https://${context.req.headers.host}/login`,
+        permanent: true,
+      },
+    };
+  }
+  const { sessionTokenRegister } = context.req.cookies;
+  console.log(sessionTokenRegister);
 
-  const validSession = await findSession(currentSessionToken);
+  const validSession = await findSession(sessionTokenRegister);
 
   if (validSession) {
     return {
