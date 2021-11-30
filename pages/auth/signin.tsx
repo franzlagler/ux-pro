@@ -1,6 +1,7 @@
 import { NextPageContext } from 'next';
 import { useRouter } from 'next/router';
 import { ChangeEvent, FormEvent, useState } from 'react';
+import { useCookies } from 'react-cookie';
 import { useDispatch } from 'react-redux';
 import { RegularButton } from '../../components/Buttons';
 import {
@@ -15,11 +16,15 @@ import {
 } from '../../components/FormFields';
 import { ErrorMessage, PrimHeading } from '../../components/TextElements';
 import { logIn } from '../../state/loggedInSlice';
-import { getSessionCookie } from '../../util/cookies';
+import {
+  createSerializedRegisterSessionTokenCookie,
+  getSessionCookie,
+} from '../../util/cookies';
 import { findSession } from '../../util/DB/findQueries';
 
 export default function SignIn() {
   const router = useRouter();
+  const [cookie, setCookie] = useCookies(['sessionTokenRegister']);
   const [credentials, setCredentials] = useState({ email: '', password: '' });
   const [errorMessage, setErrorMessage] = useState({ email: '', password: '' });
 
@@ -41,7 +46,19 @@ export default function SignIn() {
       },
       body: JSON.stringify({ email, password }),
     });
+
     if (res.ok) {
+      const { token } = await res.json();
+      const maxAge = 60 * 60 * 12;
+
+      setCookie('sessionTokenRegister', JSON.stringify(token), {
+        maxAge: maxAge,
+        expires: new Date(Date.now() + maxAge * 1000),
+        httpOnly: true,
+        secure: process.env.NODE_ENV !== 'production',
+        path: '/',
+        sameSite: 'lax',
+      });
       dispatch(logIn());
       router.push('/profile');
     } else {

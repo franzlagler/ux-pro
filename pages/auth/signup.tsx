@@ -81,7 +81,7 @@ export default function SignUp() {
 
       if (ok) {
         dispatch(logIn());
-        setTimeout(() => router.push('/auth/signin'), 2000);
+        router.push('/auth/profile');
       }
     }
   };

@@ -125,7 +125,6 @@ export default function Topic({
     useState(false);
   const router = useRouter();
   const [openPopup, setOpenPopup] = useState(false);
-  const [noScroll, setNoScroll] = useState(false);
 
   const handleLikeClick = async () => {
     setLikeTopic(!likeTopic);
@@ -143,7 +142,6 @@ export default function Topic({
 
   const handleStartQuizClick = () => {
     if (foundProfile?.showInstructions) {
-      setNoScroll(true);
       setOpenPopup(!openPopup);
       return;
     }

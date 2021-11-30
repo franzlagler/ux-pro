@@ -1,6 +1,7 @@
 import crypto from 'node:crypto';
 import { compare } from 'bcryptjs';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { setCookie } from 'nookies';
 import { createSerializedRegisterSessionTokenCookie } from '../../../util/cookies';
 import { findUserByEmail } from '../../../util/DB/findQueries';
 import { addSession } from '../../../util/DB/insertQueries';
