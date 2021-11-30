@@ -1,4 +1,4 @@
-import { NextPageContext } from 'next';
+import { GetServerSidePropsContext, NextPageContext } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import nookies from 'nookies';
@@ -182,8 +182,9 @@ export default function Home({
   );
 }
 
-export async function getServerSideProps(context: NextPageContext) {
-  const { sessionTokenRegister } = nookies.get(context);
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const { sessionTokenRegister } = context.req.cookies;
+
   const validSession = await findSession(sessionTokenRegister);
 
   if (!validSession) {
